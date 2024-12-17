@@ -22,7 +22,6 @@ fun PaintbrushView(
                             y = offset.y / size.height
                         )
                         viewModel.strokes.endStroke()
-                        viewModel.recompose()
                     }
                 )
             }.pointerInput(Unit) {
@@ -32,14 +31,12 @@ fun PaintbrushView(
                             x = offset.x / size.width,
                             y = offset.y / size.height
                         )
-                        viewModel.recompose()
                     },
                     onDrag = { change, _ ->
                         viewModel.strokes.appendStroke(
                             x = change.position.x / size.width,
                             y = change.position.y / size.height
                         )
-                        viewModel.recompose()
                     },
                     onDragEnd = {
                         viewModel.strokes.endStroke()

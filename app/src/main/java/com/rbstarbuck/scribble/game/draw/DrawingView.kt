@@ -11,7 +11,17 @@ fun DrawingView(
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
-        CanvasView(
+        CanvasBackgroundView(
+            backgroundStateFlow = viewModel.backgroundColor,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        CommittedStrokesCanvasView(
+            viewModel = viewModel.canvas,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        CurrentStrokeCanvasView(
             viewModel = viewModel.canvas,
             modifier = Modifier.fillMaxSize()
         )
