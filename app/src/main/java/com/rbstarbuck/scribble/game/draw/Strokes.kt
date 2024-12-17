@@ -1,17 +1,30 @@
 package com.rbstarbuck.scribble.game.draw
 
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class Strokes(
     private val selectedColor: StateFlow<Color>,
     private val selectedWidth: StateFlow<Float>
 ): Iterable<Stroke> {
-    private var currentStroke: MutableStroke? = null
-    private val strokes = mutableListOf<Stroke>()
+    private var _currentStroke: MutableStroke? = null
+    val currentStroke: Stroke?
+        get() = _currentStroke
+
+    private val _committedStrokes = mutableListOf<Stroke>()
+    val committedStrokes: List<Stroke>
+        get() = _committedStrokes
+
+    private val _recomposeCurrentStrokeStateFlow = MutableStateFlow(false)
+    val recomposeCurrentStrokeStateFlow = _recomposeCurrentStrokeStateFlow.asStateFlow()
+
+    private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(false)
+    val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
 
     fun beginStroke(x: Float, y: Float) {
-        currentStroke = MutableStroke(
+        _currentStroke = MutableStroke(
             color = selectedColor.value,
             width = selectedWidth.value,
             initialPoint = Point(x, y)
@@ -19,19 +32,21 @@ class Strokes(
     }
 
     fun appendStroke(x: Float, y: Float) {
-        currentStroke!!.addPoint(Point(x, y))
+        _currentStroke!!.addPoint(Point(x, y))
+        _recomposeCurrentStrokeStateFlow.value = !_recomposeCurrentStrokeStateFlow.value
     }
 
     fun endStroke() {
-        strokes.add(currentStroke!!)
-        currentStroke = null
+        _committedStrokes.add(_currentStroke!!)
+        _currentStroke = null
+        _recomposeCommittedStrokesStateFlow.value = !_recomposeCommittedStrokesStateFlow.value
     }
 
     override fun iterator(): Iterator<Stroke> = StrokesIterator()
 
     private inner class StrokesIterator: Iterator<Stroke> {
-        private val strokesIterator: Iterator<Stroke> = strokes.iterator()
-        private val lastStroke: MutableStroke? = currentStroke
+        private val strokesIterator: Iterator<Stroke> = _committedStrokes.iterator()
+        private val lastStroke: MutableStroke? = _currentStroke
 
         private var hasLastStroke = lastStroke != null
 
