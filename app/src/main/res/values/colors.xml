@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="row_item_background">#FFFFFFFF</color>
-    <color name="selected_row_item_background">#FFAAAAAA</color>
+    <color name="selected_row_item_background">#FFEEEEEE</color>
     <color name="row_item_image_border">#FF666666</color>
     <color name="selected_row_item_image_border">#FFFF0000</color>
 </resources>

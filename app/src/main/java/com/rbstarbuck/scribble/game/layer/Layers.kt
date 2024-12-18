@@ -27,6 +27,14 @@ class Layers(
         val key = generateKey()
         val strokes = Strokes(selectedStrokeColor, selectedStrokeWidth)
 
+        val canMergeDown: Boolean
+            get() {
+                val layers = layersStateFlow.value
+                val index = layers.indexOfFirst { it.key == key }
+
+                return index >= 0 && index < layers.size - 1
+            }
+
         private val _visibleStateFlow = MutableStateFlow(true)
         val visibleStateFlow = _visibleStateFlow.asStateFlow()
         var visible: Boolean
@@ -50,6 +58,17 @@ class Layers(
         }
 
         fun remove() {
+            val layers = _layersStateFlow.value
+
+            if (selected) {
+                val index = layers.indexOfFirst { it.key == key }
+                if (index < layers.size - 1) {
+                    layers[index + 1].select()
+                } else if (index > 0) {
+                    layers[index - 1].select()
+                }
+            }
+
             _layersStateFlow.value = layersStateFlow.value.filter { it.key != key }
         }
 
@@ -73,6 +92,7 @@ class Layers(
 
         fun moveDown() {
             val layers = layersStateFlow.value
+
             if (layers.size > 1) {
                 val index = layers.indexOfFirst { it.key == key }
                 if (index >= 0 && index < layers.size - 1) {
@@ -86,6 +106,17 @@ class Layers(
                                 }
 
                 }
+            }
+        }
+
+        fun mergeDown() {
+            val layers = layersStateFlow.value
+            val index = layers.indexOfFirst { it.key == key }
+
+            if (index >= 0 && index < layers.size - 1) {
+                layers[index].strokes.mergeInto(layers[index + 1].strokes)
+                layers[index + 1].select()
+                layers[index].remove()
             }
         }
     }

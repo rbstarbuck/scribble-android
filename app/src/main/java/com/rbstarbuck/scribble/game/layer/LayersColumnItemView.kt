@@ -193,7 +193,7 @@ private fun DeleteLayerConfirmationDialog(
     enabledStateFlow: MutableStateFlow<Boolean>
 ) {
     val enabled by enabledStateFlow.collectAsState()
-    
+
     if (enabled) {
         AlertDialog(
             onDismissRequest = { enabledStateFlow.value = false },
@@ -208,7 +208,10 @@ private fun DeleteLayerConfirmationDialog(
             text = { Text(stringResource(R.string.delete_layer_dialog_text)) },
             confirmButton = {
                 TextButton(
-                    onClick = { layer.remove() }
+                    onClick = {
+                        layer.remove()
+                        enabledStateFlow.value = false
+                    }
                 ) {
                     Text(stringResource(R.string.delete))
                 }

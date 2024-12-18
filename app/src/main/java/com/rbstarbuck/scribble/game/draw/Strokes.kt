@@ -43,6 +43,10 @@ class Strokes(
         _recomposeCurrentStrokeStateFlow.value = !_recomposeCurrentStrokeStateFlow.value
     }
 
+    fun mergeInto(other: Strokes) {
+        other._committedStrokes.addAll(committedStrokes)
+    }
+
     override fun iterator(): Iterator<Stroke> = StrokesIterator()
 
     private inner class StrokesIterator: Iterator<Stroke> {

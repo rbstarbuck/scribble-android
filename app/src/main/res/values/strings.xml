@@ -10,4 +10,7 @@
     <string name="delete_layer_dialog_text">Are you sure you want to delete this layer? This action cannot be undone.\n\nTip: layers can be hidden using the \"eye\" icon.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="merge_layers">Merge layers?</string>
+    <string name="merge_layers_dialog_text">Merge the selected layer with the layer below it? This action cannot be undone.</string>
+    <string name="merge">Merge</string>
 </resources>
