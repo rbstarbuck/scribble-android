@@ -40,7 +40,7 @@ import com.rbstarbuck.scribble.game.draw.CommittedStrokesCanvasView
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun LayersRowItemView(
+fun LayersColumnItemView(
     layer: Layers.Layer,
     backgroundStateFlow: StateFlow<Color>,
     canMoveUp: Boolean,
@@ -76,7 +76,12 @@ fun LayersRowItemView(
         contentAlignment = Alignment.BottomStart
     ) {
         Row(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(
+                top = 5.dp,
+                bottom = 6.5.dp,
+                start = 5.dp,
+                end = 5.dp
+            ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val visible by layer.visibleStateFlow.collectAsState()
@@ -170,11 +175,11 @@ fun LayersRowItemView(
 
 @Preview
 @Composable
-fun LayersRowItemViewPreview() {
+fun LayersColumnItemViewPreview() {
     val layers = Layers(MutableStateFlow(Color.Black), MutableStateFlow(10f))
     val layer by layers.selectedLayerStateFlow.collectAsState()
 
-    LayersRowItemView(
+    LayersColumnItemView(
         layer = layer,
         canMoveUp = true,
         canMoveDown = true,
@@ -187,9 +192,8 @@ private fun DeleteLayerConfirmationDialog(
     layer: Layers.Layer,
     enabledStateFlow: MutableStateFlow<Boolean>
 ) {
-    val enabled by enabledStateFlow.collectAsState(
-
-    )
+    val enabled by enabledStateFlow.collectAsState()
+    
     if (enabled) {
         AlertDialog(
             onDismissRequest = { enabledStateFlow.value = false },

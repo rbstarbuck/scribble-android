@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,7 +48,7 @@ fun LayersView(viewModel: LayersViewModel, modifier: Modifier = Modifier) {
                     layers[i].key
                 }
             ) { i ->
-                LayersRowItemView(
+                LayersColumnItemView(
                     layer = layers[i],
                     backgroundStateFlow = viewModel.backgroundStateFlow,
                     canMoveUp = i > 0,
