@@ -27,15 +27,15 @@ fun CanvasBackgroundView(
 
 @Composable
 fun CommittedStrokesCanvasView(
-    viewModel: CanvasViewModel,
+    strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
     val recomposeCommittedStrokesState =
-        viewModel.strokes.recomposeCommittedStrokesStateFlow.collectAsState()
+        strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
     key(recomposeCommittedStrokesState.value) {
         Canvas(modifier.clipToBounds()) {
-            for (stroke in viewModel.strokes.committedStrokes) {
+            for (stroke in strokes.committedStrokes) {
                 drawStroke(stroke)
             }
         }
@@ -44,15 +44,15 @@ fun CommittedStrokesCanvasView(
 
 @Composable
 fun CurrentStrokeCanvasView(
-    viewModel: CanvasViewModel,
+    strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
     val recomposeCurrentStrokeState =
-        viewModel.strokes.recomposeCurrentStrokeStateFlow.collectAsState()
+        strokes.recomposeCurrentStrokeStateFlow.collectAsState()
 
     key(recomposeCurrentStrokeState.value) {
         Canvas(modifier.clipToBounds()) {
-            val currentStroke = viewModel.strokes.currentStroke
+            val currentStroke = strokes.currentStroke
             if (currentStroke != null) {
                 drawStroke(currentStroke)
             }

@@ -17,17 +17,17 @@ fun DrawingView(
         )
 
         CommittedStrokesCanvasView(
-            viewModel = viewModel.canvas,
+            strokes = viewModel.strokes,
             modifier = Modifier.fillMaxSize()
         )
 
         CurrentStrokeCanvasView(
-            viewModel = viewModel.canvas,
+            strokes = viewModel.strokes,
             modifier = Modifier.fillMaxSize()
         )
 
         PaintbrushView(
-            viewModel = viewModel.paintbrush,
+            strokes = viewModel.strokes,
             modifier = Modifier.fillMaxSize()
         )
     }

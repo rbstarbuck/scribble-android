@@ -10,6 +10,4 @@ class DrawingViewModel(
     selectedStrokeWidth: StateFlow<Float>
 ): ViewModel() {
     val strokes = Strokes(selectedColor, selectedStrokeWidth)
-    val canvas = CanvasViewModel(strokes)
-    val paintbrush = PaintbrushViewModel(strokes)
 }

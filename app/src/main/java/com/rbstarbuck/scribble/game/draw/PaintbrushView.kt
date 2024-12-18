@@ -9,7 +9,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun PaintbrushView(
-    viewModel: PaintbrushViewModel,
+    strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -17,29 +17,29 @@ fun PaintbrushView(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { offset ->
-                        viewModel.strokes.beginStroke(
+                        strokes.beginStroke(
                             x = offset.x / size.width,
                             y = offset.y / size.height
                         )
-                        viewModel.strokes.endStroke()
+                        strokes.endStroke()
                     }
                 )
             }.pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
-                        viewModel.strokes.beginStroke(
+                        strokes.beginStroke(
                             x = offset.x / size.width,
                             y = offset.y / size.height
                         )
                     },
                     onDrag = { change, _ ->
-                        viewModel.strokes.appendStroke(
+                        strokes.appendStroke(
                             x = change.position.x / size.width,
                             y = change.position.y / size.height
                         )
                     },
                     onDragEnd = {
-                        viewModel.strokes.endStroke()
+                        strokes.endStroke()
                     }
                 )
             }
