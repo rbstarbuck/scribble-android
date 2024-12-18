@@ -31,10 +31,11 @@ fun LayersView(
 ) {
     Column(modifier) {
         val layers by viewModel.layers.layersStateFlow.collectAsState()
+
         Row {
             val selectedLayer by viewModel.layers.selectedLayerStateFlow.collectAsState()
 
-            val mergeDownEnabledStateFlow = remember { MutableStateFlow(false) }
+            val showMergeDownDialogStateFlow = remember { MutableStateFlow(false) }
 
             TextButton(
                 onClick = { viewModel.layers.addAndSelect() }
@@ -45,7 +46,7 @@ fun LayersView(
                     modifier = Modifier.size(36.dp)
                 )
 
-                Spacer(Modifier.width(5.dp))
+                Spacer(Modifier.width(6.dp))
 
                 Text(
                     text = stringResource(R.string.add_layer),
@@ -56,7 +57,7 @@ fun LayersView(
             Spacer(Modifier.weight(1f))
 
             TextButton(
-                onClick = { mergeDownEnabledStateFlow.value = true },
+                onClick = { showMergeDownDialogStateFlow.value = true },
                 enabled = selectedLayer.canMergeDown
             ) {
                 Image(
@@ -65,13 +66,15 @@ fun LayersView(
                     modifier = Modifier.size(36.dp)
                 )
 
+                Spacer(Modifier.width(8.dp))
+
                 Text(
                     text = stringResource(R.string.merge),
                     fontSize = 16.sp
                 )
             }
 
-            MergeLayerConfirmationDialog(selectedLayer, mergeDownEnabledStateFlow)
+            MergeLayerConfirmationDialog(selectedLayer, showMergeDownDialogStateFlow)
         }
 
         LazyColumn(Modifier.fillMaxWidth()) {

@@ -27,7 +27,7 @@ fun GameView(
         DrawingView(
             viewModel = viewModel.drawingViewModel,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(20.dp)
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .border(
@@ -39,7 +39,7 @@ fun GameView(
         LayersView(
             viewModel = viewModel.layersViewModel,
             modifier = Modifier
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 20.dp)
                 .fillMaxWidth()
         )
     }
