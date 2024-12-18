@@ -4,17 +4,23 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import com.rbstarbuck.scribble.game.layer.Layers.Layer
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun PaintbrushView(
-    strokes: Strokes,
+    selectedLayerStateFlow: StateFlow<Layer>,
     modifier: Modifier = Modifier
 ) {
+    val selectedLayerState = selectedLayerStateFlow.collectAsState()
+    val strokes = selectedLayerState.value.strokes
+
     Box(
         modifier = modifier
-            .pointerInput(Unit) {
+            .pointerInput(strokes) {
                 detectTapGestures(
                     onTap = { offset ->
                         strokes.beginStroke(
@@ -24,7 +30,7 @@ fun PaintbrushView(
                         strokes.endStroke()
                     }
                 )
-            }.pointerInput(Unit) {
+            }.pointerInput(strokes) {
                 detectDragGestures(
                     onDragStart = { offset ->
                         strokes.beginStroke(
@@ -39,6 +45,9 @@ fun PaintbrushView(
                         )
                     },
                     onDragEnd = {
+                        strokes.endStroke()
+                    },
+                    onDragCancel = {
                         strokes.endStroke()
                     }
                 )
