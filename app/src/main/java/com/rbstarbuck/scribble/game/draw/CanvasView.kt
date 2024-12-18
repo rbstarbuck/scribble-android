@@ -65,7 +65,7 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
 
         drawCircle(
             color = stroke.color,
-            radius = stroke.width / 2f,
+            radius = stroke.width * size.width / 2f,
             center = Offset(
                 x = point.x * size.width,
                 y = point.y * size.height
@@ -91,7 +91,7 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
             path = path,
             color = stroke.color,
             style = androidx.compose.ui.graphics.drawscope.Stroke(
-                width = stroke.width,
+                width = stroke.width * size.width,
                 cap = StrokeCap.Round
             )
         )

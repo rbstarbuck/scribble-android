@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class GameViewModel: ViewModel() {
     val backgroundColor = MutableStateFlow(Color.White)
     val selectedStrokeColor = MutableStateFlow(Color.Black)
-    val selectedStrokeWidth = MutableStateFlow(5f)
+    val selectedStrokeWidth = MutableStateFlow(0.005f)
 
     val layers = Layers(selectedStrokeColor, selectedStrokeWidth)
 
