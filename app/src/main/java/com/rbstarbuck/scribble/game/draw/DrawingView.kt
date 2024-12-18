@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -17,20 +18,20 @@ fun DrawingView(
             modifier = Modifier.fillMaxSize()
         )
 
-        val layersState = viewModel.layers.layersStateFlow.collectAsState()
+        val layers by viewModel.layers.layersStateFlow.collectAsState()
 
-        for (layer in layersState.value) {
-            val visibleState = layer.visibleStateFlow.collectAsState()
+        for (layer in layers) {
+            val visible by layer.visibleStateFlow.collectAsState()
 
-            if (visibleState.value) {
+            if (visible) {
+                val selected by layer.selectedStateFlow.collectAsState()
+
                 CommittedStrokesCanvasView(
                     strokes = layer.strokes,
                     modifier = Modifier.fillMaxSize()
                 )
 
-                val selectedState = layer.selectedStateFlow.collectAsState()
-
-                if (selectedState.value) {
+                if (selected) {
                     CurrentStrokeCanvasView(
                         strokes = layer.strokes,
                         modifier = Modifier.fillMaxSize()

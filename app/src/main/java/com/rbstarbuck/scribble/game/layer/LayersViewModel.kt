@@ -1,11 +1,10 @@
-package com.rbstarbuck.scribble.game.draw
+package com.rbstarbuck.scribble.game.layer
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.rbstarbuck.scribble.game.layer.Layers
 import kotlinx.coroutines.flow.StateFlow
 
-class DrawingViewModel(
+class LayersViewModel(
     val layers: Layers,
-    val backgroundColor: StateFlow<Color>
+    val backgroundStateFlow: StateFlow<Color>
 ): ViewModel()

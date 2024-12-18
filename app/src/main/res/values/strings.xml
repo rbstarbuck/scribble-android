@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Scribble</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="visibility">Visibility</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
 </resources>

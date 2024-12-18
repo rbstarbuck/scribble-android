@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -13,8 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import com.rbstarbuck.scribble.game.Stroke
-import com.rbstarbuck.scribble.game.Strokes
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -22,9 +21,9 @@ fun CanvasBackgroundView(
     backgroundStateFlow: StateFlow<Color>,
     modifier: Modifier = Modifier
 ) {
-    val backgroundState = backgroundStateFlow.collectAsState()
+    val background by backgroundStateFlow.collectAsState()
 
-    Box(modifier.background(backgroundState.value))
+    Box(modifier.background(background))
 }
 
 @Composable
@@ -32,10 +31,9 @@ fun CommittedStrokesCanvasView(
     strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
-    val recomposeCommittedStrokesState =
-        strokes.recomposeCommittedStrokesStateFlow.collectAsState()
+    val recomposeCommittedStrokes by strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
-    key(recomposeCommittedStrokesState.value) {
+    key(recomposeCommittedStrokes) {
         Canvas(modifier.clipToBounds()) {
             for (stroke in strokes.committedStrokes) {
                 drawStroke(stroke)
@@ -49,10 +47,9 @@ fun CurrentStrokeCanvasView(
     strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
-    val recomposeCurrentStrokeState =
-        strokes.recomposeCurrentStrokeStateFlow.collectAsState()
+    val recomposeCurrentStroke by strokes.recomposeCurrentStrokeStateFlow.collectAsState()
 
-    key(recomposeCurrentStrokeState.value) {
+    key(recomposeCurrentStroke) {
         Canvas(modifier.clipToBounds()) {
             val currentStroke = strokes.currentStroke
             if (currentStroke != null) {

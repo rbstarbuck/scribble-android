@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import com.rbstarbuck.scribble.game.layer.Layers.Layer
@@ -15,11 +16,10 @@ fun PaintbrushView(
     selectedLayerStateFlow: StateFlow<Layer>,
     modifier: Modifier = Modifier
 ) {
-    val selectedLayerState = selectedLayerStateFlow.collectAsState()
-    val strokes = selectedLayerState.value.strokes
+    val selectedLayer by selectedLayerStateFlow.collectAsState()
+    val strokes = selectedLayer.strokes
 
-    val visibleState = selectedLayerState.value.visibleStateFlow.collectAsState()
-    val visible = visibleState.value
+    val visible by selectedLayer.visibleStateFlow.collectAsState()
 
     if (visible) {
         Box(
