@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,13 +50,20 @@ fun LayersRowItemView(
     val selected by layer.selectedStateFlow.collectAsState()
 
     val animatedCanvasSize = animateFloatAsState(
-        targetValue = if (selected) 80f else 60f,
+        targetValue = if (selected) 65f else 50f,
         label = "canvasSize",
+        animationSpec = tween(500)
+    )
+
+    val animatedCanvasBorderWidth = animateFloatAsState(
+        targetValue = if (selected) 3f else 1.5f,
+        label = "canvasBorderWidth",
         animationSpec = tween(500)
     )
 
     Box(
         modifier = modifier
+            .clickable { layer.select() }
             .background(
                 colorResource(
                     if (selected) {
@@ -93,7 +99,7 @@ fun LayersRowItemView(
                     modifier = Modifier
                         .fillMaxSize()
                         .border(
-                            width = if (selected) 3.dp else 1.5.dp,
+                            width = animatedCanvasBorderWidth.value.dp,
                             color = colorResource(
                                 if (selected) {
                                     R.color.selected_row_item_image_border
@@ -151,7 +157,7 @@ fun LayersRowItemView(
             DeleteLayerConfirmationDialog(layer, deleteDialogEnabled)
         }
 
-        if (canMoveUp) {
+        if (canMoveDown) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
