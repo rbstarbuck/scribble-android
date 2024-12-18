@@ -50,13 +50,13 @@ fun LayersColumnItemView(
     val selected by layer.selectedStateFlow.collectAsState()
 
     val animatedCanvasSize = animateFloatAsState(
-        targetValue = if (selected) 65f else 50f,
+        targetValue = if (selected) 55f else 40f,
         label = "canvasSize",
         animationSpec = tween(500)
     )
 
     val animatedCanvasBorderWidth = animateFloatAsState(
-        targetValue = if (selected) 3f else 1.5f,
+        targetValue = if (selected) 3f else 1f,
         label = "canvasBorderWidth",
         animationSpec = tween(500)
     )
@@ -80,12 +80,12 @@ fun LayersColumnItemView(
                 top = 5.dp,
                 bottom = 6.5.dp,
                 start = 5.dp,
-                end = 5.dp
+                end = 10.dp
             ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val visible by layer.visibleStateFlow.collectAsState()
-            val deleteDialogEnabled = remember { MutableStateFlow(false) }
+            val showDeleteLayerDialog = remember { MutableStateFlow(false) }
 
             val grayscale = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
 
@@ -122,8 +122,8 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.delete),
                 contentDescription = stringResource(R.string.delete),
                 modifier = Modifier
-                    .size(36.dp)
-                    .clickable { deleteDialogEnabled.value = true }
+                    .size(30.dp)
+                    .clickable { showDeleteLayerDialog.value = true }
             )
 
             Spacer(Modifier.width(10.dp))
@@ -132,7 +132,7 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.visibility),
                 contentDescription = stringResource(R.string.visibility),
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(30.dp)
                     .clickable { layer.visible = !layer.visible },
                 colorFilter = if (visible) null else grayscale
             )
@@ -143,7 +143,7 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.arrow_up),
                 contentDescription = stringResource(R.string.move_up),
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(30.dp)
                     .clickable { layer.moveUp() },
                 colorFilter = if (canMoveUp) null else grayscale
             )
@@ -154,12 +154,12 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.arrow_down),
                 contentDescription = stringResource(R.string.move_down),
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(30.dp)
                     .clickable { layer.moveDown() },
                 colorFilter = if (canMoveDown) null else grayscale
             )
 
-            DeleteLayerConfirmationDialog(layer, deleteDialogEnabled)
+            DeleteLayerConfirmationDialog(layer, showDeleteLayerDialog)
         }
 
         if (canMoveDown) {
