@@ -1,5 +1,6 @@
 package com.rbstarbuck.scribble.game.layer
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -49,18 +50,6 @@ fun LayersColumnItemView(
 ) {
     val selected by layer.selectedStateFlow.collectAsState()
 
-    val animatedCanvasSize = animateFloatAsState(
-        targetValue = if (selected) 55f else 40f,
-        label = "canvasSize",
-        animationSpec = tween(500)
-    )
-
-    val animatedCanvasBorderWidth = animateFloatAsState(
-        targetValue = if (selected) 3f else 1f,
-        label = "canvasBorderWidth",
-        animationSpec = tween(500)
-    )
-
     Box(
         modifier = modifier
             .clickable { layer.select() }
@@ -89,6 +78,30 @@ fun LayersColumnItemView(
 
             val grayscale = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
 
+            val animatedCanvasSize = animateFloatAsState(
+                targetValue = if (selected) 55f else 40f,
+                label = "canvasSize",
+                animationSpec = tween(500)
+            )
+
+            val animatedCanvasBorderWidth = animateFloatAsState(
+                targetValue = if (selected) 3f else 1f,
+                label = "canvasBorderWidth",
+                animationSpec = tween(500)
+            )
+
+            val animatedCanvasBorderColor = animateColorAsState(
+                targetValue = colorResource(
+                    if (selected) {
+                        R.color.selected_row_item_image_border
+                    } else {
+                        R.color.row_item_image_border
+                    }
+                ),
+                label = "canvasBorderColor",
+                animationSpec = tween(500)
+            )
+
             Box(
                 modifier = Modifier
                     .size(animatedCanvasSize.value.dp)
@@ -105,13 +118,7 @@ fun LayersColumnItemView(
                         .fillMaxSize()
                         .border(
                             width = animatedCanvasBorderWidth.value.dp,
-                            color = colorResource(
-                                if (selected) {
-                                    R.color.selected_row_item_image_border
-                                } else {
-                                    R.color.row_item_image_border
-                                }
-                            )
+                            color = animatedCanvasBorderColor.value
                         )
                 )
             }
