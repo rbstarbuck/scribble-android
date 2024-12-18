@@ -1,5 +1,7 @@
 package com.rbstarbuck.scribble.game.layer
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,9 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +50,12 @@ fun LayersRowItemView(
 ) {
     val selected by layer.selectedStateFlow.collectAsState()
 
+    val animatedCanvasSize = animateFloatAsState(
+        targetValue = if (selected) 80f else 60f,
+        label = "canvasSize",
+        animationSpec = tween(500)
+    )
+
     Box(
         modifier = modifier
             .background(
@@ -57,18 +70,17 @@ fun LayersRowItemView(
         contentAlignment = Alignment.BottomStart
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp),
+            modifier = Modifier.padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val visible by layer.visibleStateFlow.collectAsState()
+            val deleteDialogEnabled = remember { MutableStateFlow(false) }
 
             val grayscale = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
 
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(animatedCanvasSize.value.dp)
                     .clickable { layer.select() }
             ) {
                 CanvasBackgroundView(
@@ -94,6 +106,16 @@ fun LayersRowItemView(
             }
 
             Spacer(Modifier.weight(1f))
+
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.delete),
+                contentDescription = stringResource(R.string.delete),
+                modifier = Modifier
+                    .size(36.dp)
+                    .clickable { deleteDialogEnabled.value = true }
+            )
+
+            Spacer(Modifier.width(10.dp))
 
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.visibility),
@@ -125,6 +147,8 @@ fun LayersRowItemView(
                     .clickable { layer.moveDown() },
                 colorFilter = if (canMoveDown) null else grayscale
             )
+
+            DeleteLayerConfirmationDialog(layer, deleteDialogEnabled)
         }
 
         if (canMoveUp) {
@@ -150,4 +174,42 @@ fun LayersRowItemViewPreview() {
         canMoveDown = true,
         backgroundStateFlow = MutableStateFlow(Color.White)
     )
+}
+
+@Composable
+private fun DeleteLayerConfirmationDialog(
+    layer: Layers.Layer,
+    enabledStateFlow: MutableStateFlow<Boolean>
+) {
+    val enabled by enabledStateFlow.collectAsState(
+
+    )
+    if (enabled) {
+        AlertDialog(
+            onDismissRequest = { enabledStateFlow.value = false },
+            icon = {
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.delete),
+                    contentDescription = stringResource(R.string.delete_layer),
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = { Text(stringResource(R.string.delete_layer)) },
+            text = { Text(stringResource(R.string.delete_layer_dialog_text)) },
+            confirmButton = {
+                TextButton(
+                    onClick = { layer.remove() }
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { enabledStateFlow.value = false }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
