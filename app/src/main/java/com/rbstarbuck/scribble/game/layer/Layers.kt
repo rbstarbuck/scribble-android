@@ -1,7 +1,7 @@
 package com.rbstarbuck.scribble.game.layer
 
 import androidx.compose.ui.graphics.Color
-import com.rbstarbuck.scribble.game.Strokes
+import com.rbstarbuck.scribble.game.draw.Strokes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +19,8 @@ class Layers(
     fun addAndSelect() {
         val layer = Layer()
         _layersStateFlow.value = _layersStateFlow.value + layer
-        layer.selected = true
+        layer.select()
+        _layersStateFlow
     }
 
     inner class Layer {
@@ -36,7 +37,7 @@ class Layers(
 
         private val _selectedStateFlow = MutableStateFlow(true)
         val selectedStateFlow = _selectedStateFlow.asStateFlow()
-        var selected: Boolean
+        private var selected: Boolean
             get() = selectedStateFlow.value
             set(value) {
                 _selectedStateFlow.value = value

@@ -1,4 +1,4 @@
-package com.rbstarbuck.scribble.game
+package com.rbstarbuck.scribble.game.draw
 
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.MutableStateFlow

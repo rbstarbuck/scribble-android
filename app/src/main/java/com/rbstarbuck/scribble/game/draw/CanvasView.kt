@@ -13,8 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import com.rbstarbuck.scribble.game.Stroke
-import com.rbstarbuck.scribble.game.Strokes
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
