@@ -74,6 +74,7 @@ fun LayersColumnItemView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val visible by layer.visibleStateFlow.collectAsState()
+            val showMergeDialog = remember { MutableStateFlow(false) }
             val showDeleteLayerDialog = remember { MutableStateFlow(false) }
 
             val grayscale = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
@@ -137,6 +138,17 @@ fun LayersColumnItemView(
             Spacer(Modifier.width(10.dp))
 
             Image(
+                imageVector = ImageVector.vectorResource(R.drawable.merge_down),
+                contentDescription = stringResource(R.string.merge),
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable { showMergeDialog.value = true },
+                colorFilter = if (visible) null else grayscale
+            )
+
+            Spacer(Modifier.width(10.dp))
+
+            Image(
                 imageVector = ImageVector.vectorResource(R.drawable.delete),
                 contentDescription = stringResource(R.string.delete),
                 modifier = Modifier
@@ -166,6 +178,8 @@ fun LayersColumnItemView(
                 colorFilter = if (canMoveDown) null else grayscale
             )
 
+            MergeLayerConfirmationDialog(layer, showMergeDialog)
+
             DeleteLayerConfirmationDialog(layer, showDeleteLayerDialog)
         }
 
@@ -178,20 +192,6 @@ fun LayersColumnItemView(
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun LayersColumnItemViewPreview() {
-    val layers = Layers(MutableStateFlow(Color.Black), MutableStateFlow(10f))
-    val layer by layers.selectedLayerStateFlow.collectAsState()
-
-    LayersColumnItemView(
-        layer = layer,
-        canMoveUp = true,
-        canMoveDown = true,
-        backgroundStateFlow = MutableStateFlow(Color.White)
-    )
 }
 
 @Composable
@@ -232,4 +232,58 @@ private fun DeleteLayerConfirmationDialog(
             },
         )
     }
+}
+
+@Composable
+private fun MergeLayerConfirmationDialog(
+    layer: Layers.Layer,
+    enabledStateFlow: MutableStateFlow<Boolean>
+) {
+    val enabled by enabledStateFlow.collectAsState()
+
+    if (enabled) {
+        AlertDialog(
+            onDismissRequest = { enabledStateFlow.value = false },
+            icon = {
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.merge_down),
+                    contentDescription = stringResource(R.string.merge_layers),
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = { Text(stringResource(R.string.merge_layers)) },
+            text = { Text(stringResource(R.string.merge_layers_dialog_text)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        layer.mergeDown()
+                        enabledStateFlow.value = false
+                    }
+                ) {
+                    Text(stringResource(R.string.merge))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { enabledStateFlow.value = false }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LayersColumnItemViewPreview() {
+    val layers = Layers(MutableStateFlow(Color.Black), MutableStateFlow(10f))
+    val layer by layers.selectedLayerStateFlow.collectAsState()
+
+    LayersColumnItemView(
+        layer = layer,
+        canMoveUp = true,
+        canMoveDown = true,
+        backgroundStateFlow = MutableStateFlow(Color.White)
+    )
 }

@@ -33,10 +33,6 @@ fun LayersView(
         val layers by viewModel.layers.layersStateFlow.collectAsState()
 
         Row {
-            val selectedLayer by viewModel.layers.selectedLayerStateFlow.collectAsState()
-
-            val showMergeDownDialogStateFlow = remember { MutableStateFlow(false) }
-
             TextButton(
                 onClick = { viewModel.layers.addAndSelect() }
             ) {
@@ -53,28 +49,6 @@ fun LayersView(
                     fontSize = 16.sp
                 )
             }
-
-            Spacer(Modifier.weight(1f))
-
-            TextButton(
-                onClick = { showMergeDownDialogStateFlow.value = true },
-                enabled = selectedLayer.canMergeDown
-            ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.merge_down),
-                    contentDescription = stringResource(R.string.merge_layers),
-                    modifier = Modifier.size(36.dp)
-                )
-
-                Spacer(Modifier.width(8.dp))
-
-                Text(
-                    text = stringResource(R.string.merge),
-                    fontSize = 16.sp
-                )
-            }
-
-            MergeLayerConfirmationDialog(selectedLayer, showMergeDownDialogStateFlow)
         }
 
         LazyColumn(Modifier.fillMaxWidth()) {
@@ -93,45 +67,5 @@ fun LayersView(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun MergeLayerConfirmationDialog(
-    layer: Layers.Layer,
-    enabledStateFlow: MutableStateFlow<Boolean>
-) {
-    val enabled by enabledStateFlow.collectAsState()
-
-    if (enabled) {
-        AlertDialog(
-            onDismissRequest = { enabledStateFlow.value = false },
-            icon = {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.merge_down),
-                    contentDescription = stringResource(R.string.merge_layers),
-                    modifier = Modifier.size(48.dp)
-                )
-            },
-            title = { Text(stringResource(R.string.merge_layers)) },
-            text = { Text(stringResource(R.string.merge_layers_dialog_text)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        layer.mergeDown()
-                        enabledStateFlow.value = false
-                    }
-                ) {
-                    Text(stringResource(R.string.merge))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { enabledStateFlow.value = false }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-        )
     }
 }
