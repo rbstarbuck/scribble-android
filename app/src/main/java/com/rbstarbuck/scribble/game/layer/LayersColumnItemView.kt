@@ -126,22 +126,22 @@ fun LayersColumnItemView(
             Spacer(Modifier.weight(1f))
 
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.delete),
-                contentDescription = stringResource(R.string.delete),
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable { showDeleteLayerDialog.value = true }
-            )
-
-            Spacer(Modifier.width(10.dp))
-
-            Image(
                 imageVector = ImageVector.vectorResource(R.drawable.visibility),
                 contentDescription = stringResource(R.string.visibility),
                 modifier = Modifier
                     .size(30.dp)
                     .clickable { layer.visible = !layer.visible },
                 colorFilter = if (visible) null else grayscale
+            )
+
+            Spacer(Modifier.width(10.dp))
+
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.delete),
+                contentDescription = stringResource(R.string.delete),
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable { showDeleteLayerDialog.value = true }
             )
 
             Spacer(Modifier.width(10.dp))
