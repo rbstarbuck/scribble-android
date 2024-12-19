@@ -3,6 +3,7 @@ package com.rbstarbuck.scribble.game.color
 import android.graphics.Color.HSVToColor
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun HuePicker(
     hueStateFlow: MutableStateFlow<Float>,
+    saturationValueStateFlow: MutableStateFlow<Pair<Float, Float>>,
     modifier: Modifier = Modifier
 ) {
     val pointStateFlow = remember { MutableStateFlow(0f) }
@@ -50,7 +52,10 @@ fun HuePicker(
     Canvas(
         modifier = modifier
             .background(Brush.verticalGradient(colorStops = colorStops))
-            .pointerInput(Unit) {
+            .border(
+                width = 1.dp,
+                color = Color.Black
+            ).pointerInput(Unit) {
                 detectTapGestures(
                     onPress = { offset ->
                         pointStateFlow.value = offset.y
@@ -72,6 +77,21 @@ fun HuePicker(
         val strokeWidth = size.width / 20f
         val center = size.width / 2f
         val radius = center - strokeWidth
+        val fillColor = Color(
+            HSVToColor(
+                floatArrayOf(
+                    hueStateFlow.value,
+                    saturationValueStateFlow.value.first,
+                    saturationValueStateFlow.value.second
+                )
+            )
+        )
+
+        drawCircle(
+            color = fillColor,
+            radius = radius,
+            center = Offset(x = center, y = point)
+        )
 
         drawCircle(
             color = Color.Black,
@@ -94,6 +114,7 @@ fun HuePickerPreview() {
     ) {
         HuePicker(
             hueStateFlow = hueStateFlow,
+            saturationValueStateFlow = MutableStateFlow(1f to 1f),
             modifier = Modifier
                 .width(50.dp)
                 .height(400.dp)

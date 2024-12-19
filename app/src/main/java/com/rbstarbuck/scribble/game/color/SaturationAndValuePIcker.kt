@@ -11,6 +11,7 @@ import android.graphics.RectF
 import android.graphics.Shader
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -50,7 +51,10 @@ fun SaturationAndValuePicker(
 
     Canvas(
         modifier = modifier
-            .pointerInput(Unit) {
+            .border(
+                width = 1.dp,
+                color = Color.Black
+            ).pointerInput(Unit) {
                 detectTapGestures(
                     onPress = { offset ->
                         val saturation =
@@ -141,19 +145,34 @@ fun SaturationAndValuePicker(
 
         val radius = size.width / 20f
         val strokeWidth = size.width / 160f
+        val fillColor = Color(
+            HSVToColor(
+                floatArrayOf(
+                    hue,
+                    saturationValueStateFlow.value.first,
+                    saturationValueStateFlow.value.second
+                )
+            )
+        )
 
         drawCircle(
-            color = Color.Black,
+            color = Color.White,
             radius = radius + strokeWidth,
             center = point,
             style = Stroke(width = strokeWidth)
         )
 
         drawCircle(
-            color = Color.White,
+            color = Color.Black,
             radius = radius,
             center = point,
             style = Stroke(width = strokeWidth)
+        )
+
+        drawCircle(
+            color = fillColor,
+            radius = radius,
+            center = point
         )
 
     }

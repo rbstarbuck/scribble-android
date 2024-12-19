@@ -29,28 +29,21 @@ fun ColorPickerView(
 ) {
     Row(modifier) {
         SaturationAndValuePicker(
-            saturationValueStateFlow = viewModel.saturationValueStateFlow,
             hueStateFlow = viewModel.hueStateFlow,
+            saturationValueStateFlow = viewModel.saturationValueStateFlow,
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
-                .border(
-                    width = 1.dp,
-                    color = Color.Black
-                )
         )
 
         Spacer(Modifier.width(15.dp))
 
         HuePicker(
             hueStateFlow = viewModel.hueStateFlow,
+            saturationValueStateFlow = viewModel.saturationValueStateFlow,
             modifier = Modifier
                 .fillMaxHeight()
                 .width(30.dp)
-                .border(
-                    width = 1.dp,
-                    color = Color.Black
-                )
         )
 
         Spacer(Modifier.width(15.dp))

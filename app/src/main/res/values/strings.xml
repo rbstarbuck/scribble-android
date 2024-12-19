@@ -2,6 +2,9 @@
     <string name="app_name">Scribble</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="color">Color</string>
+    <string name="layers">Layers</string>
+
     <string name="add_layer">Add layer</string>
     <string name="visibility">Visibility</string>
     <string name="move_up">Move up</string>
