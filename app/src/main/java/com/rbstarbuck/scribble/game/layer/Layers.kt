@@ -18,7 +18,7 @@ class Layers(
 
     fun addAndSelect() {
         val layer = Layer()
-        _layersStateFlow.value = _layersStateFlow.value + layer
+        _layersStateFlow.value = listOf(layer) + _layersStateFlow.value
         layer.select()
         _layersStateFlow
     }
