@@ -48,7 +48,9 @@ fun GameView(
             modifier = modifier.padding(padding),
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(Modifier.weight(1f))
+            val recompose by TabItem.recomposeFlag.collectAsState()
+
+            Spacer(Modifier.height(50.dp))
 
             DrawingView(
                 viewModel = viewModel.drawingViewModel,
@@ -62,14 +64,12 @@ fun GameView(
                     )
             )
 
-            val recompose by TabItem.recomposeFlag.collectAsState()
-
             key(recompose) {
                 if (TabItem.ColorTabItem.isSelected) {
                     ColorPickerView(
                         viewModel = viewModel.colorPickerViewModel,
                         modifier = Modifier
-                            .height(200.dp)
+                            .weight(1f)
                             .padding(horizontal = 20.dp)
                     )
                 }
@@ -78,7 +78,7 @@ fun GameView(
                     LayersView(
                         viewModel = viewModel.layersViewModel,
                         modifier = Modifier
-                            .height(200.dp)
+                            .weight(1f)
                             .padding(horizontal = 20.dp)
                             .fillMaxWidth()
                     )
@@ -97,6 +97,13 @@ fun TabView() {
         val recompose by TabItem.recomposeFlag.collectAsState()
 
         for (item in TabItem.tabItems) {
+            fun selectTab() {
+                TabItem.selectedItem.isSelected = false
+                TabItem.selectedItem = item
+                item.isSelected = true
+                TabItem.recomposeFlag.value = !TabItem.recomposeFlag.value
+            }
+
             Column(
                 modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -114,17 +121,13 @@ fun TabView() {
                         contentDescription = stringResource(item.title),
                         modifier = Modifier
                             .size(36.dp)
-                            .clickable {
-                                TabItem.selectedItem.isSelected = false
-                                TabItem.selectedItem = item
-                                item.isSelected = true
-                                TabItem.recomposeFlag.value = !TabItem.recomposeFlag.value
-                            },
+                            .clickable { selectTab() },
                         colorFilter = colorFilter
                     )
 
                     Text(
                         text = stringResource(item.title),
+                        modifier = Modifier.clickable { selectTab() },
                         color = titleTextColor
                     )
                 }
