@@ -20,7 +20,7 @@ fun DrawingView(
 
         val layers by viewModel.layers.layersStateFlow.collectAsState()
 
-        for (layer in layers) {
+        for (layer in layers.reversed()) {
             val visible by layer.visibleStateFlow.collectAsState()
 
             if (visible) {
