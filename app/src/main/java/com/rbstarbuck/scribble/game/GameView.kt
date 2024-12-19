@@ -29,7 +29,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.google.android.material.tabs.TabLayout
 import com.rbstarbuck.scribble.game.draw.DrawingView
 import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.game.color.ColorPickerView
