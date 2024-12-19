@@ -2,13 +2,14 @@ package com.rbstarbuck.scribble.game.color
 
 import android.graphics.Color.HSVToColor
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -32,7 +33,11 @@ fun ColorPickerView(
             hueStateFlow = viewModel.hueStateFlow,
             modifier = Modifier
                 .fillMaxHeight()
-                .aspectRatio(1f)
+                .weight(1f)
+                .border(
+                    width = 1.dp,
+                    color = Color.Black
+                )
         )
 
         Spacer(Modifier.width(15.dp))
@@ -42,6 +47,17 @@ fun ColorPickerView(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(30.dp)
+                .border(
+                    width = 1.dp,
+                    color = Color.Black
+                )
+        )
+
+        Spacer(Modifier.width(15.dp))
+
+        SavedColorsView(
+            viewModel = viewModel.savedColorsViewModel,
+            modifier = Modifier.fillMaxHeight()
         )
     }
 }
@@ -57,16 +73,12 @@ fun ColorPickerViewPreview() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.height(50.dp))
 
-        Row {
-            Spacer(Modifier.weight(1f))
-
-            ColorPickerView(
-                viewModel = viewModel,
-                modifier = Modifier.height(200.dp)
-            )
-
-            Spacer(Modifier.weight(1f))
-        }
+        ColorPickerView(
+            viewModel = viewModel,
+            modifier = Modifier
+                .height(200.dp)
+                .padding(horizontal = 20.dp)
+        )
 
         Spacer(Modifier.height(50.dp))
 

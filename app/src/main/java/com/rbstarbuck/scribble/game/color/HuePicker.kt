@@ -74,7 +74,7 @@ fun HuePicker(
         val radius = center - strokeWidth
 
         drawCircle(
-            color = Color.White,
+            color = Color.Black,
             radius = radius,
             center = Offset(x = center, y = point),
             style = Stroke(width = strokeWidth)

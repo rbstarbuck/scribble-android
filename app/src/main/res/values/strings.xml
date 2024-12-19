@@ -13,4 +13,6 @@
     <string name="merge_layers">Merge layers?</string>
     <string name="merge_layers_dialog_text">Merge the selected layer with the layer below it? This action cannot be undone.</string>
     <string name="merge">Merge</string>
+
+    <string name="add_color">Add color</string>
 </resources>
