@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.rbstarbuck.scribble.R
+import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.CanvasBackgroundView
 import com.rbstarbuck.scribble.game.draw.CommittedStrokesCanvasView
 import kotlinx.coroutines.flow.StateFlow
@@ -277,7 +278,7 @@ private fun MergeLayerConfirmationDialog(
 @Preview
 @Composable
 fun LayersColumnItemViewPreview() {
-    val layers = Layers(MutableStateFlow(Color.Black), MutableStateFlow(10f))
+    val layers = Layers(MutableStateFlow(HSVColor(0f, 0f, 0f)), MutableStateFlow(10f))
     val layer by layers.selectedLayerStateFlow.collectAsState()
 
     LayersColumnItemView(

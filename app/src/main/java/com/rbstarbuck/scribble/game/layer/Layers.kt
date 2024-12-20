@@ -1,13 +1,13 @@
 package com.rbstarbuck.scribble.game.layer
 
-import androidx.compose.ui.graphics.Color
+import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.Strokes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class Layers(
-    private val selectedStrokeColor: StateFlow<Color>,
+    private val selectedStrokeColor: StateFlow<HSVColor>,
     private val selectedStrokeWidth: StateFlow<Float>
 ) {
     private val _layersStateFlow = MutableStateFlow(listOf(Layer()))

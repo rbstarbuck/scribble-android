@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import com.rbstarbuck.scribble.game.color.toColor
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -64,7 +65,7 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
         val point = stroke.points.first()
 
         drawCircle(
-            color = stroke.color,
+            color = stroke.color.toColor(),
             radius = stroke.width * size.width / 2f,
             center = Offset(
                 x = point.x * size.width,
@@ -89,7 +90,7 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
 
         drawPath(
             path = path,
-            color = stroke.color,
+            color = stroke.color.toColor(),
             style = androidx.compose.ui.graphics.drawscope.Stroke(
                 width = stroke.width * size.width,
                 cap = StrokeCap.Round

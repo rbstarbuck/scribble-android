@@ -43,7 +43,9 @@ fun ColorPickerView(
             )
 
             TextButton(
-                onClick = { viewModel.backgroundStateFlow.value = viewModel.colorStateFlow.value }
+                onClick = {
+                    viewModel.backgroundStateFlow.value = viewModel.colorStateFlow.value.toColor()
+                }
             ) {
                 Text(stringResource(R.string.set_background_color))
             }
@@ -92,7 +94,7 @@ fun ColorPickerViewPreview() {
         Box(
             modifier = Modifier
                 .size(60.dp)
-                .background(color)
+                .background(color.toColor())
         )
     }
 }

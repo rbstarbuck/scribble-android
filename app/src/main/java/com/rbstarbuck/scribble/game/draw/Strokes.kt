@@ -1,12 +1,14 @@
 package com.rbstarbuck.scribble.game.draw
 
 import androidx.compose.ui.graphics.Color
+import com.rbstarbuck.scribble.game.color.HSVColor
+import com.rbstarbuck.scribble.game.color.toColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class Strokes(
-    private val selectedColor: StateFlow<Color>,
+    private val selectedColor: StateFlow<HSVColor>,
     private val selectedWidth: StateFlow<Float>
 ) {
     private var _currentStroke: MutableStroke? = null
@@ -49,13 +51,13 @@ class Strokes(
 }
 
 interface Stroke {
-    val color: Color
+    val color: HSVColor
     val width: Float
     val points: List<Point>
 }
 
 class MutableStroke(
-    override val color: Color,
+    override val color: HSVColor,
     override val width: Float,
     initialPoint: Point
 ): Stroke {

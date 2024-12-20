@@ -20,6 +20,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rbstarbuck.scribble.game.color.HSVColor
+import com.rbstarbuck.scribble.game.color.toColor
 import com.rbstarbuck.scribble.pxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +33,7 @@ const val LINE_THICKNESS_MAX_VALUE = 0.1f
 fun LineThicknessSlider(
     modifier: Modifier = Modifier,
     lineThicknessStateFlow: MutableStateFlow<Float>,
-    colorStateFlow: StateFlow<Color>
+    colorStateFlow: StateFlow<HSVColor>
 ) {
     val color by colorStateFlow.collectAsState()
 
@@ -82,7 +84,7 @@ fun LineThicknessSlider(
         )
 
         drawLine(
-            color = color,
+            color = color.toColor(),
             start = Offset(x = 0f, y = size.height / 2f),
             end = Offset(x = size.width, y = size.height / 2f),
             strokeWidth = size.height * point,
@@ -96,7 +98,7 @@ fun LineThicknessSlider(
         )
 
         drawCircle(
-            color = color,
+            color = color.toColor(),
             center = Offset(x = size.width * point, y = size.height / 2f)
         )
     }
@@ -113,7 +115,7 @@ fun LineThicknessSliderPreview() {
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
             lineThicknessStateFlow = MutableStateFlow(0.015f),
-            colorStateFlow = MutableStateFlow(Color.Red)
+            colorStateFlow = MutableStateFlow(HSVColor(0f, 1f, 1f))
         )
 
         Spacer(Modifier.weight(1f))
