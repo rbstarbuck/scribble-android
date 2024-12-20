@@ -51,7 +51,7 @@ fun GameView(
         ) {
             val recompose by TabItem.recomposeFlag.collectAsState()
 
-            Spacer(Modifier.height(75.dp))
+            Spacer(Modifier.height(65.dp))
 
             DrawingView(
                 viewModel = viewModel.drawingViewModel,
