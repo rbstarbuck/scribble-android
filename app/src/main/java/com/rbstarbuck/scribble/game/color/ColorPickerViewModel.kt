@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class ColorPickerViewModel: ViewModel() {
-    val hueStateFlow = MutableStateFlow(0f)
+    val hueStateFlow = MutableStateFlow(180f)
     val saturationValueStateFlow = MutableStateFlow(0f to 0f)
     val colorStateFlow = MutableStateFlow(Color.Black)
     val backgroundStateFlow = MutableStateFlow(Color.White)

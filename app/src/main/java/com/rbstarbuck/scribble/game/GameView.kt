@@ -51,7 +51,7 @@ fun GameView(
         ) {
             val recompose by TabItem.recomposeFlag.collectAsState()
 
-            Spacer(Modifier.height(50.dp))
+            Spacer(Modifier.height(75.dp))
 
             DrawingView(
                 viewModel = viewModel.drawingViewModel,
@@ -71,7 +71,7 @@ fun GameView(
                         viewModel = viewModel.brushViewModel,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 20.dp)
+                            .padding(horizontal = 30.dp)
                     )
                 }
 
@@ -118,11 +118,10 @@ fun TabView() {
                 modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val (titleTextColor, colorFilter) = if (item.isSelected) {
-                    Color.Black to null
+                val colorFilter = if (item.isSelected) {
+                    null
                 } else {
-                    colorResource(R.color.tab_item_title) to
-                            ColorMatrixColorFilter(ColorMatrix().apply { setToSaturation(0f) })
+                    ColorMatrixColorFilter(ColorMatrix().apply { setToSaturation(0f) })
                 }
 
                 key(recompose) {
@@ -133,12 +132,6 @@ fun TabView() {
                             .size(36.dp)
                             .clickable { selectTab() },
                         colorFilter = colorFilter
-                    )
-
-                    Text(
-                        text = stringResource(item.title),
-                        modifier = Modifier.clickable { selectTab() },
-                        color = titleTextColor
                     )
                 }
             }

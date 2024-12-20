@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class Strokes(
     private val selectedColor: StateFlow<Color>,
     private val selectedWidth: StateFlow<Float>
-): Iterable<Stroke> {
+) {
     private var _currentStroke: MutableStroke? = null
     val currentStroke: Stroke?
         get() = _currentStroke
@@ -45,24 +45,6 @@ class Strokes(
 
     fun mergeInto(other: Strokes) {
         other._committedStrokes.addAll(committedStrokes)
-    }
-
-    override fun iterator(): Iterator<Stroke> = StrokesIterator()
-
-    private inner class StrokesIterator: Iterator<Stroke> {
-        private val strokesIterator: Iterator<Stroke> = _committedStrokes.iterator()
-        private val lastStroke: MutableStroke? = _currentStroke
-
-        private var hasLastStroke = lastStroke != null
-
-        override fun hasNext(): Boolean = strokesIterator.hasNext() || hasLastStroke
-
-        override fun next(): Stroke = if (strokesIterator.hasNext()) {
-            strokesIterator.next()
-        } else {
-            hasLastStroke = false
-            lastStroke!!
-        }
     }
 }
 

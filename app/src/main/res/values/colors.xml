@@ -8,8 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="tab_item_title">#FF666666</color>
-
     <color name="canvas_border">#FFCCCCCC</color>
 
     <color name="row_item_background">#FFFFFFFF</color>

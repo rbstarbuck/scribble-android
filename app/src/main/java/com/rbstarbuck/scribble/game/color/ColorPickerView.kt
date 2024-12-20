@@ -49,7 +49,7 @@ fun ColorPickerView(
             }
         }
 
-        Spacer(Modifier.width(15.dp))
+        Spacer(Modifier.width(25.dp))
 
         HuePicker(
             hueStateFlow = viewModel.hueStateFlow,
@@ -59,7 +59,7 @@ fun ColorPickerView(
                 .width(30.dp)
         )
 
-        Spacer(Modifier.width(15.dp))
+        Spacer(Modifier.width(25.dp))
 
         SavedColorsView(
             viewModel = viewModel.savedColorsViewModel,
