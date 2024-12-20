@@ -140,6 +140,46 @@ fun PolygonPaintbrushView(
     }
 }
 
+@Composable
+fun CirclePaintbrushView(
+    selectedLayerStateFlow: StateFlow<Layer>,
+    modifier: Modifier = Modifier
+) {
+    val selectedLayer by selectedLayerStateFlow.collectAsState()
+    val strokes = selectedLayer.strokes
+
+    val visible by selectedLayer.visibleStateFlow.collectAsState()
+
+    if (visible) {
+        Box(
+            modifier = modifier
+                .pointerInput(strokes) {
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            strokes.beginStroke(
+                                x = offset.x / size.width,
+                                y = offset.y / size.height
+                            )
+                            strokes.appendStroke(
+                                x = offset.x / size.width,
+                                y = offset.y / size.height
+                            )
+                        },
+                        onDrag = { change, _ ->
+                            strokes.moveCurrentStrokePoint(
+                                x = change.position.x / size.width,
+                                y = change.position.y / size.height
+                            )
+                        },
+                        onDragEnd = {
+                            strokes.endStroke()
+                        }
+                    )
+                }
+        )
+    }
+}
+
 private fun pointsAreCloseToEachOther(
     x1: Float,
     y1: Float,

@@ -42,7 +42,10 @@ fun DrawingView(
                 selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                 modifier = Modifier.fillMaxSize()
             )
-            BrushType.Circle -> {}
+            BrushType.Circle -> CirclePaintbrushView(
+                selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
