@@ -68,8 +68,9 @@ fun PencilPaintbrushView(
 }
 
 @Composable
-fun PolygonPaintbrushView(
+fun LineAndPolygonPaintbrushView(
     selectedLayerStateFlow: StateFlow<Layer>,
+    isPolygon: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -93,12 +94,18 @@ fun PolygonPaintbrushView(
                                     y = offset.y / size.height
                                 )
                             } else {
+                                val point = if (isPolygon) {
+                                    strokes.firstPoint()
+                                } else {
+                                    strokes.lastPoint()
+                                }
+
                                 if (
                                     pointsAreCloseToEachOther(
                                         offset.x,
                                         offset.y,
-                                        strokes.firstPoint().x * size.width,
-                                        strokes.firstPoint().y * size.height,
+                                        point.x * size.width,
+                                        point.y * size.height,
                                         context
                                     )
                                 ) {

@@ -3,6 +3,7 @@ package com.rbstarbuck.scribble.game.brush
 enum class BrushType {
     Pencil,
     Eraser,
+    Line,
     Polygon,
     Circle
 }

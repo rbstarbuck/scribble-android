@@ -10,6 +10,7 @@
     <string name="stroke_width">Stroke width</string>
     <string name="pencil">Pencil</string>
     <string name="eraser">Eraser</string>
+    <string name="line">Line</string>
     <string name="polygon">Polygon</string>
     <string name="circle">Circle</string>
     <string name="undo">Undo</string>

@@ -56,7 +56,7 @@ fun GameView(
             DrawingView(
                 viewModel = viewModel.drawingViewModel,
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .border(
@@ -115,7 +115,7 @@ fun TabView() {
             }
 
             Column(
-                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+                modifier = Modifier.padding(vertical = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val colorFilter = if (item.isSelected) {

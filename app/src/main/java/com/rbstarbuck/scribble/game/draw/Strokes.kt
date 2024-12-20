@@ -59,6 +59,8 @@ class Strokes(
 
     fun firstPoint() = currentStroke!!.points.first()
 
+    fun lastPoint() = currentStroke!!.points.last()
+
     fun discardLastPoint() = _currentStroke!!.discardLastPoint()
 
     private fun recompose() {

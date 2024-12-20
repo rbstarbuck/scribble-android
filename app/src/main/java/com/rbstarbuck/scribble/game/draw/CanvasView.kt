@@ -52,7 +52,7 @@ fun CanvasView(
             Canvas(modifier.clipToBounds()) {
                 for (stroke in strokes.committedStrokes) {
                     if (stroke.brushType == BrushType.Circle) {
-                        drawStrokeCircle(stroke, size)
+                        drawStrokeCircle(stroke)
                     } else {
                         drawStroke(stroke)
                     }
@@ -61,26 +61,15 @@ fun CanvasView(
                 val currentStroke = strokes.currentStroke
                 if (currentStroke != null) {
                     if (currentStroke.brushType == BrushType.Circle) {
-                        drawStrokeCircle(currentStroke, size)
+                        drawStrokeCircle(currentStroke)
                     } else {
                         drawStroke(currentStroke)
                     }
 
                     if (currentStroke.brushType == BrushType.Polygon) {
-                        drawCircle(
-                            color = Color.DarkGray,
-                            radius = 24.dp.toPx(),
-                            center = Offset(
-                                currentStroke.points.first().x * size.width,
-                                currentStroke.points.first().y * size.height
-                            ),
-                            style = androidx.compose.ui.graphics.drawscope.Stroke (
-                                width = 1.5.dp.toPx(),
-                                pathEffect = PathEffect.dashPathEffect(
-                                    intervals = floatArrayOf(5.dp.toPx(), 5.dp.toPx())
-                                )
-                            )
-                        )
+                        drawCloseShapeCircle(currentStroke.points.first())
+                    } else if (currentStroke.brushType == BrushType.Line) {
+                        drawCloseShapeCircle(currentStroke.points.last())
                     }
                 }
             }
@@ -121,7 +110,6 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
                 path.close()
             }
 
-
             drawPath(
                 path = path,
                 color = if (stroke.brushType == BrushType.Eraser) {
@@ -147,14 +135,13 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
     }
 }
 
-private fun DrawScope.drawStrokeCircle(stroke: Stroke, canvasSize: Size) {
+private fun DrawScope.drawStrokeCircle(stroke: Stroke) {
     if (stroke.points.size == 2) {
         drawCircle(
             color = stroke.color.toColor(),
             radius = distance(
                 p1 = stroke.points.first(),
-                p2 = stroke.points.last(),
-                canvasSize
+                p2 = stroke.points.last()
             ),
             center = Offset(
                 x = stroke.points.first().x * size.width,
@@ -162,7 +149,7 @@ private fun DrawScope.drawStrokeCircle(stroke: Stroke, canvasSize: Size) {
             ),
             style = when (stroke.fillType) {
                 FillType.Stroke -> androidx.compose.ui.graphics.drawscope.Stroke(
-                    width = stroke.width * canvasSize.width
+                    width = stroke.width * size.width
                 )
                 FillType.Filled -> Fill
             }
@@ -170,13 +157,29 @@ private fun DrawScope.drawStrokeCircle(stroke: Stroke, canvasSize: Size) {
     }
 }
 
-private fun distance(
+private fun DrawScope.drawCloseShapeCircle(point: Point) {
+    drawCircle(
+        color = Color.DarkGray,
+        radius = 24.dp.toPx(),
+        center = Offset(
+            point.x * size.width,
+            point.y * size.height
+        ),
+        style = androidx.compose.ui.graphics.drawscope.Stroke (
+            width = 1.5.dp.toPx(),
+            pathEffect = PathEffect.dashPathEffect(
+                intervals = floatArrayOf(5.dp.toPx(), 5.dp.toPx())
+            )
+        )
+    )
+}
+
+private fun DrawScope.distance(
     p1: Point,
-    p2: Point,
-    canvasSize: Size
+    p2: Point
 ) = sqrt(
-    (p1.x * canvasSize.width - p2.x * canvasSize.height).pow(2) +
-            (p1.y * canvasSize.width - p2.y * canvasSize.height).pow(2)
+    (p1.x * size.width - p2.x * size.height).pow(2) +
+            (p1.y * size.width - p2.y * size.height).pow(2)
 )
 
 @Composable

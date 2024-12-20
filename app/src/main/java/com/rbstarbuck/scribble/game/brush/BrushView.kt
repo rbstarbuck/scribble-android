@@ -43,97 +43,106 @@ fun BrushView(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Column {
-            Text(stringResource(R.string.stroke_width))
+        StrokeWidthSlider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            lineThicknessStateFlow = viewModel.lineThicknessStateFlow,
+            colorStateFlow = viewModel.colorStateFlow
+        )
 
-            Spacer(Modifier.height(8.dp))
-
-            StrokeWidthSlider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                lineThicknessStateFlow = viewModel.lineThicknessStateFlow,
-                colorStateFlow = viewModel.colorStateFlow
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(Modifier.fillMaxWidth()) {
             val brushType by viewModel.brushTypeStateFlow.collectAsState()
             val fillType by viewModel.fillTypeStateFlow.collectAsState()
 
-            BrushButton(
-                onClick = {
-                    viewModel.brushTypeStateFlow.value = BrushType.Pencil
-                },
-                icon = ImageVector.vectorResource(R.drawable.pencil),
-                contentDescription = stringResource(R.string.pencil),
-                selected = brushType == BrushType.Pencil
-            )
+            Column {
+                Row {
+                    BrushButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Pencil
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.pencil),
+                        contentDescription = stringResource(R.string.pencil),
+                        selected = brushType == BrushType.Pencil
+                    )
 
-            Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(6.dp))
 
-            BrushButton(
-                onClick = {
-                    viewModel.brushTypeStateFlow.value = BrushType.Eraser
+                    BrushButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Eraser
 
-                },
-                icon = ImageVector.vectorResource(R.drawable.eraser),
-                contentDescription = stringResource(R.string.eraser),
-                selected = brushType == BrushType.Eraser
-            )
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.eraser),
+                        contentDescription = stringResource(R.string.eraser),
+                        selected = brushType == BrushType.Eraser
+                    )
+                }
 
-            Spacer(Modifier.width(6.dp))
+                Spacer(Modifier.height(10.dp))
 
-            BrushButton(
-                onClick = {
-                    viewModel.brushTypeStateFlow.value = BrushType.Polygon
-                },
-                icon = ImageVector.vectorResource(R.drawable.polygon),
-                contentDescription = stringResource(R.string.polygon),
-                selected = brushType == BrushType.Polygon
-            )
+                Row {
+                    BrushButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Line
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.line),
+                        contentDescription = stringResource(R.string.line),
+                        selected = brushType == BrushType.Line
+                    )
 
-            Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(6.dp))
 
-            BrushButton(
-                onClick = {
-                    viewModel.brushTypeStateFlow.value = BrushType.Circle
-                },
-                icon = ImageVector.vectorResource(R.drawable.circle),
-                contentDescription = stringResource(R.string.circle),
-                selected = brushType == BrushType.Circle
-            )
+                    BrushButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Polygon
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.polygon),
+                        contentDescription = stringResource(R.string.polygon),
+                        selected = brushType == BrushType.Polygon
+                    )
 
-            Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(6.dp))
 
-            FillTypeButton(
-                onClick = {
-                    viewModel.fillTypeStateFlow.value = FillType.Stroke
-                },
-                enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
-                selected = fillType == FillType.Stroke,
-                fillType = FillType.Stroke
-            )
+                    BrushButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Circle
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.circle),
+                        contentDescription = stringResource(R.string.circle),
+                        selected = brushType == BrushType.Circle
+                    )
 
-            Spacer(Modifier.width(6.dp))
+                    Spacer(Modifier.width(15.dp))
 
-            FillTypeButton(
-                onClick = {
-                    viewModel.fillTypeStateFlow.value = FillType.Filled
-                },
-                enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
-                selected = fillType == FillType.Filled,
-                fillType = FillType.Filled,
-            )
+                    FillTypeButton(
+                        onClick = {
+                            viewModel.fillTypeStateFlow.value = FillType.Stroke
+                        },
+                        enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
+                        selected = fillType == FillType.Stroke,
+                        fillType = FillType.Stroke
+                    )
+
+                    Spacer(Modifier.width(6.dp))
+
+                    FillTypeButton(
+                        onClick = {
+                            viewModel.fillTypeStateFlow.value = FillType.Filled
+                        },
+                        enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
+                        selected = fillType == FillType.Filled,
+                        fillType = FillType.Filled,
+                    )
+                }
+            }
 
             Spacer(Modifier.weight(1f))
 
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.undo),
                 contentDescription = stringResource(R.string.undo),
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             )
         }
     }
@@ -148,9 +157,9 @@ fun ButtonContainer(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier.size(36.dp),
+        modifier = Modifier.size(48.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = if (selected) {
             ButtonColors(
                 containerColor = Color.White,

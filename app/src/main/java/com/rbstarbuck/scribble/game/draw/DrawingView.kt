@@ -38,8 +38,14 @@ fun DrawingView(
                 selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                 modifier = Modifier.fillMaxSize()
             )
-            BrushType.Polygon -> PolygonPaintbrushView(
+            BrushType.Line -> LineAndPolygonPaintbrushView(
                 selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                isPolygon = false,
+                modifier = Modifier.fillMaxSize()
+            )
+            BrushType.Polygon -> LineAndPolygonPaintbrushView(
+                selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                isPolygon = true,
                 modifier = Modifier.fillMaxSize()
             )
             BrushType.Circle -> CirclePaintbrushView(
