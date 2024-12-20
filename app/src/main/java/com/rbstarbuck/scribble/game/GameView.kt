@@ -33,6 +33,7 @@ import com.rbstarbuck.scribble.game.draw.DrawingView
 import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.game.color.ColorPickerView
 import com.rbstarbuck.scribble.game.layer.LayersView
+import com.rbstarbuck.scribble.game.brush.BrushView
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -65,6 +66,15 @@ fun GameView(
             )
 
             key(recompose) {
+                if (TabItem.BrushTabItem.isSelected) {
+                    BrushView(
+                        viewModel = viewModel.brushViewModel,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 20.dp)
+                    )
+                }
+
                 if (TabItem.ColorTabItem.isSelected) {
                     ColorPickerView(
                         viewModel = viewModel.colorPickerViewModel,
@@ -137,10 +147,15 @@ fun TabView() {
 }
 
 open class TabItem(val title: Int, val icon: Int, var isSelected: Boolean = false) {
+    object BrushTabItem: TabItem(
+        title = R.string.brush,
+        icon = R.drawable.brush,
+        isSelected = true
+    )
+
     object ColorTabItem: TabItem(
         title = R.string.color,
-        icon = R.drawable.color,
-        isSelected = true
+        icon = R.drawable.color
     )
 
     object LayersTabItem: TabItem(
@@ -149,8 +164,8 @@ open class TabItem(val title: Int, val icon: Int, var isSelected: Boolean = fals
     )
 
     companion object {
-        val tabItems: List<TabItem> = listOf(ColorTabItem, LayersTabItem)
-        var selectedItem: TabItem = ColorTabItem
+        val tabItems: List<TabItem> = listOf(BrushTabItem, ColorTabItem, LayersTabItem)
+        var selectedItem: TabItem = BrushTabItem
         val recomposeFlag = MutableStateFlow(false)
     }
 }

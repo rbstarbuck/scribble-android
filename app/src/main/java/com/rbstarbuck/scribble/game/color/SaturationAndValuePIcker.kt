@@ -89,8 +89,8 @@ fun SaturationAndValuePicker(
         val rgb = HSVToColor(floatArrayOf(hue, 1f, 1f))
 
         val bitmap = Bitmap.createBitmap(
-            /* width = */ size.width.toInt(),
-            /* height = */ size.height.toInt(),
+            /* width = */ size.width.toInt().coerceIn(1, Int.MAX_VALUE),
+            /* height = */ size.height.toInt().coerceIn(1, Int.MAX_VALUE),
             /* config = */ Bitmap.Config.ARGB_8888
         )
 
