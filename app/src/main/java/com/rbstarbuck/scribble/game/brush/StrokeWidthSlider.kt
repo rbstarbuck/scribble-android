@@ -30,7 +30,7 @@ const val LINE_THICKNESS_MIN_VALUE = 0.005f
 const val LINE_THICKNESS_MAX_VALUE = 0.1f
 
 @Composable
-fun LineThicknessSlider(
+fun StrokeWidthSlider(
     modifier: Modifier = Modifier,
     lineThicknessStateFlow: MutableStateFlow<Float>,
     colorStateFlow: StateFlow<HSVColor>
@@ -106,11 +106,11 @@ fun LineThicknessSlider(
 
 @Preview
 @Composable
-fun LineThicknessSliderPreview() {
+fun StrokeWidthSliderPreview() {
     Column {
         Spacer(Modifier.weight(1f))
 
-        LineThicknessSlider(
+        StrokeWidthSlider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),

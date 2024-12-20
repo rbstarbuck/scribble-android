@@ -11,7 +11,7 @@ fun BrushView(
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
-        LineThicknessSlider(
+        StrokeWidthSlider(
             modifier = Modifier.fillMaxWidth(),
             lineThicknessStateFlow = viewModel.lineThicknessStateFlow,
             colorStateFlow = viewModel.colorStateFlow
