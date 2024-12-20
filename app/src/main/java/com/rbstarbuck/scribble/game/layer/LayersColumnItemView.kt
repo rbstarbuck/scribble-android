@@ -36,9 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.rbstarbuck.scribble.R
+import com.rbstarbuck.scribble.game.brush.BrushType
+import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.CanvasBackgroundView
-import com.rbstarbuck.scribble.game.draw.CommittedStrokesCanvasView
+import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -114,7 +116,7 @@ fun LayersColumnItemView(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                CommittedStrokesCanvasView(
+                CanvasView(
                     strokes = layer.strokes,
                     modifier = Modifier
                         .fillMaxSize()
@@ -278,7 +280,12 @@ private fun MergeLayerConfirmationDialog(
 @Preview
 @Composable
 fun LayersColumnItemViewPreview() {
-    val layers = Layers(MutableStateFlow(HSVColor(0f, 0f, 0f)), MutableStateFlow(10f))
+    val layers = Layers(
+        selectedStrokeColor = MutableStateFlow(HSVColor(0f, 0f, 0f)),
+        selectedStrokeWidth = MutableStateFlow(10f),
+        selectedBrushType = MutableStateFlow(BrushType.Pencil),
+        selectedFillType = MutableStateFlow(FillType.Stroke)
+    )
     val layer by layers.selectedLayerStateFlow.collectAsState()
 
     LayersColumnItemView(

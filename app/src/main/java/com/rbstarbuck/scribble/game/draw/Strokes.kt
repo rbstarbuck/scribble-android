@@ -1,15 +1,17 @@
 package com.rbstarbuck.scribble.game.draw
 
-import androidx.compose.ui.graphics.Color
+import com.rbstarbuck.scribble.game.brush.BrushType
+import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
-import com.rbstarbuck.scribble.game.color.toColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
-    private val selectedWidth: StateFlow<Float>
+    private val selectedWidth: StateFlow<Float>,
+    private val selectedBrushType: StateFlow<BrushType>,
+    private val selectedFillType: StateFlow<FillType>
 ) {
     private var _currentStroke: MutableStroke? = null
     val currentStroke: Stroke?
@@ -19,30 +21,28 @@ class Strokes(
     val committedStrokes: List<Stroke>
         get() = _committedStrokes
 
-    private val _recomposeCurrentStrokeStateFlow = MutableStateFlow(false)
-    val recomposeCurrentStrokeStateFlow = _recomposeCurrentStrokeStateFlow.asStateFlow()
-
-    private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(false)
-    val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
+    private val _recomposeStateFlow = MutableStateFlow(false)
+    val recomposeCurrentStrokeStateFlow = _recomposeStateFlow.asStateFlow()
 
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
             color = selectedColor.value,
             width = selectedWidth.value,
+            brushType = selectedBrushType.value,
+            fillType = selectedFillType.value,
             initialPoint = Point(x, y)
         )
     }
 
     fun appendStroke(x: Float, y: Float) {
         _currentStroke!!.addPoint(Point(x, y))
-        _recomposeCurrentStrokeStateFlow.value = !_recomposeCurrentStrokeStateFlow.value
+        _recomposeStateFlow.value = !_recomposeStateFlow.value
     }
 
     fun endStroke() {
         _committedStrokes.add(_currentStroke!!)
         _currentStroke = null
-        _recomposeCommittedStrokesStateFlow.value = !_recomposeCommittedStrokesStateFlow.value
-        _recomposeCurrentStrokeStateFlow.value = !_recomposeCurrentStrokeStateFlow.value
+        _recomposeStateFlow.value = !_recomposeStateFlow.value
     }
 
     fun mergeInto(other: Strokes) {
@@ -53,12 +53,16 @@ class Strokes(
 interface Stroke {
     val color: HSVColor
     val width: Float
+    val brushType: BrushType
+    val fillType: FillType
     val points: List<Point>
 }
 
 class MutableStroke(
     override val color: HSVColor,
     override val width: Float,
+    override val brushType: BrushType,
+    override val fillType: FillType,
     initialPoint: Point
 ): Stroke {
     private val _points = mutableListOf<Point>(initialPoint)

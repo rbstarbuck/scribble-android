@@ -24,19 +24,10 @@ fun DrawingView(
             val visible by layer.visibleStateFlow.collectAsState()
 
             if (visible) {
-                val selected by layer.selectedStateFlow.collectAsState()
-
-                CommittedStrokesCanvasView(
+                CanvasView(
                     strokes = layer.strokes,
                     modifier = Modifier.fillMaxSize()
                 )
-
-                if (selected) {
-                    CurrentStrokeCanvasView(
-                        strokes = layer.strokes,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
             }
         }
 

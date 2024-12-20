@@ -1,5 +1,7 @@
 package com.rbstarbuck.scribble.game.layer
 
+import com.rbstarbuck.scribble.game.brush.BrushType
+import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.Strokes
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class Layers(
     private val selectedStrokeColor: StateFlow<HSVColor>,
-    private val selectedStrokeWidth: StateFlow<Float>
+    private val selectedStrokeWidth: StateFlow<Float>,
+    private val selectedBrushType: StateFlow<BrushType>,
+    private val selectedFillType: StateFlow<FillType>
 ) {
     private val _layersStateFlow = MutableStateFlow(listOf(Layer()))
     val layersStateFlow = _layersStateFlow.asStateFlow()
@@ -25,7 +29,12 @@ class Layers(
 
     inner class Layer {
         val key = generateKey()
-        val strokes = Strokes(selectedStrokeColor, selectedStrokeWidth)
+        val strokes = Strokes(
+            selectedStrokeColor,
+            selectedStrokeWidth,
+            selectedBrushType,
+            selectedFillType
+        )
 
         val canMergeDown: Boolean
             get() {

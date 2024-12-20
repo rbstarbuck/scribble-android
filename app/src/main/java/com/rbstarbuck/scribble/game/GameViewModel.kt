@@ -11,7 +11,12 @@ class GameViewModel: ViewModel() {
     val colorPickerViewModel = ColorPickerViewModel()
     val brushViewModel = BrushViewModel(colorPickerViewModel.colorStateFlow)
 
-    val layers = Layers(colorPickerViewModel.colorStateFlow, brushViewModel.lineThicknessStateFlow)
+    val layers = Layers(
+        colorPickerViewModel.colorStateFlow,
+        brushViewModel.lineThicknessStateFlow,
+        brushViewModel.brushTypeStateFlow,
+        brushViewModel.fillTypeStateFlow
+    )
 
     val drawingViewModel = DrawingViewModel(layers, colorPickerViewModel.backgroundStateFlow)
     val layersViewModel = LayersViewModel(layers, colorPickerViewModel.backgroundStateFlow)
