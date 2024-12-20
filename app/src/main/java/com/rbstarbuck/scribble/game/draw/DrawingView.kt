@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.rbstarbuck.scribble.game.brush.BrushType
 
 @Composable
 fun DrawingView(
@@ -19,6 +20,7 @@ fun DrawingView(
         )
 
         val layers by viewModel.layers.layersStateFlow.collectAsState()
+        val brush by viewModel.selectedBrushType.collectAsState()
 
         for (layer in layers.reversed()) {
             val visible by layer.visibleStateFlow.collectAsState()
@@ -31,9 +33,16 @@ fun DrawingView(
             }
         }
 
-        PaintbrushView(
-            selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
-            modifier = Modifier.fillMaxSize()
-        )
+        when (brush) {
+            BrushType.Pencil, BrushType.Eraser -> PencilPaintbrushView(
+                selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                modifier = Modifier.fillMaxSize()
+            )
+            BrushType.Polygon -> PolygonPaintbrushView(
+                selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                modifier = Modifier.fillMaxSize()
+            )
+            BrushType.Circle -> {}
+        }
     }
 }

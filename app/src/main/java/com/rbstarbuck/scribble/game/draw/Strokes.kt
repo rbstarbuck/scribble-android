@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
     private val selectedWidth: StateFlow<Float>,
-    private val selectedBrushType: StateFlow<BrushType>,
-    private val selectedFillType: StateFlow<FillType>
+    val selectedBrushType: StateFlow<BrushType>,
+    val selectedFillType: StateFlow<FillType>
 ) {
     private var _currentStroke: MutableStroke? = null
     val currentStroke: Stroke?
@@ -32,21 +32,37 @@ class Strokes(
             fillType = selectedFillType.value,
             initialPoint = Point(x, y)
         )
+        recompose()
     }
 
     fun appendStroke(x: Float, y: Float) {
         _currentStroke!!.addPoint(Point(x, y))
-        _recomposeStateFlow.value = !_recomposeStateFlow.value
+        recompose()
+    }
+
+    fun moveCurrentStrokePoint(x: Float, y: Float) {
+        val currentPoint = _currentStroke!!.points.last()
+        currentPoint.x = x
+        currentPoint.y = y
+        recompose()
     }
 
     fun endStroke() {
         _committedStrokes.add(_currentStroke!!)
         _currentStroke = null
-        _recomposeStateFlow.value = !_recomposeStateFlow.value
+        recompose()
     }
 
     fun mergeInto(other: Strokes) {
         other._committedStrokes.addAll(committedStrokes)
+    }
+
+    fun firstPoint() = currentStroke!!.points.first()
+
+    fun discardLastPoint() = _currentStroke!!.discardLastPoint()
+
+    private fun recompose() {
+        _recomposeStateFlow.value = !_recomposeStateFlow.value
     }
 }
 
@@ -72,9 +88,11 @@ class MutableStroke(
     fun addPoint(point: Point) {
         _points.add(point)
     }
+
+    fun discardLastPoint() = _points.removeAt(points.size - 1)
 }
 
 data class Point(
-    val x: Float,
-    val y: Float
+    var x: Float,
+    var y: Float
 )

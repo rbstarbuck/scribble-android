@@ -9,15 +9,23 @@ import com.rbstarbuck.scribble.game.brush.BrushViewModel
 
 class GameViewModel: ViewModel() {
     val colorPickerViewModel = ColorPickerViewModel()
-    val brushViewModel = BrushViewModel(colorPickerViewModel.colorStateFlow)
+
+    val brushViewModel = BrushViewModel(colorStateFlow = colorPickerViewModel.colorStateFlow)
 
     val layers = Layers(
-        colorPickerViewModel.colorStateFlow,
-        brushViewModel.lineThicknessStateFlow,
-        brushViewModel.brushTypeStateFlow,
-        brushViewModel.fillTypeStateFlow
+        selectedStrokeColor = colorPickerViewModel.colorStateFlow,
+        selectedStrokeWidth = brushViewModel.lineThicknessStateFlow,
+        selectedBrushType = brushViewModel.brushTypeStateFlow,
+        selectedFillType = brushViewModel.fillTypeStateFlow
     )
 
-    val drawingViewModel = DrawingViewModel(layers, colorPickerViewModel.backgroundStateFlow)
-    val layersViewModel = LayersViewModel(layers, colorPickerViewModel.backgroundStateFlow)
+    val drawingViewModel = DrawingViewModel(
+        layers = layers,
+        backgroundColor = colorPickerViewModel.backgroundStateFlow,
+        selectedBrushType = brushViewModel.brushTypeStateFlow
+    )
+    val layersViewModel = LayersViewModel(
+        layers = layers,
+        backgroundStateFlow = colorPickerViewModel.backgroundStateFlow
+    )
 }

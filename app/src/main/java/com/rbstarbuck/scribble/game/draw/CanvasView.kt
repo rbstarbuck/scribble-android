@@ -14,12 +14,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.rbstarbuck.scribble.game.brush.BrushType
+import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.toColor
 import kotlinx.coroutines.flow.StateFlow
 
@@ -44,19 +47,48 @@ fun CanvasView(
         SoftwareLayerComposable {
             Canvas(modifier.clipToBounds()) {
                 for (stroke in strokes.committedStrokes) {
-                    drawStroke(stroke)
+                    drawStroke(
+                        stroke = stroke,
+                        brushType = stroke.brushType,
+                        fillType = stroke.fillType
+                    )
                 }
 
                 val currentStroke = strokes.currentStroke
                 if (currentStroke != null) {
-                    drawStroke(currentStroke)
+                    drawStroke(
+                        stroke = currentStroke,
+                        brushType = currentStroke.brushType,
+                        fillType = currentStroke.fillType
+                    )
+
+                    if (currentStroke.brushType == BrushType.Polygon) {
+                        drawCircle(
+                            color = Color.DarkGray,
+                            radius = 24.dp.toPx(),
+                            center = Offset(
+                                currentStroke.points.first().x * size.width,
+                                currentStroke.points.first().y * size.height
+                            ),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke (
+                                width = 1.5.dp.toPx(),
+                                pathEffect = PathEffect.dashPathEffect(
+                                    intervals = floatArrayOf(5.dp.toPx(), 5.dp.toPx())
+                                )
+                            )
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-private fun DrawScope.drawStroke(stroke: Stroke) {
+private fun DrawScope.drawStroke(
+    stroke: Stroke,
+    brushType: BrushType,
+    fillType: FillType
+) {
     if (stroke.points.size == 1) {
         val point = stroke.points.first()
 
@@ -69,38 +101,49 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
             )
         )
     } else {
-        val path = Path()
-        val initialPoint = stroke.points.first()
+        if (stroke.points.isNotEmpty()) {
+            val path = Path()
+            val initialPoint = stroke.points.first()
 
-        path.moveTo(
-            x = initialPoint.x * size.width,
-            y = initialPoint.y * size.height
-        )
+            path.moveTo(
+                x = initialPoint.x * size.width,
+                y = initialPoint.y * size.height
+            )
 
-        for (point in stroke.points) {
-            path.lineTo(
-                x = point.x * size.width,
-                y = point.y * size.height
+            for (point in stroke.points) {
+                path.lineTo(
+                    x = point.x * size.width,
+                    y = point.y * size.height
+                )
+            }
+
+            if (brushType == BrushType.Polygon) {
+                path.close()
+            }
+
+
+            drawPath(
+                path = path,
+                color = if (stroke.brushType == BrushType.Eraser) {
+                    Color.Transparent
+                } else {
+                    stroke.color.toColor()
+                },
+                style = if (fillType == FillType.Stroke || stroke.points.size < 3) {
+                    androidx.compose.ui.graphics.drawscope.Stroke(
+                        width = stroke.width * size.width,
+                        cap = StrokeCap.Round
+                    )
+                } else {
+                    Fill
+                },
+                blendMode = if (stroke.brushType == BrushType.Eraser) {
+                    BlendMode.Clear
+                } else {
+                    BlendMode.SrcOver
+                }
             )
         }
-
-        drawPath(
-            path = path,
-            color = if (stroke.brushType == BrushType.Eraser) {
-                Color.Transparent
-            } else {
-                stroke.color.toColor()
-            },
-            style = androidx.compose.ui.graphics.drawscope.Stroke(
-                width = stroke.width * size.width,
-                cap = StrokeCap.Round
-            ),
-            blendMode = if (stroke.brushType == BrushType.Eraser) {
-                BlendMode.Clear
-            } else {
-                BlendMode.SrcOver
-            }
-        )
     }
 }
 
