@@ -7,4 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class BrushViewModel(val colorStateFlow: StateFlow<HSVColor>): ViewModel() {
     val lineThicknessStateFlow = MutableStateFlow(0.015f)
+
+    val brushTypeStateFlow = MutableStateFlow(BrushType.Pencil)
+    val fillTypeStateFlow = MutableStateFlow(FillType.Stroke)
 }

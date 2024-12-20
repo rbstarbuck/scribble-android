@@ -71,7 +71,7 @@ fun GameView(
                         viewModel = viewModel.brushViewModel,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 30.dp)
+                            .padding(horizontal = 20.dp)
                     )
                 }
 
