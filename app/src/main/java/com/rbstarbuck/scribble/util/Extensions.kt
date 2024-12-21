@@ -1,4 +1,4 @@
-package com.rbstarbuck.scribble
+package com.rbstarbuck.scribble.util
 
 import android.content.Context
 import android.util.DisplayMetrics

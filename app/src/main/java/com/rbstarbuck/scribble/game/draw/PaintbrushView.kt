@@ -12,7 +12,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.rbstarbuck.scribble.dpToPx
+import com.rbstarbuck.scribble.util.dpToPx
 import com.rbstarbuck.scribble.game.layer.Layers.Layer
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.pow

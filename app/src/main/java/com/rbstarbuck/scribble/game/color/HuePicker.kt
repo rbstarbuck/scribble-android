@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun HuePickerView(
+fun HuePicker(
     hueStateFlow: MutableStateFlow<Float>,
     saturationValueStateFlow: MutableStateFlow<Pair<Float, Float>>,
     modifier: Modifier = Modifier
@@ -112,7 +112,7 @@ fun HuePickerPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        HuePickerView(
+        HuePicker(
             hueStateFlow = hueStateFlow,
             saturationValueStateFlow = MutableStateFlow(1f to 1f),
             modifier = Modifier

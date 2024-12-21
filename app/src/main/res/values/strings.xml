@@ -5,6 +5,7 @@
     <string name="brush">Brush</string>
     <string name="color">Color</string>
     <string name="layers">Layers</string>
+    <string name="transform">Transform</string>
     <string name="set_background_color">Set background color</string>
 
     <string name="stroke_width">Stroke width</string>

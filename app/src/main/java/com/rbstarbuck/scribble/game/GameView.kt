@@ -14,14 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.ColorMatrixColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,6 +32,7 @@ import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.game.color.ColorPickerView
 import com.rbstarbuck.scribble.game.layer.LayersView
 import com.rbstarbuck.scribble.game.brush.BrushView
+import com.rbstarbuck.scribble.game.transform.TransformView
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -90,7 +89,15 @@ fun GameView(
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
+                    )
+                }
+
+                if (TabItem.TransformTabItem.isSelected) {
+                    TransformView(
+                        viewModel = viewModel.transformViewModel,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
                     )
                 }
             }
@@ -156,8 +163,18 @@ open class TabItem(val title: Int, val icon: Int, var isSelected: Boolean = fals
         icon = R.drawable.layers
     )
 
+    object TransformTabItem: TabItem(
+        title = R.string.transform,
+        icon = R.drawable.transform
+    )
+
     companion object {
-        val tabItems: List<TabItem> = listOf(BrushTabItem, ColorTabItem, LayersTabItem)
+        val tabItems: List<TabItem> = listOf(
+            BrushTabItem,
+            ColorTabItem,
+            LayersTabItem,
+            TransformTabItem
+        )
         var selectedItem: TabItem = BrushTabItem
         val recomposeFlag = MutableStateFlow(false)
     }

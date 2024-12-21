@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.color.toColor
-import com.rbstarbuck.scribble.pxToDp
+import com.rbstarbuck.scribble.util.pxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
