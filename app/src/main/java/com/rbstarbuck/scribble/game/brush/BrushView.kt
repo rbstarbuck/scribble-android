@@ -153,7 +153,7 @@ fun BrushView(
 }
 
 @Composable
-fun ButtonContainer(
+private fun ButtonContainer(
     onClick: () -> Unit,
     enabled: Boolean,
     selected: Boolean,
@@ -188,7 +188,7 @@ fun ButtonContainer(
 }
 
 @Composable
-fun BrushButton(
+private fun BrushButton(
     onClick: () -> Unit,
     icon: ImageVector,
     contentDescription: String,
@@ -212,7 +212,7 @@ fun BrushButton(
 }
 
 @Composable
-fun FillTypeButton(
+private fun FillTypeButton(
     onClick: () -> Unit,
     enabled: Boolean,
     selected: Boolean,
