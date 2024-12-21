@@ -2,6 +2,7 @@ package com.rbstarbuck.scribble.game.brush
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -141,7 +142,11 @@ fun BrushView(
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.undo),
                 contentDescription = stringResource(R.string.undo),
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clickable {
+                        viewModel.selectedLayerStateFlow.value.undo()
+                    }
             )
         }
     }
