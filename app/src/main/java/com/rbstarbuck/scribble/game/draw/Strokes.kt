@@ -93,7 +93,7 @@ class MutableStroke(
     override val fillType: FillType,
     initialPoint: Point
 ): Stroke {
-    private val _points = mutableListOf<Point>(initialPoint)
+    private val _points = mutableListOf(initialPoint)
     override val points: List<Point>
         get() = _points
 

@@ -75,8 +75,6 @@ fun ColorPickerView(
 fun ColorPickerViewPreview() {
     val viewModel = remember { ColorPickerViewModel() }
 
-    val hue by viewModel.hueStateFlow.collectAsState()
-    val saturationValue by viewModel.saturationValueStateFlow.collectAsState()
     val color by viewModel.colorStateFlow.collectAsState()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
