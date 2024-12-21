@@ -224,7 +224,7 @@ private fun FillTypeButton(
         selected = selected
     ) {
         Canvas(Modifier.size(20.dp)) {
-            drawCircle(
+            drawRect(
                 color = if (enabled && selected) {
                     Color.Blue
                 } else {
