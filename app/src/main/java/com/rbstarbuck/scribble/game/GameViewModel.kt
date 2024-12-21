@@ -1,31 +1,54 @@
 package com.rbstarbuck.scribble.game
 
 import androidx.lifecycle.ViewModel
+import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.color.ColorPickerViewModel
 import com.rbstarbuck.scribble.game.draw.DrawingViewModel
 import com.rbstarbuck.scribble.game.layer.Layers
 import com.rbstarbuck.scribble.game.layer.LayersViewModel
 import com.rbstarbuck.scribble.game.brush.BrushViewModel
+import com.rbstarbuck.scribble.game.brush.FillType
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class GameViewModel: ViewModel() {
-    val colorPickerViewModel = ColorPickerViewModel()
+    val layers: Layers
 
-    val brushViewModel = BrushViewModel(colorStateFlow = colorPickerViewModel.colorStateFlow)
+    val colorPickerViewModel: ColorPickerViewModel
+    val layersViewModel: LayersViewModel
+    val brushViewModel: BrushViewModel
+    val drawingViewModel: DrawingViewModel
 
-    val layers = Layers(
-        selectedStrokeColor = colorPickerViewModel.colorStateFlow,
-        selectedStrokeWidth = brushViewModel.lineThicknessStateFlow,
-        selectedBrushType = brushViewModel.brushTypeStateFlow,
-        selectedFillType = brushViewModel.fillTypeStateFlow
-    )
+    init {
+        val strokeWidthStateFlow = MutableStateFlow(0.015f)
+        val brushTypeStateFlow = MutableStateFlow(BrushType.Pencil)
+        val fillTypeStateFlow = MutableStateFlow(FillType.Stroke)
 
-    val drawingViewModel = DrawingViewModel(
-        layers = layers,
-        backgroundColor = colorPickerViewModel.backgroundStateFlow,
-        selectedBrushType = brushViewModel.brushTypeStateFlow
-    )
-    val layersViewModel = LayersViewModel(
-        layers = layers,
-        backgroundStateFlow = colorPickerViewModel.backgroundStateFlow
-    )
+        colorPickerViewModel = ColorPickerViewModel()
+
+        layers = Layers(
+            selectedColorStateFlow = colorPickerViewModel.colorStateFlow,
+            selectedStrokeWidthStateFlow = strokeWidthStateFlow,
+            selectedBrushTypeStateFlow = brushTypeStateFlow,
+            selectedFillTypeStateFlow = fillTypeStateFlow
+        )
+
+        layersViewModel = LayersViewModel(
+            layers = layers,
+            backgroundStateFlow = colorPickerViewModel.backgroundStateFlow
+        )
+
+        brushViewModel = BrushViewModel(
+            colorStateFlow = colorPickerViewModel.colorStateFlow,
+            selectedLayerStateFlow = layers.selectedLayerStateFlow,
+            strokeWidthStateFlow = strokeWidthStateFlow,
+            brushTypeStateFlow = brushTypeStateFlow,
+            fillTypeStateFlow = fillTypeStateFlow,
+        )
+
+        drawingViewModel = DrawingViewModel(
+            layers = layers,
+            backgroundStateFlow = colorPickerViewModel.backgroundStateFlow,
+            selectedBrushTypeStateFlow = brushTypeStateFlow
+        )
+    }
 }

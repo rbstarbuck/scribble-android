@@ -15,12 +15,12 @@ fun DrawingView(
 ) {
     Box(modifier) {
         CanvasBackgroundView(
-            backgroundStateFlow = viewModel.backgroundColor,
+            backgroundStateFlow = viewModel.backgroundStateFlow,
             modifier = Modifier.fillMaxSize()
         )
 
         val layers by viewModel.layers.layersStateFlow.collectAsState()
-        val brush by viewModel.selectedBrushType.collectAsState()
+        val brush by viewModel.selectedBrushTypeStateFlow.collectAsState()
 
         for (layer in layers.reversed()) {
             val visible by layer.visibleStateFlow.collectAsState()

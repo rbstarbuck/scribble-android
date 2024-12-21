@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class Layers(
-    private val selectedStrokeColor: StateFlow<HSVColor>,
-    private val selectedStrokeWidth: StateFlow<Float>,
-    private val selectedBrushType: StateFlow<BrushType>,
-    private val selectedFillType: StateFlow<FillType>
+    private val selectedColorStateFlow: StateFlow<HSVColor>,
+    private val selectedStrokeWidthStateFlow: StateFlow<Float>,
+    private val selectedBrushTypeStateFlow: StateFlow<BrushType>,
+    private val selectedFillTypeStateFlow: StateFlow<FillType>
 ) {
     private val _layersStateFlow = MutableStateFlow(listOf(Layer()))
     val layersStateFlow = _layersStateFlow.asStateFlow()
@@ -30,10 +30,10 @@ class Layers(
     inner class Layer {
         val key = generateKey()
         val strokes = Strokes(
-            selectedStrokeColor,
-            selectedStrokeWidth,
-            selectedBrushType,
-            selectedFillType
+            selectedColorStateFlow,
+            selectedStrokeWidthStateFlow,
+            selectedBrushTypeStateFlow,
+            selectedFillTypeStateFlow
         )
 
         val canMergeDown: Boolean
@@ -127,6 +127,10 @@ class Layers(
                 layers[index + 1].select()
                 layers[index].remove()
             }
+        }
+
+        fun undo() {
+            strokes.undo()
         }
     }
 }

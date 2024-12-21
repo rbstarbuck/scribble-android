@@ -57,6 +57,16 @@ class Strokes(
         other._committedStrokes.addAll(committedStrokes)
     }
 
+    fun undo() {
+        if (_currentStroke != null) {
+            _currentStroke = null
+        } else {
+            _committedStrokes.removeLastOrNull()
+        }
+
+        recompose()
+    }
+
     fun firstPoint() = currentStroke!!.points.first()
 
     fun lastPoint() = currentStroke!!.points.last()

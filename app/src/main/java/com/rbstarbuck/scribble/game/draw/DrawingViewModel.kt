@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 class DrawingViewModel(
     val layers: Layers,
-    val backgroundColor: StateFlow<Color>,
-    val selectedBrushType: StateFlow<BrushType>
+    val backgroundStateFlow: StateFlow<Color>,
+    val selectedBrushTypeStateFlow: StateFlow<BrushType>
 ): ViewModel()

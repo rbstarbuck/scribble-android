@@ -281,10 +281,10 @@ private fun MergeLayerConfirmationDialog(
 @Composable
 fun LayersColumnItemViewPreview() {
     val layers = Layers(
-        selectedStrokeColor = MutableStateFlow(HSVColor(0f, 0f, 0f)),
-        selectedStrokeWidth = MutableStateFlow(10f),
-        selectedBrushType = MutableStateFlow(BrushType.Pencil),
-        selectedFillType = MutableStateFlow(FillType.Stroke)
+        selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
+        selectedStrokeWidthStateFlow = MutableStateFlow(10f),
+        selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
+        selectedFillTypeStateFlow = MutableStateFlow(FillType.Stroke)
     )
     val layer by layers.selectedLayerStateFlow.collectAsState()
 
