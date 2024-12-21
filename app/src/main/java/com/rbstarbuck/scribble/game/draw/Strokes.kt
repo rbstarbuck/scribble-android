@@ -3,9 +3,13 @@ package com.rbstarbuck.scribble.game.draw
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
@@ -50,7 +54,10 @@ class Strokes(
     fun endStroke() {
         _committedStrokes.add(_currentStroke!!)
         _currentStroke = null
-        recompose()
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(100L)
+            recompose()
+        }
     }
 
     fun mergeInto(other: Strokes) {
