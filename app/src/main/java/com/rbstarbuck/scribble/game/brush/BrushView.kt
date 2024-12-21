@@ -77,6 +77,18 @@ fun BrushView(
                         contentDescription = stringResource(R.string.eraser),
                         selected = brushType == BrushType.Eraser
                     )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.undo),
+                        contentDescription = stringResource(R.string.undo),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clickable {
+                                viewModel.selectedLayerStateFlow.value.undo()
+                            }
+                    )
                 }
 
                 Spacer(Modifier.height(10.dp))
@@ -136,18 +148,6 @@ fun BrushView(
                     )
                 }
             }
-
-            Spacer(Modifier.weight(1f))
-
-            Image(
-                imageVector = ImageVector.vectorResource(R.drawable.undo),
-                contentDescription = stringResource(R.string.undo),
-                modifier = Modifier
-                    .size(48.dp)
-                    .clickable {
-                        viewModel.selectedLayerStateFlow.value.undo()
-                    }
-            )
         }
     }
 }
