@@ -12,6 +12,7 @@
     <string name="pencil">Pencil</string>
     <string name="eraser">Eraser</string>
     <string name="line">Line</string>
+    <string name="rectangle">Rectangle</string>
     <string name="polygon">Polygon</string>
     <string name="circle">Circle</string>
     <string name="undo">Undo</string>

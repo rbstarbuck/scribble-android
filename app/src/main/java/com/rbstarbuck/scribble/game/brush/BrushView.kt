@@ -74,6 +74,18 @@ fun BrushView(
                         selected = brushType == BrushType.Eraser
                     )
 
+                    Spacer(Modifier.width(6.dp))
+
+                    SelectionButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Line
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.line),
+                        contentDescription = stringResource(R.string.line),
+                        size = 44.dp,
+                        selected = brushType == BrushType.Line
+                    )
+
                     Spacer(Modifier.weight(1f))
 
                     Image(
@@ -90,14 +102,33 @@ fun BrushView(
                 Spacer(Modifier.height(10.dp))
 
                 Row {
+                    val fillTypeEnabled = when (brushType) {
+                        BrushType.Polygon, BrushType.Rectangle, BrushType.Circle -> true
+                        else -> false
+                    }
+
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Line
+                            viewModel.brushTypeStateFlow.value = BrushType.Rectangle
                         },
-                        icon = ImageVector.vectorResource(R.drawable.line),
-                        contentDescription = stringResource(R.string.line),
+                        icon = ImageVector.vectorResource(R.drawable.square),
+                        contentDescription = stringResource(R.string.rectangle),
                         size = 44.dp,
-                        selected = brushType == BrushType.Line
+                        contentPadding = 3.dp,
+                        selected = brushType == BrushType.Rectangle
+                    )
+
+                    Spacer(Modifier.width(6.dp))
+
+                    SelectionButton(
+                        onClick = {
+                            viewModel.brushTypeStateFlow.value = BrushType.Circle
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.circle),
+                        contentDescription = stringResource(R.string.circle),
+                        size = 44.dp,
+                        contentPadding = 2.dp,
+                        selected = brushType == BrushType.Circle
                     )
 
                     Spacer(Modifier.width(6.dp))
@@ -112,18 +143,6 @@ fun BrushView(
                         selected = brushType == BrushType.Polygon
                     )
 
-                    Spacer(Modifier.width(6.dp))
-
-                    SelectionButton(
-                        onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Circle
-                        },
-                        icon = ImageVector.vectorResource(R.drawable.circle),
-                        contentDescription = stringResource(R.string.circle),
-                        size = 44.dp,
-                        selected = brushType == BrushType.Circle
-                    )
-
                     Spacer(Modifier.width(15.dp))
 
                     FillTypeButton(
@@ -131,7 +150,7 @@ fun BrushView(
                             viewModel.fillTypeStateFlow.value = FillType.Stroke
                         },
                         size = 44.dp,
-                        enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
+                        enabled = fillTypeEnabled,
                         selected = fillType == FillType.Stroke,
                         fillType = FillType.Stroke
                     )
@@ -143,7 +162,7 @@ fun BrushView(
                             viewModel.fillTypeStateFlow.value = FillType.Filled
                         },
                         size = 44.dp,
-                        enabled = brushType == BrushType.Polygon || brushType == BrushType.Circle,
+                        enabled = fillTypeEnabled,
                         selected = fillType == FillType.Filled,
                         fillType = FillType.Filled,
                     )
@@ -163,7 +182,7 @@ private fun FillTypeButton(
 ) {
     SelectionButtonContainer(onClick, size, enabled, selected) {
         Canvas(Modifier.size(20.dp)) {
-            drawRect(
+            drawCircle(
                 color = if (enabled && selected) {
                     Color.Blue
                 } else {

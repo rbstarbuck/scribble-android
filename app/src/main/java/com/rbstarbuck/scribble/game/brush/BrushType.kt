@@ -4,8 +4,9 @@ enum class BrushType {
     Pencil,
     Eraser,
     Line,
-    Polygon,
-    Circle
+    Rectangle,
+    Circle,
+    Polygon
 }
 
 enum class FillType {

@@ -29,6 +29,7 @@ import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.toColor
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -63,6 +64,8 @@ fun CanvasView(
                     for (stroke in strokes.committedStrokes) {
                         if (stroke.brushType == BrushType.Circle) {
                             drawStrokeCircle(stroke)
+                        } else if (stroke.brushType == BrushType.Rectangle) {
+                            drawStrokeRectangle(stroke)
                         } else {
                             drawStroke(stroke)
                         }
@@ -80,6 +83,8 @@ fun CanvasView(
                     if (currentStroke != null) {
                         if (currentStroke.brushType == BrushType.Circle) {
                             drawStrokeCircle(currentStroke)
+                        } else if (currentStroke.brushType == BrushType.Rectangle) {
+                            drawStrokeRectangle(currentStroke)
                         } else {
                             drawStroke(currentStroke)
                         }
@@ -158,6 +163,42 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
                 }
             )
         }
+    }
+}
+
+private fun DrawScope.drawStrokeRectangle(stroke: Stroke) {
+    if (stroke.points.size == 2) {
+        val first = stroke.points.first()
+        val second = stroke.points.last()
+
+        val xFirst = first.x * size.width
+        val xSecond = second.x * size.width
+        val yFirst = first.y * size.height
+        val ySecond = second.y * size.height
+
+        val topLeft = when {
+            xFirst < xSecond && yFirst > ySecond -> Offset(xFirst, ySecond)
+            xFirst < xSecond && yFirst < ySecond -> Offset(xFirst, yFirst)
+            xFirst > xSecond && yFirst > ySecond -> Offset(xSecond, ySecond)
+            else -> Offset(xSecond, yFirst)
+        }
+
+        val rectSize = Size(
+            width = (xFirst - xSecond).absoluteValue,
+            height = (yFirst - ySecond).absoluteValue
+        )
+
+        drawRect(
+            color = stroke.color.toColor(),
+            topLeft = topLeft,
+            size = rectSize,
+            style = when (stroke.fillType) {
+                FillType.Stroke -> androidx.compose.ui.graphics.drawscope.Stroke(
+                    width = stroke.width * size.width
+                )
+                FillType.Filled -> Fill
+            }
+        )
     }
 }
 

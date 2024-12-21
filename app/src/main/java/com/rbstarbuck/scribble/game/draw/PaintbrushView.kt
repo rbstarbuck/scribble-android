@@ -148,7 +148,7 @@ fun LineAndPolygonPaintbrushView(
 }
 
 @Composable
-fun CirclePaintbrushView(
+fun RectangleAndCirclePaintbrushView(
     selectedLayerStateFlow: StateFlow<Layer>,
     modifier: Modifier = Modifier
 ) {

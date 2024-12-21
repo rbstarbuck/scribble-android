@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -26,6 +27,7 @@ fun SelectionButton(
     icon: ImageVector,
     contentDescription: String,
     size: Dp,
+    contentPadding: Dp = 0.dp,
     selected: Boolean,
     enabled: Boolean = true
 ) {
@@ -33,6 +35,7 @@ fun SelectionButton(
         Image(
             imageVector = icon,
             contentDescription = contentDescription,
+            modifier = Modifier.padding(contentPadding),
             colorFilter = if (selected) {
                 null
             } else {

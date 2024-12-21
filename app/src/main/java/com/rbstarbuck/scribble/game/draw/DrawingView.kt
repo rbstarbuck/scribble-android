@@ -48,7 +48,7 @@ fun DrawingView(
                 isPolygon = true,
                 modifier = Modifier.fillMaxSize()
             )
-            BrushType.Circle -> CirclePaintbrushView(
+            BrushType.Rectangle, BrushType.Circle -> RectangleAndCirclePaintbrushView(
                 selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                 modifier = Modifier.fillMaxSize()
             )
