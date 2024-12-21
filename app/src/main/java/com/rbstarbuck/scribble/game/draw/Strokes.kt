@@ -25,8 +25,11 @@ class Strokes(
     val committedStrokes: List<Stroke>
         get() = _committedStrokes
 
-    private val _recomposeStateFlow = MutableStateFlow(false)
-    val recomposeCurrentStrokeStateFlow = _recomposeStateFlow.asStateFlow()
+    private val _recomposeCurrentStrokesStateFlow = MutableStateFlow(false)
+    val recomposeCurrentStrokesStateFlow = _recomposeCurrentStrokesStateFlow.asStateFlow()
+
+    private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(false)
+    val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
 
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
@@ -36,19 +39,19 @@ class Strokes(
             fillType = selectedFillType.value,
             initialPoint = Point(x, y)
         )
-        recompose()
+        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
     }
 
     fun appendStroke(x: Float, y: Float) {
         _currentStroke!!.addPoint(Point(x, y))
-        recompose()
+        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
     }
 
     fun moveCurrentStrokePoint(x: Float, y: Float) {
         val currentPoint = _currentStroke!!.points.last()
         currentPoint.x = x
         currentPoint.y = y
-        recompose()
+        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
     }
 
     fun endStroke() {
@@ -56,7 +59,7 @@ class Strokes(
         _currentStroke = null
         CoroutineScope(Dispatchers.Default).launch {
             delay(100L)
-            recompose()
+            _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
         }
     }
 
@@ -71,7 +74,7 @@ class Strokes(
             _committedStrokes.removeLastOrNull()
         }
 
-        recompose()
+        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
     fun firstPoint() = currentStroke!!.points.first()
@@ -79,10 +82,6 @@ class Strokes(
     fun lastPoint() = currentStroke!!.points.last()
 
     fun discardLastPoint() = _currentStroke!!.discardLastPoint()
-
-    private fun recompose() {
-        _recomposeStateFlow.value = !_recomposeStateFlow.value
-    }
 }
 
 interface Stroke {

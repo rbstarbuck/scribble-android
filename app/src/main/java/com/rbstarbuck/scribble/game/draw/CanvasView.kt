@@ -4,6 +4,7 @@ import android.view.View
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,36 +49,54 @@ fun CanvasView(
     strokes: Strokes,
     modifier: Modifier = Modifier
 ) {
-    val recomposeCommittedStrokes by strokes.recomposeCurrentStrokeStateFlow.collectAsState()
+    val recomposeCurrentStrokes by strokes.recomposeCurrentStrokesStateFlow.collectAsState()
+    val recomposeCommittedStrokes by strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
-    key(recomposeCommittedStrokes) {
+    Box(modifier) {
         SoftwareLayerComposable {
-            Canvas(modifier.clipToBounds()) {
-                for (stroke in strokes.committedStrokes) {
-                    if (stroke.brushType == BrushType.Circle) {
-                        drawStrokeCircle(stroke)
-                    } else {
-                        drawStroke(stroke)
+            key(recomposeCommittedStrokes) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds()
+                ) {
+                    for (stroke in strokes.committedStrokes) {
+                        if (stroke.brushType == BrushType.Circle) {
+                            drawStrokeCircle(stroke)
+                        } else {
+                            drawStroke(stroke)
+                        }
                     }
                 }
+            }
 
-                val currentStroke = strokes.currentStroke
-                if (currentStroke != null) {
-                    if (currentStroke.brushType == BrushType.Circle) {
-                        drawStrokeCircle(currentStroke)
-                    } else {
-                        drawStroke(currentStroke)
+            key(recomposeCurrentStrokes) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds()
+                ) {
+                    val currentStroke = strokes.currentStroke
+                    if (currentStroke != null) {
+                        if (currentStroke.brushType == BrushType.Circle) {
+                            drawStrokeCircle(currentStroke)
+                        } else {
+                            drawStroke(currentStroke)
+                        }
+
+                        if (currentStroke.brushType == BrushType.Polygon) {
+                            drawCloseShapeCircle(currentStroke.points.first())
+                        } else if (currentStroke.brushType == BrushType.Line) {
+                            drawCloseShapeCircle(currentStroke.points.last())
+                        }
                     }
 
-                    if (currentStroke.brushType == BrushType.Polygon) {
-                        drawCloseShapeCircle(currentStroke.points.first())
-                    } else if (currentStroke.brushType == BrushType.Line) {
-                        drawCloseShapeCircle(currentStroke.points.last())
+                    if (
+                        TabItem.TransformTabItem.isSelected &&
+                        strokes.committedStrokes.isNotEmpty()
+                    ) {
+                        drawTransformBox(strokes)
                     }
-                }
-
-                if (TabItem.TransformTabItem.isSelected && strokes.committedStrokes.isNotEmpty()) {
-                    drawTransformBox(strokes)
                 }
             }
         }
