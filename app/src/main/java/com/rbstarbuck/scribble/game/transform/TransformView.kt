@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,34 +32,42 @@ fun TransformView(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val transformType by viewModel.transformTypeStateFlow.collectAsState()
+
             val size = this@BoxWithConstraints.maxWidth * 0.3f
 
             SelectionButton(
-                onClick = {},
+                onClick = {
+                    viewModel.transformTypeStateFlow.value = TransformType.TRANSLATE
+                },
                 icon = ImageVector.vectorResource(R.drawable.move),
                 contentDescription = stringResource(R.string.move),
                 size = size,
-                selected = true
+                selected = transformType == TransformType.TRANSLATE
             )
 
             Spacer(Modifier.weight(1f))
 
             SelectionButton(
-                onClick = {},
+                onClick = {
+                    viewModel.transformTypeStateFlow.value = TransformType.SCALE
+                },
                 icon = ImageVector.vectorResource(R.drawable.scale),
                 contentDescription = stringResource(R.string.scale),
                 size = size,
-                selected = false
+                selected = transformType == TransformType.SCALE
             )
 
             Spacer(Modifier.weight(1f))
 
             SelectionButton(
-                onClick = {},
+                onClick = {
+                    viewModel.transformTypeStateFlow.value = TransformType.ROTATE
+                },
                 icon = ImageVector.vectorResource(R.drawable.rotate),
                 contentDescription = stringResource(R.string.rotate),
                 size = size,
-                selected = false
+                selected = transformType == TransformType.ROTATE
             )
         }
     }
