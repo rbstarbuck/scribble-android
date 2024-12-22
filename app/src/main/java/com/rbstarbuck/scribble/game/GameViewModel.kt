@@ -52,7 +52,7 @@ class GameViewModel: ViewModel() {
         transformViewModel = TransformViewModel()
 
         translateViewModel = TranslateViewModel(
-            selectedLayer = layers.selectedLayerStateFlow
+            selectedLayerStateFlow = layers.selectedLayerStateFlow
         )
 
         drawingViewModel = DrawingViewModel(

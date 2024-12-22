@@ -36,14 +36,6 @@ class Layers(
             selectedFillTypeStateFlow
         )
 
-        val canMergeDown: Boolean
-            get() {
-                val layers = layersStateFlow.value
-                val index = layers.indexOfFirst { it.key == key }
-
-                return index >= 0 && index < layers.size - 1
-            }
-
         private val _visibleStateFlow = MutableStateFlow(true)
         val visibleStateFlow = _visibleStateFlow.asStateFlow()
         var visible: Boolean
