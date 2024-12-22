@@ -77,6 +77,17 @@ class Strokes(
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
+    fun translate(x: Float, y: Float) {
+        for (stroke in committedStrokes) {
+            for (point in stroke.points) {
+                point.x += x
+                point.y += y
+            }
+        }
+
+        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+    }
+
     fun firstPoint() = currentStroke!!.points.first()
 
     fun lastPoint() = currentStroke!!.points.last()

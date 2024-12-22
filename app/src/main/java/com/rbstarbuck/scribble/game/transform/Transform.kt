@@ -61,30 +61,32 @@ private fun DrawScope.strokesBoundingBox(strokes: Strokes): Rect {
     var bottom = Float.MIN_VALUE
 
     for (stroke in strokes.committedStrokes) {
-        if (stroke.brushType == BrushType.Circle) {
-            val first = stroke.points.first()
-            val second = stroke.points.last()
+        if (stroke.brushType != BrushType.Eraser) {
+            if (stroke.brushType == BrushType.Circle) {
+                val first = stroke.points.first()
+                val second = stroke.points.last()
 
-            val distance = distance(first, second)
+                val distance = distance(first, second)
 
-            val leftDistance = first.x - distance
-            val rightDistance = first.x + distance
-            val topDistance = first.y - distance
-            val bottomDistance = first.y + distance
+                val leftDistance = first.x - distance
+                val rightDistance = first.x + distance
+                val topDistance = first.y - distance
+                val bottomDistance = first.y + distance
 
-            if (leftDistance < left) left = leftDistance
-            if (rightDistance > right) right = rightDistance
-            if (topDistance < top) top = topDistance
-            if (bottomDistance > bottom) bottom = bottomDistance
-        } else {
-            for (point in stroke.points) {
-                val horizontal = point.x
-                val vertical = point.y
+                if (leftDistance < left) left = leftDistance
+                if (rightDistance > right) right = rightDistance
+                if (topDistance < top) top = topDistance
+                if (bottomDistance > bottom) bottom = bottomDistance
+            } else {
+                for (point in stroke.points) {
+                    val horizontal = point.x
+                    val vertical = point.y
 
-                if (horizontal < left) left = horizontal
-                if (horizontal > right) right = horizontal
-                if (vertical < top) top = vertical
-                if (vertical > bottom) bottom = vertical
+                    if (horizontal < left) left = horizontal
+                    if (horizontal > right) right = horizontal
+                    if (vertical < top) top = vertical
+                    if (vertical > bottom) bottom = vertical
+                }
             }
         }
     }
