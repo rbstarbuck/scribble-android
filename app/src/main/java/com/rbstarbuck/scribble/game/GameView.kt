@@ -48,7 +48,7 @@ fun GameView(
             modifier = modifier.padding(padding),
             verticalArrangement = Arrangement.Center
         ) {
-            val recompose by TabItem.recomposeFlag.collectAsState()
+            val tabItemRecompose by TabItem.recomposeFlag.collectAsState()
 
             Spacer(Modifier.height(65.dp))
 
@@ -64,7 +64,7 @@ fun GameView(
                     )
             )
 
-            key(recompose) {
+            key(tabItemRecompose) {
                 if (TabItem.BrushTabItem.isSelected) {
                     BrushView(
                         viewModel = viewModel.brushViewModel,

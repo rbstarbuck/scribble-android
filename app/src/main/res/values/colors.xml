@@ -17,4 +17,6 @@
     <color name="selected_row_item_background">#FFEEEEEE</color>
     <color name="row_item_image_border">#FF666666</color>
     <color name="selected_row_item_image_border">#FFFF0000</color>
+
+    <color name="white_alpha_75">#BFFFFFFF</color>
 </resources>

@@ -32,13 +32,13 @@ fun TransformView(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val transformType by viewModel.transformTypeStateFlow.collectAsState()
+            val transformType by viewModel.selectedTransformTypeStateFlow.collectAsState()
 
             val size = this@BoxWithConstraints.maxWidth * 0.3f
 
             SelectionButton(
                 onClick = {
-                    viewModel.transformTypeStateFlow.value = TransformType.TRANSLATE
+                    viewModel.selectedTransformTypeStateFlow.value = TransformType.TRANSLATE
                 },
                 icon = ImageVector.vectorResource(R.drawable.move),
                 contentDescription = stringResource(R.string.move),
@@ -50,7 +50,7 @@ fun TransformView(
 
             SelectionButton(
                 onClick = {
-                    viewModel.transformTypeStateFlow.value = TransformType.SCALE
+                    viewModel.selectedTransformTypeStateFlow.value = TransformType.SCALE
                 },
                 icon = ImageVector.vectorResource(R.drawable.scale),
                 contentDescription = stringResource(R.string.scale),
@@ -62,7 +62,7 @@ fun TransformView(
 
             SelectionButton(
                 onClick = {
-                    viewModel.transformTypeStateFlow.value = TransformType.ROTATE
+                    viewModel.selectedTransformTypeStateFlow.value = TransformType.ROTATE
                 },
                 icon = ImageVector.vectorResource(R.drawable.rotate),
                 contentDescription = stringResource(R.string.rotate),

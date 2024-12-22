@@ -9,6 +9,7 @@ import com.rbstarbuck.scribble.game.layer.LayersViewModel
 import com.rbstarbuck.scribble.game.brush.BrushViewModel
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.transform.TransformViewModel
+import com.rbstarbuck.scribble.game.transform.TranslateViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class GameViewModel: ViewModel() {
@@ -19,6 +20,7 @@ class GameViewModel: ViewModel() {
     val brushViewModel: BrushViewModel
     val drawingViewModel: DrawingViewModel
     val transformViewModel: TransformViewModel
+    val translateViewModel: TranslateViewModel
 
     init {
         val strokeWidthStateFlow = MutableStateFlow(0.015f)
@@ -47,12 +49,17 @@ class GameViewModel: ViewModel() {
             fillTypeStateFlow = fillTypeStateFlow,
         )
 
+        transformViewModel = TransformViewModel()
+
+        translateViewModel = TranslateViewModel(
+            selectedLayer = layers.selectedLayerStateFlow
+        )
+
         drawingViewModel = DrawingViewModel(
             layers = layers,
             backgroundStateFlow = colorPickerViewModel.backgroundStateFlow,
-            selectedBrushTypeStateFlow = brushTypeStateFlow
+            selectedBrushTypeStateFlow = brushTypeStateFlow,
+            selectedTransformTypeStateFlow = transformViewModel.selectedTransformTypeStateFlow,
         )
-
-        transformViewModel = TransformViewModel()
     }
 }

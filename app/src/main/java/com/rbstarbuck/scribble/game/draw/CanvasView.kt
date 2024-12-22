@@ -1,6 +1,5 @@
 package com.rbstarbuck.scribble.game.draw
 
-import android.view.View
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -21,19 +19,15 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.rbstarbuck.scribble.game.TabItem
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.toColor
+import com.rbstarbuck.scribble.util.SoftwareLayer
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sqrt
-
-private const val TRANSFORM_BOUNDS_PADDING = 25f
 
 @Composable
 fun CanvasBackgroundView(
@@ -54,7 +48,7 @@ fun CanvasView(
     val recomposeCommittedStrokes by strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
     Box(modifier) {
-        SoftwareLayerComposable {
+        SoftwareLayer {
             key(recomposeCommittedStrokes) {
                 Canvas(
                     modifier = Modifier
@@ -94,13 +88,6 @@ fun CanvasView(
                         } else if (currentStroke.brushType == BrushType.Line) {
                             drawCloseShapeCircle(currentStroke.points.last())
                         }
-                    }
-
-                    if (
-                        TabItem.TransformTabItem.isSelected &&
-                        strokes.committedStrokes.isNotEmpty()
-                    ) {
-                        drawTransformBox(strokes)
                     }
                 }
             }
@@ -241,103 +228,9 @@ private fun DrawScope.drawCloseShapeCircle(point: Point) {
     )
 }
 
-
-private fun DrawScope.drawTransformBox(strokes: Strokes): Rect {
-    val bounds = strokesBoundingBox(strokes)
-
-    val topLeft = Offset(
-        x = bounds.left - TRANSFORM_BOUNDS_PADDING,
-        y = bounds.top - TRANSFORM_BOUNDS_PADDING
-    )
-
-    val size = Size(
-        width = bounds.width + 2f * TRANSFORM_BOUNDS_PADDING,
-        height = bounds.height + 2f * TRANSFORM_BOUNDS_PADDING
-    )
-
-    drawRect(
-        color = Color.DarkGray,
-        topLeft = topLeft,
-        size = size,
-        style = androidx.compose.ui.graphics.drawscope.Stroke(
-            width = 10f,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(30f, 30f))
-        )
-
-    )
-
-    return bounds
-}
-
 private fun DrawScope.distanceInCanvas(
     p1: Point,
     p2: Point
 ) = sqrt(
     (p1.x * size.width - p2.x * size.width).pow(2) +
             (p1.y * size.height - p2.y * size.height).pow(2))
-
-private fun DrawScope.distance(
-    p1: Point,
-    p2: Point
-) = sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
-
-private fun DrawScope.strokesBoundingBox(strokes: Strokes): Rect {
-    var left = Float.MAX_VALUE
-    var right = Float.MIN_VALUE
-    var top = Float.MAX_VALUE
-    var bottom = Float.MIN_VALUE
-
-    for (stroke in strokes.committedStrokes) {
-        if (stroke.brushType == BrushType.Circle) {
-            val first = stroke.points.first()
-            val second = stroke.points.last()
-
-            val distance = distance(first, second)
-
-            val leftDistance = first.x - distance
-            val rightDistance = first.x + distance
-            val topDistance = first.y - distance
-            val bottomDistance = first.y + distance
-
-            if (leftDistance < left) left = leftDistance
-            if (rightDistance > right) right = rightDistance
-            if (topDistance < top) top = topDistance
-            if (bottomDistance > bottom) bottom = bottomDistance
-        } else {
-            for (point in stroke.points) {
-                val horizontal = point.x
-                val vertical = point.y
-
-                if (horizontal < left) left = horizontal
-                if (horizontal > right) right = horizontal
-                if (vertical < top) top = vertical
-                if (vertical > bottom) bottom = vertical
-            }
-        }
-    }
-
-    return Rect(
-        left = left * size.width,
-        top = top * size.height,
-        right = right * size.width,
-        bottom = bottom * size.height
-    )
-}
-
-@Composable
-fun SoftwareLayerComposable(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    AndroidView(
-        factory = { context ->
-            ComposeView(context).apply {
-                setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-            }
-        },
-        update = { composeView ->
-            composeView.setContent(content)
-        },
-        modifier = modifier,
-    )
-}
