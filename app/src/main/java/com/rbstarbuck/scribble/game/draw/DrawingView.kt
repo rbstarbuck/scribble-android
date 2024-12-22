@@ -9,6 +9,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import com.rbstarbuck.scribble.game.TabItem
 import com.rbstarbuck.scribble.game.brush.BrushType
+import com.rbstarbuck.scribble.game.transform.RotateView
 import com.rbstarbuck.scribble.game.transform.TransformType
 import com.rbstarbuck.scribble.game.transform.TranslateView
 
@@ -73,7 +74,10 @@ fun DrawingView(
 
                     TransformType.SCALE -> {}
 
-                    TransformType.ROTATE -> {}
+                    TransformType.ROTATE -> RotateView(
+                        viewModel = viewModel.rotateViewModel,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }

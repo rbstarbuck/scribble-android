@@ -1,5 +1,7 @@
 package com.rbstarbuck.scribble.game.draw
 
+import android.graphics.Matrix
+import androidx.compose.ui.geometry.Offset
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
@@ -88,6 +90,53 @@ class Strokes(
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
+    fun rotate(degrees: Float) {
+        val centroid = centroid()
+
+        val matrix = Matrix()
+        matrix.postRotate(degrees, centroid.x, centroid.y)
+
+        for (stroke in committedStrokes) {
+            val points = mutableListOf<Float>()
+            for (point in stroke.points) {
+                points.add(point.x)
+                points.add(point.y)
+            }
+            val srcPoints = points.toFloatArray()
+            val dstPoints = FloatArray(points.size)
+            matrix.mapPoints(dstPoints, srcPoints)
+
+            for (i in 0..<dstPoints.size) {
+                if (i % 2 == 0) {
+                    stroke.points[i / 2].x = dstPoints[i]
+                    stroke.points[i / 2].y = dstPoints[i + 1]
+                }
+            }
+        }
+
+    }
+
+    fun centroid(): Offset {
+        var minX = Float.MAX_VALUE
+        var maxX = Float.MIN_VALUE
+        var minY = Float.MAX_VALUE
+        var maxY = Float.MIN_VALUE
+
+        for (stroke in committedStrokes) {
+            for (point in stroke.points) {
+                if (point.x < minX) minX = point.x
+                if (point.x > maxX) maxX = point.x
+                if (point.y < minY) minY = point.y
+                if (point.y > maxY) maxY = point.y
+            }
+        }
+
+        return Offset(
+            x = (minX + maxX) / 2f,
+            y = (minY + maxY) / 2f
+        )
+    }
+
     fun firstPoint() = currentStroke!!.points.first()
 
     fun lastPoint() = currentStroke!!.points.last()
@@ -115,8 +164,6 @@ class MutableStroke(
     fun addPoint(point: Point) {
         _points.add(point)
     }
-
-    fun discardLastPoint() = _points.removeAt(points.size - 1)
 }
 
 data class Point(
