@@ -12,12 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import com.rbstarbuck.scribble.game.draw.CanvasView
-import com.rbstarbuck.scribble.util.drawToBitmap
 import com.rbstarbuck.scribble.util.pxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -34,16 +31,7 @@ fun TranslateView(
         val dragOffsetStateFlow = remember { MutableStateFlow(Offset(x = 0f, y = 0f)) }
         val dragOffset by dragOffsetStateFlow.collectAsState()
 
-        val boundsStateFlow = remember {
-            MutableStateFlow(
-                Rect(
-                    Offset(x = 0f, y = 0f),
-                    Size(width = 0f, height = 0f))
-            )
-        }
-        val bounds by boundsStateFlow.collectAsState()
-
-        val layerWasVisible = selectedLayer.visible
+        val layerWasVisible = remember { selectedLayer.visible }
 
         Canvas(
             modifier = Modifier
@@ -70,20 +58,18 @@ fun TranslateView(
                     )
                 }
         ) {
-            boundsStateFlow.value = drawTransformBox(selectedLayer.strokes, context)
+            drawTransformBox(selectedLayer.strokes, context)
         }
 
-        drawToBitmap(bounds.size) {
-            CanvasView(
-                strokes = selectedLayer.strokes,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds()
-                    .offset(
-                        x = dragOffset.x.pxToDp(context),
-                        y = dragOffset.y.pxToDp(context)
-                    )
-            )
-        }
+        CanvasView(
+            strokes = selectedLayer.strokes,
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds()
+                .offset(
+                    x = dragOffset.x.pxToDp(context),
+                    y = dragOffset.y.pxToDp(context)
+                )
+        )
     }
 }
