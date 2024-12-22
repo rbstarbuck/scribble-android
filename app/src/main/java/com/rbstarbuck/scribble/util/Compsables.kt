@@ -1,5 +1,6 @@
 package com.rbstarbuck.scribble.util
 
+import android.graphics.Bitmap
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
