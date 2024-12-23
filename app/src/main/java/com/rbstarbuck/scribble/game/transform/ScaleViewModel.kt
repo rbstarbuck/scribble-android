@@ -4,6 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.rbstarbuck.scribble.game.layer.Layers
 import kotlinx.coroutines.flow.StateFlow
 
-class RotateViewModel(
+class ScaleViewModel(
     val selectedLayerStateFlow: StateFlow<Layers.Layer>
 ): ViewModel()

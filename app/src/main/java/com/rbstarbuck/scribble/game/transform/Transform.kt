@@ -21,7 +21,10 @@ enum class TransformType {
     ROTATE
 }
 
-fun DrawScope.drawTransformBox(strokes: Strokes, context: Context): Rect {
+fun DrawScope.drawTransformBox(
+    strokes: Strokes,
+    context: Context
+): Rect {
     val bounds = strokesBoundingBox(strokes)
     val boundsPadding = 16.dp.dpToPx(context)
 

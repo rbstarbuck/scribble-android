@@ -90,30 +90,26 @@ class Strokes(
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
+    fun scale(dX: Float, dY: Float) {
+        val centroid = centroid()
+
+        val matrix = Matrix()
+        matrix.postScale(dX, dY, centroid.x, centroid.y)
+
+        mapPoints { dstArray, srcArray ->
+            matrix.mapPoints(dstArray, srcArray)
+        }
+    }
+
     fun rotate(degrees: Float) {
         val centroid = centroid()
 
         val matrix = Matrix()
         matrix.postRotate(degrees, centroid.x, centroid.y)
 
-        for (stroke in committedStrokes) {
-            val points = mutableListOf<Float>()
-            for (point in stroke.points) {
-                points.add(point.x)
-                points.add(point.y)
-            }
-            val srcPoints = points.toFloatArray()
-            val dstPoints = FloatArray(points.size)
-            matrix.mapPoints(dstPoints, srcPoints)
-
-            for (i in 0..<dstPoints.size) {
-                if (i % 2 == 0) {
-                    stroke.points[i / 2].x = dstPoints[i]
-                    stroke.points[i / 2].y = dstPoints[i + 1]
-                }
-            }
+        mapPoints { dstArray, srcArray ->
+            matrix.mapPoints(dstArray, srcArray)
         }
-
     }
 
     fun centroid(): Offset {
@@ -135,6 +131,29 @@ class Strokes(
             x = (minX + maxX) / 2f,
             y = (minY + maxY) / 2f
         )
+    }
+
+    fun mapPoints(mapping: (FloatArray, FloatArray) -> Unit) {
+        for (stroke in committedStrokes) {
+            val points = mutableListOf<Float>()
+
+            for (point in stroke.points) {
+                points.add(point.x)
+                points.add(point.y)
+            }
+
+            val srcPoints = points.toFloatArray()
+            val dstPoints = FloatArray(points.size)
+
+            mapping(dstPoints, srcPoints)
+
+            for (i in 0..<dstPoints.size) {
+                if (i % 2 == 0) {
+                    stroke.points[i / 2].x = dstPoints[i]
+                    stroke.points[i / 2].y = dstPoints[i + 1]
+                }
+            }
+        }
     }
 
     fun firstPoint() = currentStroke!!.points.first()

@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import com.rbstarbuck.scribble.game.draw.CanvasView
+import com.rbstarbuck.scribble.util.Bitmap
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.math.absoluteValue
 
 @Composable
-fun RotateView(
-    viewModel: RotateViewModel,
+fun ScaleView(
+    viewModel: ScaleViewModel,
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
@@ -28,8 +30,8 @@ fun RotateView(
 
         val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
 
-        val rotationStateFlow = remember { MutableStateFlow(0f) }
-        val rotation by rotationStateFlow.collectAsState()
+        val scaleStateFlow = remember { MutableStateFlow(Offset(x = 0.5f, y = 0.5f)) }
+        val scale by scaleStateFlow.collectAsState()
 
         val pivotFractionStateFlow = remember { MutableStateFlow(Offset(0f, 0f)) }
         val pivotFraction by pivotFractionStateFlow.collectAsState()
@@ -39,21 +41,23 @@ fun RotateView(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer {
-                    transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
-                    rotationZ = rotation * 360f
-                }.pointerInput(Unit) {
+                .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
                             selectedLayer.visible = false
                         },
                         onDrag = { change, offset ->
-                            rotationStateFlow.value += offset.x / size.width
-                            rotationStateFlow.value += offset.y / size.height
+                            scaleStateFlow.value += Offset(
+                                x = (offset.x / size.width),
+                                y = (offset.y / size.height)
+                            )
                         },
                         onDragEnd = {
-                            selectedLayer.strokes.rotate(rotation * 360f)
-                            rotationStateFlow.value = 0f
+                            selectedLayer.strokes.scale(
+                                dX = scale.x.absoluteValue * 2f,
+                                dY = scale.y.absoluteValue * 2f
+                            )
+                            scaleStateFlow.value = Offset(x = 0.5f, y = 0.5f)
                             selectedLayer.visible = layerWasVisible
                         }
                     )
@@ -62,20 +66,9 @@ fun RotateView(
             val bounds = drawTransformBox(selectedLayer.strokes, context)
 
             pivotFractionStateFlow.value = Offset(
-                x = bounds.center.x / size.width,
-                y = bounds.center.y / size.height
+                x = bounds.center.x.absoluteValue / size.width,
+                y = bounds.center.y.absoluteValue / size.height
             )
         }
-
-        CanvasView(
-            strokes = selectedLayer.strokes,
-            modifier = Modifier
-                .fillMaxSize()
-                .clipToBounds()
-                .graphicsLayer {
-                    transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
-                    rotationZ = rotation * 360f
-                }
-        )
     }
 }
