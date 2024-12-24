@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
@@ -99,6 +100,11 @@ class Strokes(
         mapPoints { dstArray, srcArray ->
             matrix.mapPoints(dstArray, srcArray)
         }
+
+        val dXY = (dX + dY) / 2f
+        for (stroke in committedStrokes) {
+            stroke.width *= dXY
+        }
     }
 
     fun rotate(degrees: Float) {
@@ -163,7 +169,7 @@ class Strokes(
 
 interface Stroke {
     val color: HSVColor
-    val width: Float
+    var width: Float
     val brushType: BrushType
     val fillType: FillType
     val points: List<Point>
@@ -171,7 +177,7 @@ interface Stroke {
 
 class MutableStroke(
     override val color: HSVColor,
-    override val width: Float,
+    override var width: Float,
     override val brushType: BrushType,
     override val fillType: FillType,
     initialPoint: Point

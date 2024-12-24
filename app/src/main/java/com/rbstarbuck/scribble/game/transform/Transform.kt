@@ -1,6 +1,5 @@
 package com.rbstarbuck.scribble.game.transform
 
-import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -11,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.draw.Point
 import com.rbstarbuck.scribble.game.draw.Strokes
-import com.rbstarbuck.scribble.util.dpToPx
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -23,19 +21,19 @@ enum class TransformType {
 
 fun DrawScope.drawTransformBox(
     strokes: Strokes,
-    context: Context
+    scale: Offset = Offset(0f, 0f)
 ): Rect {
-    val bounds = strokesBoundingBox(strokes)
-    val boundsPadding = 16.dp.dpToPx(context)
+    val bounds = strokesBoundingBox(strokes, scale)
+    val boundsPadding = 16.dp.toPx()
 
     val topLeft = Offset(
-        x = bounds.left - boundsPadding,
-        y = bounds.top - boundsPadding
+        x = bounds.left - boundsPadding,// + if (bounds.width < 2 * boundsPadding) (bounds.width / 2 - boundsPadding) else 0f,
+        y = bounds.top - boundsPadding,// + if (bounds.height < 2 * boundsPadding) (bounds.height / 2 - boundsPadding) else 0f
     )
 
     val size = Size(
-        width = bounds.width + 2f * boundsPadding,
-        height = bounds.height + 2f * boundsPadding
+        width = (bounds.width + 2f * boundsPadding),//.coerceIn(boundsPadding * 2f, Float.MAX_VALUE),
+        height = (bounds.height + 2f * boundsPadding),//.coerceIn(boundsPadding * 2f, Float.MAX_VALUE)
     )
 
     drawRect(
@@ -46,7 +44,6 @@ fun DrawScope.drawTransformBox(
             width = 5f,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f))
         )
-
     )
 
     return bounds
@@ -57,7 +54,10 @@ private fun DrawScope.distance(
     p2: Point
 ) = sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
 
-private fun DrawScope.strokesBoundingBox(strokes: Strokes): Rect {
+private fun DrawScope.strokesBoundingBox(
+    strokes: Strokes,
+    scale: Offset = Offset(0f, 0f)
+): Rect {
     var left = Float.MAX_VALUE
     var right = Float.MIN_VALUE
     var top = Float.MAX_VALUE
@@ -95,9 +95,9 @@ private fun DrawScope.strokesBoundingBox(strokes: Strokes): Rect {
     }
 
     return Rect(
-        left = left * size.width,
-        top = top * size.height,
-        right = right * size.width,
-        bottom = bottom * size.height
+        left = left * size.width - scale.x,
+        top = top * size.height - scale.y,
+        right = right * size.width + scale.x,
+        bottom = bottom * size.height + scale.y
     )
 }

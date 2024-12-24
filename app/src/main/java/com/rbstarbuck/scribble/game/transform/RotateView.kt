@@ -59,7 +59,7 @@ fun RotateView(
                     )
                 }
         ) {
-            val bounds = drawTransformBox(selectedLayer.strokes, context)
+            val bounds = drawTransformBox(selectedLayer.strokes)
 
             pivotFractionStateFlow.value = Offset(
                 x = bounds.center.x / size.width,

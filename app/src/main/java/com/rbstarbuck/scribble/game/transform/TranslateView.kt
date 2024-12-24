@@ -58,7 +58,7 @@ fun TranslateView(
                     )
                 }
         ) {
-            drawTransformBox(selectedLayer.strokes, context)
+            drawTransformBox(selectedLayer.strokes)
         }
 
         CanvasView(
