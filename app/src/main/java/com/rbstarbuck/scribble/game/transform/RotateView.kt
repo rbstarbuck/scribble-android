@@ -14,7 +14,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -23,41 +22,41 @@ fun RotateView(
     viewModel: RotateViewModel,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier) {
-        val context = LocalContext.current
+    val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
 
-        val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val rotationStateFlow = remember { MutableStateFlow(0f) }
+    val rotation by rotationStateFlow.collectAsState()
 
-        val rotationStateFlow = remember { MutableStateFlow(0f) }
-        val rotation by rotationStateFlow.collectAsState()
+    val pivotFractionStateFlow = remember { MutableStateFlow(Offset(0f, 0f)) }
+    val pivotFraction by pivotFractionStateFlow.collectAsState()
 
-        val pivotFractionStateFlow = remember { MutableStateFlow(Offset(0f, 0f)) }
-        val pivotFraction by pivotFractionStateFlow.collectAsState()
+    val layerWasVisible = remember { selectedLayer.visible }
 
-        val layerWasVisible = remember { selectedLayer.visible }
-
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
+                rotationZ = rotation * 360f
+            }.pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = {
+                        selectedLayer.visible = false
+                    },
+                    onDrag = { change, offset ->
+                        rotationStateFlow.value += offset.x / size.width
+                        rotationStateFlow.value += offset.y / size.height
+                    },
+                    onDragEnd = {
+                        selectedLayer.strokes.rotate(rotation * 360f)
+                        rotationStateFlow.value = 0f
+                        selectedLayer.visible = layerWasVisible
+                    }
+                )
+            }
+    ) {
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer {
-                    transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
-                    rotationZ = rotation * 360f
-                }.pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = {
-                            selectedLayer.visible = false
-                        },
-                        onDrag = { change, offset ->
-                            rotationStateFlow.value += offset.x / size.width
-                            rotationStateFlow.value += offset.y / size.height
-                        },
-                        onDragEnd = {
-                            selectedLayer.strokes.rotate(rotation * 360f)
-                            rotationStateFlow.value = 0f
-                            selectedLayer.visible = layerWasVisible
-                        }
-                    )
-                }
         ) {
             val bounds = drawTransformBox(selectedLayer.strokes)
 
@@ -72,10 +71,6 @@ fun RotateView(
             modifier = Modifier
                 .fillMaxSize()
                 .clipToBounds()
-                .graphicsLayer {
-                    transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
-                    rotationZ = rotation * 360f
-                }
         )
     }
 }
