@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import kotlin.math.min
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
@@ -101,10 +102,10 @@ class Strokes(
             matrix.mapPoints(dstArray, srcArray)
         }
 
-        val dXY = (dX + dY) / 2f
-        for (stroke in committedStrokes) {
-            stroke.width *= dXY
-        }
+//        val dXY = (dX + dY) / 2f
+//        for (stroke in committedStrokes) {
+//            stroke.width *= dXY
+//        }
     }
 
     fun rotate(degrees: Float) {
