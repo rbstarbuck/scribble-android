@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.max
-import kotlin.math.min
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
@@ -102,10 +100,12 @@ class Strokes(
             matrix.mapPoints(dstArray, srcArray)
         }
 
-//        val dXY = (dX + dY) / 2f
-//        for (stroke in committedStrokes) {
-//            stroke.width *= dXY
-//        }
+        val dXY = (dX + dY) / 2f
+        for (stroke in committedStrokes) {
+            stroke.width *= dXY
+        }
+
+        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
     fun rotate(degrees: Float) {
@@ -140,25 +140,23 @@ class Strokes(
         )
     }
 
-    fun mapPoints(mapping: (FloatArray, FloatArray) -> Unit) {
+    fun mapPoints(mapping: (srcArray: FloatArray, dstArray: FloatArray) -> Unit) {
         for (stroke in committedStrokes) {
-            val points = mutableListOf<Float>()
+            val srcPoints = FloatArray(stroke.points.size * 2)
+            val dstPoints = FloatArray(srcPoints.size)
 
-            for (point in stroke.points) {
-                points.add(point.x)
-                points.add(point.y)
+            stroke.points.forEachIndexed { i, p ->
+                val i2 = i * 2
+                srcPoints[i2] = p.x
+                srcPoints[i2 + 1] = p.y
             }
-
-            val srcPoints = points.toFloatArray()
-            val dstPoints = FloatArray(points.size)
 
             mapping(dstPoints, srcPoints)
 
-            for (i in 0..<dstPoints.size) {
-                if (i % 2 == 0) {
-                    stroke.points[i / 2].x = dstPoints[i]
-                    stroke.points[i / 2].y = dstPoints[i + 1]
-                }
+            stroke.points.forEachIndexed { i, p ->
+                val i2 = i * 2
+                p.x = dstPoints[i2]
+                p.y = dstPoints[i2 + 1]
             }
         }
     }

@@ -27,13 +27,13 @@ fun DrawScope.drawTransformBox(
     val boundsPadding = 16.dp.toPx()
 
     val topLeft = Offset(
-        x = bounds.left - boundsPadding,// + if (bounds.width < 2 * boundsPadding) (bounds.width / 2 - boundsPadding) else 0f,
-        y = bounds.top - boundsPadding,// + if (bounds.height < 2 * boundsPadding) (bounds.height / 2 - boundsPadding) else 0f
+        x = bounds.left - boundsPadding,
+        y = bounds.top - boundsPadding,
     )
 
     val size = Size(
-        width = (bounds.width + 2f * boundsPadding),//.coerceIn(boundsPadding * 2f, Float.MAX_VALUE),
-        height = (bounds.height + 2f * boundsPadding),//.coerceIn(boundsPadding * 2f, Float.MAX_VALUE)
+        width = (bounds.width + 2f * boundsPadding),
+        height = (bounds.height + 2f * boundsPadding),
     )
 
     drawRect(

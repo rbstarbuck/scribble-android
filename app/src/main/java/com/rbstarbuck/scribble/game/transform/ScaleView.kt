@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -22,37 +23,41 @@ fun ScaleView(
     modifier: Modifier = Modifier
 ) {
     val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val recompose by selectedLayer.strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
     val boundsStateFlow = remember { MutableStateFlow(Rect.Zero) }
     val bounds by boundsStateFlow.collectAsState()
-
-    val recomposeStateFlow = remember { MutableStateFlow(false) }
-    val recompose by recomposeStateFlow.collectAsState()
 
     val layerWasVisible = remember { selectedLayer.visible }
 
     Box(modifier = modifier
         .pointerInput(Unit) {
+            val padding = 16.dp.toPx()
+
             detectDragGestures(
                 onDragStart = { offset ->
                     selectedLayer.visible = false
                 },
                 onDrag = { change, offset ->
+                    val width = bounds.width.coerceIn(0.0000001f, Float.MAX_VALUE)
+                    val height = bounds.height.coerceIn(0.0000001f, Float.MAX_VALUE)
+
                     val dX = if (change.position.x < bounds.center.x) {
-                        (bounds.width + 2f * -offset.x) / bounds.width
+                        (width + 2f * -offset.x) / width
                     } else {
-                        (bounds.width + 2f * offset.x) / bounds.width
+                        (width + 2f * offset.x) / width
                     }
 
                     val dY = if (change.position.y < bounds.center.y) {
-                        (bounds.height + 2f * -offset.y) / bounds.height
+                        (height + 2f * -offset.y) / height
                     } else {
-                        (bounds.height + 2f * offset.y) / bounds.height
+                        (height + 2f * offset.y) / height
                     }
 
-                    selectedLayer.strokes.scale(dX, dY)
-
-                    recomposeStateFlow.value = !recomposeStateFlow.value
+                    selectedLayer.strokes.scale(
+                        dX = if (dX < 1f && width < padding) 1f else dX,
+                        dY = if (dY < 1f && height < padding) 1f else dY
+                    )
                 },
                 onDragEnd = {
                     selectedLayer.visible = layerWasVisible
@@ -62,17 +67,15 @@ fun ScaleView(
     ) {
         key(recompose) {
             Canvas(Modifier.fillMaxSize()) {
-                boundsStateFlow.value = drawTransformBox(
-                    strokes = selectedLayer.strokes
-                )
+                boundsStateFlow.value = drawTransformBox(selectedLayer.strokes)
             }
-
-            CanvasView(
-                strokes = selectedLayer.strokes,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds()
-            )
         }
+
+        CanvasView(
+            strokes = selectedLayer.strokes,
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds()
+        )
     }
 }
