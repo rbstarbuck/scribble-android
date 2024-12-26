@@ -31,6 +31,7 @@ import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.game.layer.emptyLayer
 import com.rbstarbuck.scribble.util.SelectionButton
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TransformView(
@@ -194,38 +195,20 @@ private fun RotateControlsView(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
-        val rotation by selectedLayer.strokes.rotationZStateFlow.collectAsState()
-
-        val rotationZStateFlow = remember { MutableStateFlow(0.5f) }
-        val rotationYStateFlow = remember { MutableStateFlow(0.5f) }
-        val rotationXStateFlow = remember { MutableStateFlow(0.5f) }
 
         TransformSlider(
-            stateFlow = rotationZStateFlow,
-            label = stringResource(R.string.z)
+            stateFlow = selectedLayer.strokes.rotationZStateFlow,
+            label = stringResource(R.string.z),
+            valueRange = -180f..180f
         ) { value, change ->
-            rotationZStateFlow.value = value
-        }
-
-        TransformSlider(
-            stateFlow = rotationYStateFlow,
-            label = stringResource(R.string.y)
-        ) { value, change ->
-            rotationYStateFlow.value = value
-        }
-
-        TransformSlider(
-            stateFlow = rotationXStateFlow,
-            label = stringResource(R.string.x)
-        ) { value, change ->
-            rotationXStateFlow.value = value
+            selectedLayer.strokes.rotateZ(change)
         }
     }
 }
 
 @Composable
 private fun TransformSlider(
-    stateFlow: MutableStateFlow<Float>,
+    stateFlow: StateFlow<Float>,
     label: String,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     modifier: Modifier = Modifier,

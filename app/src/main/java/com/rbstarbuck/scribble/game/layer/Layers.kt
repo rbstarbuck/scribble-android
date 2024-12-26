@@ -122,7 +122,7 @@ class Layers(
         }
 
         fun undo() {
-            this@Layer.rotationZStateFlow.undo()
+           strokes.undo()
         }
     }
 }

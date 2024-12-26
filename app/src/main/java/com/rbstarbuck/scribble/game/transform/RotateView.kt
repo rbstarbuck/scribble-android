@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -27,7 +28,7 @@ fun RotateView(
     val rotationStateFlow = remember { MutableStateFlow(0f) }
     val rotation by rotationStateFlow.collectAsState()
 
-    val pivotFractionStateFlow = remember { MutableStateFlow(Offset(0f, 0f)) }
+    val pivotFractionStateFlow = remember { MutableStateFlow(Offset.Zero) }
     val pivotFraction by pivotFractionStateFlow.collectAsState()
 
     val layerWasVisible = remember { selectedLayer.visible }
@@ -54,16 +55,17 @@ fun RotateView(
                 )
             }
     ) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            val bounds = drawTransformBox(selectedLayer.strokes)
+        val recompose by selectedLayer.strokes.recomposeCommittedStrokesStateFlow.collectAsState()
 
-            pivotFractionStateFlow.value = Offset(
-                x = bounds.center.x / size.width,
-                y = bounds.center.y / size.height
-            )
+        key(recompose) {
+            Canvas(Modifier.fillMaxSize()) {
+                val bounds = drawTransformBox(selectedLayer.strokes)
+
+                pivotFractionStateFlow.value = Offset(
+                    x = bounds.center.x / size.width,
+                    y = bounds.center.y / size.height
+                )
+            }
         }
 
         CanvasView(

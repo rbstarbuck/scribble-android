@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.cos
+import kotlin.math.sin
 
 private const val MIN_SIZE = 0.05f
 
@@ -142,22 +144,16 @@ class Strokes(
             matrix.mapPoints(dstArray, srcArray)
         }
 
-        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
-        _rotationZStateFlow.value += degrees
-    }
-
-    fun rotateY(degrees: Float) {
-        val box = boundingBox()
-
-        val matrix = Matrix()
-        matrix.postRotate(degrees, box.center.x, box.center.y)
-
-        mapPoints { dstArray, srcArray ->
-            matrix.mapPoints(dstArray, srcArray)
+        var totalRotation = _rotationZStateFlow.value + degrees
+        while (totalRotation > 180f) {
+            totalRotation -= 360f
+        }
+        while (totalRotation < -180f) {
+            totalRotation += 360f
         }
 
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
-        _rotationZStateFlow.value += degrees
+        _rotationZStateFlow.value = totalRotation
     }
 
     fun boundingBox(): Rect {
@@ -167,11 +163,13 @@ class Strokes(
         var maxY = Float.MIN_VALUE
 
         for (stroke in committedStrokes) {
-            for (point in stroke.points) {
-                if (point.x < minX) minX = point.x
-                if (point.x > maxX) maxX = point.x
-                if (point.y < minY) minY = point.y
-                if (point.y > maxY) maxY = point.y
+            if (stroke.brushType != BrushType.Eraser) {
+                for (point in stroke.points) {
+                    if (point.x < minX) minX = point.x
+                    if (point.x > maxX) maxX = point.x
+                    if (point.y < minY) minY = point.y
+                    if (point.y > maxY) maxY = point.y
+                }
             }
         }
 
