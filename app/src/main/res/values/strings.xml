@@ -32,6 +32,10 @@
     <string name="move">Move</string>
     <string name="scale">Scale</string>
     <string name="rotate">Rotate</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="z">Z</string>
+    <string name="xy">XY</string>
 
     <string name="add_color">Add color</string>
 </resources>

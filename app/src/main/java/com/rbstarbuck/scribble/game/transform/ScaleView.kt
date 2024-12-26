@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -32,8 +31,6 @@ fun ScaleView(
 
     Box(modifier = modifier
         .pointerInput(Unit) {
-            val padding = 16.dp.toPx()
-
             detectDragGestures(
                 onDragStart = { offset ->
                     selectedLayer.visible = false
@@ -54,10 +51,7 @@ fun ScaleView(
                         (height + 2f * offset.y) / height
                     }
 
-                    selectedLayer.strokes.scale(
-                        dX = if (dX < 1f && width < padding) 1f else dX,
-                        dY = if (dY < 1f && height < padding) 1f else dY
-                    )
+                    selectedLayer.strokes.scale(dX, dY)
                 },
                 onDragEnd = {
                     selectedLayer.visible = layerWasVisible

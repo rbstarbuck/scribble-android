@@ -47,7 +47,9 @@ class GameViewModel: ViewModel() {
             fillTypeStateFlow = fillTypeStateFlow,
         )
 
-        transformViewModel = TransformViewModel()
+        transformViewModel = TransformViewModel(
+            selectedLayerStateFlow = layers.selectedLayerStateFlow
+        )
 
         drawingViewModel = DrawingViewModel(
             layers = layers,

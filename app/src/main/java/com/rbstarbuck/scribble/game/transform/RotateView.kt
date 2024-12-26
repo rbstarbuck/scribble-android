@@ -47,7 +47,7 @@ fun RotateView(
                         rotationStateFlow.value += offset.y / size.height
                     },
                     onDragEnd = {
-                        selectedLayer.strokes.rotate(rotation * 360f)
+                        selectedLayer.strokes.rotateZ(rotation * 360f)
                         rotationStateFlow.value = 0f
                         selectedLayer.visible = layerWasVisible
                     }

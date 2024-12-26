@@ -2,6 +2,7 @@ package com.rbstarbuck.scribble.game.draw
 
 import android.graphics.Matrix
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+private const val MIN_SIZE = 0.05f
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
@@ -33,10 +36,20 @@ class Strokes(
     private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(false)
     val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
 
+    private val _translationStateFlow = MutableStateFlow(Offset.Zero)
+    val translationStateFlow = _translationStateFlow.asStateFlow()
+
+    private val _scaleStateFlow = MutableStateFlow(Offset(1f, 1f))
+    val scaleStateFlow = _scaleStateFlow.asStateFlow()
+
+    private val _rotationZStateFlow = MutableStateFlow(0f)
+    val rotationZStateFlow = _rotationZStateFlow.asStateFlow()
+
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
             color = selectedColor.value,
             width = selectedWidth.value,
+            unscaledWidth = selectedWidth.value,
             brushType = selectedBrushType.value,
             fillType = selectedFillType.value,
             initialPoint = Point(x, y)
@@ -79,7 +92,10 @@ class Strokes(
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
     }
 
-    fun translate(x: Float, y: Float) {
+    fun translate(
+        x: Float,
+        y: Float
+    ) {
         for (stroke in committedStrokes) {
             for (point in stroke.points) {
                 point.x += x
@@ -88,38 +104,63 @@ class Strokes(
         }
 
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+        _translationStateFlow.value += Offset(x, y)
     }
 
-    fun scale(dX: Float, dY: Float) {
-        val centroid = centroid()
+    fun scale(
+        dX: Float,
+        dY: Float
+    ) {
+        val box = boundingBox()
+        val scaleX = box.width * dX >= MIN_SIZE
+        val scaleY = box.height * dY >= MIN_SIZE
 
         val matrix = Matrix()
-        matrix.postScale(dX, dY, centroid.x, centroid.y)
+        if (scaleX) matrix.postScale(dX, 1f, box.center.x, box.center.y)
+        if (scaleY) matrix.postScale(1f, dY, box.center.x, box.center.y)
+
+        if (scaleX || scaleY) {
+            mapPoints { dstArray, srcArray ->
+                matrix.mapPoints(dstArray, srcArray)
+            }
+
+            _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+            _scaleStateFlow.value += Offset(
+                x = if (scaleX) dX - 1 else 0f,
+                y = if (scaleY) dY - 1 else 0f
+            )
+        }
+    }
+
+    fun rotateZ(degrees: Float) {
+        val box = boundingBox()
+
+        val matrix = Matrix()
+        matrix.postRotate(degrees, box.center.x, box.center.y)
 
         mapPoints { dstArray, srcArray ->
             matrix.mapPoints(dstArray, srcArray)
-        }
-
-        val dXY = (dX + dY) / 2f
-        for (stroke in committedStrokes) {
-            stroke.width *= dXY
         }
 
         _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+        _rotationZStateFlow.value += degrees
     }
 
-    fun rotate(degrees: Float) {
-        val centroid = centroid()
+    fun rotateY(degrees: Float) {
+        val box = boundingBox()
 
         val matrix = Matrix()
-        matrix.postRotate(degrees, centroid.x, centroid.y)
+        matrix.postRotate(degrees, box.center.x, box.center.y)
 
         mapPoints { dstArray, srcArray ->
             matrix.mapPoints(dstArray, srcArray)
         }
+
+        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+        _rotationZStateFlow.value += degrees
     }
 
-    fun centroid(): Offset {
+    fun boundingBox(): Rect {
         var minX = Float.MAX_VALUE
         var maxX = Float.MIN_VALUE
         var minY = Float.MAX_VALUE
@@ -134,9 +175,9 @@ class Strokes(
             }
         }
 
-        return Offset(
-            x = (minX + maxX) / 2f,
-            y = (minY + maxY) / 2f
+        return Rect(
+            topLeft = Offset(minX, minY),
+            bottomRight = Offset(maxX, maxY)
         )
     }
 
@@ -169,6 +210,7 @@ class Strokes(
 interface Stroke {
     val color: HSVColor
     var width: Float
+    val unscaledWidth: Float
     val brushType: BrushType
     val fillType: FillType
     val points: List<Point>
@@ -177,6 +219,7 @@ interface Stroke {
 class MutableStroke(
     override val color: HSVColor,
     override var width: Float,
+    override val unscaledWidth: Float,
     override val brushType: BrushType,
     override val fillType: FillType,
     initialPoint: Point

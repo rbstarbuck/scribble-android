@@ -20,11 +20,11 @@ class Layers(
     private val _selectedLayerStateFlow = MutableStateFlow(_layersStateFlow.value.first())
     val selectedLayerStateFlow = _selectedLayerStateFlow.asStateFlow()
 
-    fun addAndSelect() {
+    fun addAndSelect(): Layer {
         val layer = Layer()
         _layersStateFlow.value = listOf(layer) + _layersStateFlow.value
         layer.select()
-        _layersStateFlow
+        return layer
     }
 
     inner class Layer {
@@ -122,9 +122,19 @@ class Layers(
         }
 
         fun undo() {
-            strokes.undo()
+            this@Layer.rotationZStateFlow.undo()
         }
     }
+}
+
+fun emptyLayer(): Layers.Layer {
+    val layers = Layers(
+        selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
+        selectedStrokeWidthStateFlow = MutableStateFlow(1f),
+        selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
+        selectedFillTypeStateFlow = MutableStateFlow(FillType.Filled)
+    )
+    return layers.addAndSelect()
 }
 
 private val chars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
