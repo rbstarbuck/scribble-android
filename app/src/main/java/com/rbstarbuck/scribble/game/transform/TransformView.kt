@@ -196,12 +196,19 @@ private fun RotateControlsView(
     ) {
         val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
 
+        val boundsStateFlow = MutableStateFlow(selectedLayer.strokes.boundingBox())
+        val bounds by boundsStateFlow.collectAsState()
+
         TransformSlider(
-            stateFlow = selectedLayer.strokes.rotationZStateFlow,
+            stateFlow = selectedLayer.strokes.rotationStateFlow,
             label = stringResource(R.string.z),
-            valueRange = -180f..180f
+            valueRange = -180f..180f,
+            onFinished = { boundsStateFlow.value = selectedLayer.strokes.boundingBox() }
         ) { value, change ->
-            selectedLayer.strokes.rotateZ(change)
+            selectedLayer.strokes.rotateZ(
+                degrees = change,
+                strokesCenter = bounds.center
+            )
         }
     }
 }
@@ -212,6 +219,7 @@ private fun TransformSlider(
     label: String,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     modifier: Modifier = Modifier,
+    onFinished: (() -> Unit)? = null,
     onValueChange: (Float, Float) -> Unit
 ) {
     val state by stateFlow.collectAsState()
@@ -237,7 +245,8 @@ private fun TransformSlider(
             ),
             onValueChange = {
                 onValueChange(it, it - state)
-            }
+            },
+            onValueChangeFinished = onFinished
         )
     }
 }

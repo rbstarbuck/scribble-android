@@ -61,7 +61,12 @@ fun DrawingView(
                         modifier = Modifier.fillMaxSize()
                     )
 
-                    BrushType.Rectangle, BrushType.Circle -> RectangleAndCirclePaintbrushView(
+                    BrushType.Circle -> CirclePaintbrushView(
+                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    BrushType.Rectangle -> RectanglePaintbrushView(
                         selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         modifier = Modifier.fillMaxSize()
                     )

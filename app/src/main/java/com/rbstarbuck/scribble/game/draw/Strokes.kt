@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 private const val MIN_SIZE = 0.05f
 
@@ -32,10 +32,10 @@ class Strokes(
     val committedStrokes: List<Stroke>
         get() = _committedStrokes
 
-    private val _recomposeCurrentStrokesStateFlow = MutableStateFlow(false)
+    private val _recomposeCurrentStrokesStateFlow = MutableStateFlow(0)
     val recomposeCurrentStrokesStateFlow = _recomposeCurrentStrokesStateFlow.asStateFlow()
 
-    private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(false)
+    private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(0)
     val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
 
     private val _translationStateFlow = MutableStateFlow(Offset.Zero)
@@ -44,8 +44,8 @@ class Strokes(
     private val _scaleStateFlow = MutableStateFlow(Offset(1f, 1f))
     val scaleStateFlow = _scaleStateFlow.asStateFlow()
 
-    private val _rotationZStateFlow = MutableStateFlow(0f)
-    val rotationZStateFlow = _rotationZStateFlow.asStateFlow()
+    private val _rotationStateFlow = MutableStateFlow(0f)
+    val rotationStateFlow = _rotationStateFlow.asStateFlow()
 
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
@@ -56,19 +56,50 @@ class Strokes(
             fillType = selectedFillType.value,
             initialPoint = Point(x, y)
         )
-        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
+
+        _recomposeCurrentStrokesStateFlow.value += 1
     }
 
     fun appendStroke(x: Float, y: Float) {
         _currentStroke!!.addPoint(Point(x, y))
-        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
+
+        _recomposeCurrentStrokesStateFlow.value += 1
     }
 
     fun moveCurrentStrokePoint(x: Float, y: Float) {
         val currentPoint = _currentStroke!!.points.last()
         currentPoint.x = x
         currentPoint.y = y
-        _recomposeCurrentStrokesStateFlow.value = !recomposeCurrentStrokesStateFlow.value
+
+        _recomposeCurrentStrokesStateFlow.value += 1
+    }
+
+    fun moveRectangleAndCircleStrokePoints(x: Float, y: Float) {
+        val points = currentStroke!!.points
+
+        points[1].x = x
+        points[2].x = x
+        points[2].y = y
+        points[3].y = y
+
+        _recomposeCurrentStrokesStateFlow.value += 1
+    }
+
+    fun moveCircleStrokePoints(x: Float, y: Float, center: Offset) {
+        val points = currentStroke!!.points
+
+        val radius = sqrt((x - center.x).pow(2) + (y - center.y).pow(2))
+
+        points[0].x = (center.x - radius)
+        points[0].y = (center.y - radius)
+        points[1].x = (center.x + radius)
+        points[1].y = (center.y - radius)
+        points[2].x = (center.x + radius)
+        points[2].y = (center.y + radius)
+        points[3].x = (center.x - radius)
+        points[3].y = (center.y + radius)
+
+        _recomposeCurrentStrokesStateFlow.value += 1
     }
 
     fun endStroke() {
@@ -76,7 +107,7 @@ class Strokes(
         _currentStroke = null
         CoroutineScope(Dispatchers.Default).launch {
             delay(100L)
-            _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+            _recomposeCommittedStrokesStateFlow.value += 1
         }
     }
 
@@ -91,7 +122,7 @@ class Strokes(
             _committedStrokes.removeLastOrNull()
         }
 
-        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+        _recomposeCommittedStrokesStateFlow.value += 1
     }
 
     fun translate(
@@ -105,7 +136,7 @@ class Strokes(
             }
         }
 
-        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
+        _recomposeCommittedStrokesStateFlow.value += 1
         _translationStateFlow.value += Offset(x, y)
     }
 
@@ -113,38 +144,47 @@ class Strokes(
         dX: Float,
         dY: Float
     ) {
-        val box = boundingBox()
-        val scaleX = box.width * dX >= MIN_SIZE
-        val scaleY = box.height * dY >= MIN_SIZE
+        val bounds = boundingBox()
+        val scaleX = bounds.width * dX >= MIN_SIZE
+        val scaleY = bounds.height * dY >= MIN_SIZE
 
         val matrix = Matrix()
-        if (scaleX) matrix.postScale(dX, 1f, box.center.x, box.center.y)
-        if (scaleY) matrix.postScale(1f, dY, box.center.x, box.center.y)
+        if (scaleX) matrix.postScale(dX, 1f, bounds.center.x, bounds.center.y)
+        if (scaleY) matrix.postScale(1f, dY, bounds.center.x, bounds.center.y)
 
         if (scaleX || scaleY) {
-            mapPoints { dstArray, srcArray ->
-                matrix.mapPoints(dstArray, srcArray)
+            for (stroke in committedStrokes) {
+                mapPoints(stroke) { dstArray, srcArray ->
+                    matrix.mapPoints(dstArray, srcArray)
+                }
             }
 
-            _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
             _scaleStateFlow.value += Offset(
                 x = if (scaleX) dX - 1 else 0f,
                 y = if (scaleY) dY - 1 else 0f
             )
+            _recomposeCommittedStrokesStateFlow.value += 1
         }
     }
 
-    fun rotateZ(degrees: Float) {
-        val box = boundingBox()
-
+    fun rotateZ(
+        degrees: Float,
+        strokesCenter: Offset
+    ) {
         val matrix = Matrix()
-        matrix.postRotate(degrees, box.center.x, box.center.y)
+        matrix.postRotate(degrees, strokesCenter.x, strokesCenter.y)
 
-        mapPoints { dstArray, srcArray ->
-            matrix.mapPoints(dstArray, srcArray)
+        for (stroke in committedStrokes) {
+            if (stroke.brushType == BrushType.Circle) {
+                rotateZCircle(degrees, stroke, strokesCenter)
+            } else {
+                mapPoints(stroke) { dstArray, srcArray ->
+                    matrix.mapPoints(dstArray, srcArray)
+                }
+            }
         }
 
-        var totalRotation = _rotationZStateFlow.value + degrees
+        var totalRotation = rotationStateFlow.value + degrees
         while (totalRotation > 180f) {
             totalRotation -= 360f
         }
@@ -152,8 +192,65 @@ class Strokes(
             totalRotation += 360f
         }
 
-        _recomposeCommittedStrokesStateFlow.value = !recomposeCommittedStrokesStateFlow.value
-        _rotationZStateFlow.value = totalRotation
+        _rotationStateFlow.value = totalRotation
+        _recomposeCommittedStrokesStateFlow.value += 1
+    }
+
+    private fun rotateZCircle(
+        degrees: Float,
+        circle: Stroke,
+        strokesCenter: Offset
+    ) {
+        val circleBounds = boundingBox(circle)
+
+        val rotateMatrix = Matrix()
+        rotateMatrix.postRotate(degrees, circleBounds.center.x, circleBounds.center.y)
+
+        mapPoints(circle) { dstArray, srcArray ->
+            rotateMatrix.mapPoints(dstArray, srcArray)
+        }
+
+        val srcTranslationPoint = FloatArray(2)
+        val dstTranslationPoint = FloatArray(2)
+
+        srcTranslationPoint[0] = circleBounds.center.x
+        srcTranslationPoint[1] = circleBounds.center.y
+
+        val translationPointMatrix = Matrix()
+        translationPointMatrix.postRotate(degrees, strokesCenter.x, strokesCenter.y)
+        translationPointMatrix.mapPoints(dstTranslationPoint, srcTranslationPoint)
+
+        val translateX = dstTranslationPoint[0] - circleBounds.center.x
+        val translateY = dstTranslationPoint[1] - circleBounds.center.y
+
+        val translationMatrix = Matrix()
+        translationMatrix.postTranslate(translateX, translateY)
+
+        mapPoints(circle) { dstArray, srcArray ->
+            translationMatrix.mapPoints(dstArray, srcArray)
+        }
+    }
+
+    fun mapPoints(
+        stroke: Stroke,
+        mapping: (FloatArray, FloatArray) -> Unit
+    ) {
+        val srcPoints = FloatArray(stroke.points.size * 2)
+        val dstPoints = FloatArray(srcPoints.size)
+
+        stroke.points.forEachIndexed { i, p ->
+            val i2 = i * 2
+            srcPoints[i2] = p.x
+            srcPoints[i2 + 1] = p.y
+        }
+
+        mapping(dstPoints, srcPoints)
+
+        stroke.points.forEachIndexed { i, p ->
+            val i2 = i * 2
+            p.x = dstPoints[i2]
+            p.y = dstPoints[i2 + 1]
+        }
     }
 
     fun boundingBox(): Rect {
@@ -179,30 +276,28 @@ class Strokes(
         )
     }
 
-    fun mapPoints(mapping: (srcArray: FloatArray, dstArray: FloatArray) -> Unit) {
-        for (stroke in committedStrokes) {
-            val srcPoints = FloatArray(stroke.points.size * 2)
-            val dstPoints = FloatArray(srcPoints.size)
-
-            stroke.points.forEachIndexed { i, p ->
-                val i2 = i * 2
-                srcPoints[i2] = p.x
-                srcPoints[i2 + 1] = p.y
-            }
-
-            mapping(dstPoints, srcPoints)
-
-            stroke.points.forEachIndexed { i, p ->
-                val i2 = i * 2
-                p.x = dstPoints[i2]
-                p.y = dstPoints[i2 + 1]
-            }
-        }
-    }
-
     fun firstPoint() = currentStroke!!.points.first()
 
     fun lastPoint() = currentStroke!!.points.last()
+}
+
+fun boundingBox(stroke: Stroke): Rect {
+    var minX = Float.MAX_VALUE
+    var maxX = Float.MIN_VALUE
+    var minY = Float.MAX_VALUE
+    var maxY = Float.MIN_VALUE
+
+    for (point in stroke.points) {
+        if (point.x < minX) minX = point.x
+        if (point.x > maxX) maxX = point.x
+        if (point.y < minY) minY = point.y
+        if (point.y > maxY) maxY = point.y
+    }
+
+    return Rect(
+        topLeft = Offset(minX, minY),
+        bottomRight = Offset(maxX, maxY)
+    )
 }
 
 interface Stroke {

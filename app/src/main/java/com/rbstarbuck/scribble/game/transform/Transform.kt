@@ -8,10 +8,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.brush.BrushType
-import com.rbstarbuck.scribble.game.draw.Point
 import com.rbstarbuck.scribble.game.draw.Strokes
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 enum class TransformType {
     TRANSLATE,
@@ -21,7 +18,7 @@ enum class TransformType {
 
 fun DrawScope.drawTransformBox(
     strokes: Strokes,
-    scale: Offset = Offset(0f, 0f)
+    scale: Offset = Offset.Zero
 ): Rect {
     val bounds = strokesBoundingBox(strokes, scale)
     val boundsPadding = 16.dp.toPx()
@@ -49,14 +46,9 @@ fun DrawScope.drawTransformBox(
     return bounds
 }
 
-private fun DrawScope.distance(
-    p1: Point,
-    p2: Point
-) = sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
-
 private fun DrawScope.strokesBoundingBox(
     strokes: Strokes,
-    scale: Offset = Offset(0f, 0f)
+    scale: Offset = Offset.Zero
 ): Rect {
     var left = Float.MAX_VALUE
     var right = Float.MIN_VALUE
@@ -65,31 +57,14 @@ private fun DrawScope.strokesBoundingBox(
 
     for (stroke in strokes.committedStrokes) {
         if (stroke.brushType != BrushType.Eraser) {
-            if (stroke.brushType == BrushType.Circle) {
-                val first = stroke.points.first()
-                val second = stroke.points.last()
+            for (point in stroke.points) {
+                val horizontal = point.x
+                val vertical = point.y
 
-                val distance = distance(first, second)
-
-                val leftDistance = first.x - distance
-                val rightDistance = first.x + distance
-                val topDistance = first.y - distance
-                val bottomDistance = first.y + distance
-
-                if (leftDistance < left) left = leftDistance
-                if (rightDistance > right) right = rightDistance
-                if (topDistance < top) top = topDistance
-                if (bottomDistance > bottom) bottom = bottomDistance
-            } else {
-                for (point in stroke.points) {
-                    val horizontal = point.x
-                    val vertical = point.y
-
-                    if (horizontal < left) left = horizontal
-                    if (horizontal > right) right = horizontal
-                    if (vertical < top) top = vertical
-                    if (vertical > bottom) bottom = vertical
-                }
+                if (horizontal < left) left = horizontal
+                if (horizontal > right) right = horizontal
+                if (vertical < top) top = vertical
+                if (vertical > bottom) bottom = vertical
             }
         }
     }
