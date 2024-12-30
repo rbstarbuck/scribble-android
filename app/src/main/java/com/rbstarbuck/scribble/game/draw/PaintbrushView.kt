@@ -80,7 +80,7 @@ fun LineAndPolygonPaintbrushView(
 
     val visible by selectedLayer.visibleStateFlow.collectAsState()
 
-    var lastDragPoint = Offset(0f, 0f)
+    var lastDragPoint = Offset.Zero
 
     if (visible) {
         Box(
@@ -148,43 +148,89 @@ fun LineAndPolygonPaintbrushView(
 }
 
 @Composable
-fun RectangleAndCirclePaintbrushView(
+fun RectanglePaintbrushView(
     selectedLayerStateFlow: StateFlow<Layer>,
     modifier: Modifier = Modifier
 ) {
     val selectedLayer by selectedLayerStateFlow.collectAsState()
     val strokes = selectedLayer.strokes
 
-    val visible by selectedLayer.visibleStateFlow.collectAsState()
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        val x = offset.x / size.width
+                        val y = offset.y / size.width
 
-    if (visible) {
-        Box(
-            modifier = modifier
-                .pointerInput(strokes) {
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            strokes.beginStroke(
-                                x = offset.x / size.width,
-                                y = offset.y / size.height
-                            )
-                            strokes.appendStroke(
-                                x = offset.x / size.width,
-                                y = offset.y / size.height
-                            )
-                        },
-                        onDrag = { change, _ ->
-                            strokes.moveCurrentStrokePoint(
-                                x = change.position.x / size.width,
-                                y = change.position.y / size.height
-                            )
-                        },
-                        onDragEnd = {
-                            strokes.endStroke()
-                        }
-                    )
-                }
-        )
+                        strokes.beginStroke(x, y)
+                        strokes.appendStroke(x, y)
+                        strokes.appendStroke(x, y)
+                        strokes.appendStroke(x, y)
+                    },
+                    onDrag = { change, dragAmount ->
+                        val x = change.position.x / size.width
+                        val y = change.position.y / size.height
+
+                        strokes.moveRectangleAndCircleStrokePoints(x, y)
+                    },
+                    onDragEnd = {
+                        strokes.endStroke()
+                    }
+                )
+            }
+    )
+}
+
+@Composable
+fun CirclePaintbrushView(
+    selectedLayerStateFlow: StateFlow<Layer>,
+    modifier: Modifier = Modifier
+) {
+    val selectedLayer by selectedLayerStateFlow.collectAsState()
+    val strokes = selectedLayer.strokes
+
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        val x = offset.x / size.width
+                        val y = offset.y / size.height
+
+                        strokes.beginStroke(x, y)
+                        strokes.appendStroke(x, y)
+                        strokes.appendStroke(x, y)
+                        strokes.appendStroke(x, y)
+                    },
+                    onDrag = { change, dragAmount ->
+                        val x = change.position.x / size.width
+                        val y = change.position.y / size.height
+
+                        strokes.moveCircleStrokePoints(x, y, center(strokes.currentStroke!!))
+                    },
+                    onDragEnd = {
+                        strokes.endStroke()
+                    }
+                )
+            }
+    )
+}
+
+private fun center(currentStroke: Stroke): Offset {
+    var minX = Float.MAX_VALUE
+    var maxX = Float.MIN_VALUE
+    var minY = Float.MAX_VALUE
+    var maxY = Float.MIN_VALUE
+
+    for (point in currentStroke.points) {
+        if (point.x < minX) minX = point.x
+        if (point.x > maxX) maxX = point.x
+        if (point.y < minY) minY = point.y
+        if (point.y > maxX) maxY = point.y
     }
+
+    return Offset((minX + maxX) / 2f, (minY + maxY) / 2f)
 }
 
 private fun pointsAreCloseToEachOther(

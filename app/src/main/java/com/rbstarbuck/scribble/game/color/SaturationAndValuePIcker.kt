@@ -46,7 +46,7 @@ fun SaturationAndValuePicker(
 ) {
     val hue by hueStateFlow.collectAsState()
 
-    val pointStateFlow = remember { MutableStateFlow(Offset(0f, 0f)) }
+    val pointStateFlow = remember { MutableStateFlow(Offset.Zero) }
     val point by pointStateFlow.collectAsState()
 
     Canvas(

@@ -1,5 +1,6 @@
 package com.rbstarbuck.scribble.game.draw
 
+import android.graphics.Matrix
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,17 +18,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.toColor
 import com.rbstarbuck.scribble.util.SoftwareLayer
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.math.absoluteValue
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 @Composable
 fun CanvasBackgroundView(
@@ -57,9 +58,7 @@ fun CanvasView(
                 ) {
                     for (stroke in strokes.committedStrokes) {
                         if (stroke.brushType == BrushType.Circle) {
-                            drawStrokeCircle(stroke)
-                        } else if (stroke.brushType == BrushType.Rectangle) {
-                            drawStrokeRectangle(stroke)
+                            drawStrokeCircle(stroke, strokes.rotationStateFlow.value)
                         } else {
                             drawStroke(stroke)
                         }
@@ -76,9 +75,7 @@ fun CanvasView(
                     val currentStroke = strokes.currentStroke
                     if (currentStroke != null) {
                         if (currentStroke.brushType == BrushType.Circle) {
-                            drawStrokeCircle(currentStroke)
-                        } else if (currentStroke.brushType == BrushType.Rectangle) {
-                            drawStrokeRectangle(currentStroke)
+                            drawStrokeCircle(currentStroke, strokes.rotationStateFlow.value)
                         } else {
                             drawStroke(currentStroke)
                         }
@@ -124,7 +121,7 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
                 )
             }
 
-            if (stroke.brushType == BrushType.Polygon) {
+            if (stroke.brushType == BrushType.Polygon || stroke.brushType == BrushType.Rectangle) {
                 path.close()
             }
 
@@ -153,58 +150,42 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
     }
 }
 
-private fun DrawScope.drawStrokeRectangle(stroke: Stroke) {
-    if (stroke.points.size == 2) {
-        val first = stroke.points.first()
-        val second = stroke.points.last()
+private fun DrawScope.drawStrokeCircle(stroke: Stroke, rotation: Float = 0f) {
+    val points = stroke.points
+    val bounds = boundingBox(stroke)
 
-        val xFirst = first.x * size.width
-        val xSecond = second.x * size.width
-        val yFirst = first.y * size.height
-        val ySecond = second.y * size.height
+    val srcArray = FloatArray(8)
+    val dstArray = FloatArray(8)
 
-        val topLeft = when {
-            xFirst < xSecond && yFirst > ySecond -> Offset(xFirst, ySecond)
-            xFirst < xSecond && yFirst < ySecond -> Offset(xFirst, yFirst)
-            xFirst > xSecond && yFirst > ySecond -> Offset(xSecond, ySecond)
-            else -> Offset(xSecond, yFirst)
-        }
+    srcArray[0] = points[0].x
+    srcArray[1] = points[0].y
+    srcArray[2] = points[1].x
+    srcArray[3] = points[1].y
+    srcArray[4] = points[2].x
+    srcArray[5] = points[2].y
+    srcArray[6] = points[3].x
+    srcArray[7] = points[3].y
 
-        val rectSize = Size(
-            width = (xFirst - xSecond).absoluteValue,
-            height = (yFirst - ySecond).absoluteValue
-        )
+    val matrix = Matrix()
+    matrix.postRotate(-rotation, bounds.center.x, bounds.center.y)
+    matrix.mapPoints(dstArray, srcArray)
 
-        drawRect(
+    rotate(rotation, Offset(bounds.center.x * size.width, bounds.center.y * size.height)) {
+        drawOval(
             color = stroke.color.toColor(),
-            topLeft = topLeft,
-            size = rectSize,
-            style = when (stroke.fillType) {
-                FillType.Stroke -> androidx.compose.ui.graphics.drawscope.Stroke(
-                    width = stroke.width * size.width
-                )
-                FillType.Filled -> Fill
-            }
-        )
-    }
-}
-
-private fun DrawScope.drawStrokeCircle(stroke: Stroke) {
-    if (stroke.points.size == 2) {
-        drawCircle(
-            color = stroke.color.toColor(),
-            radius = distanceInCanvas(
-                p1 = stroke.points.first(),
-                p2 = stroke.points.last()
+            topLeft = Offset(
+                x = dstArray[0] * size.width,
+                y = dstArray[1] * size.height
             ),
-            center = Offset(
-                x = stroke.points.first().x * size.width,
-                y = stroke.points.first().y * size.height
+            size = Size(
+                width = (dstArray[2] - dstArray[0]) * size.width,
+                height = (dstArray[7] - dstArray[1]) * size.height
             ),
             style = when (stroke.fillType) {
                 FillType.Stroke -> androidx.compose.ui.graphics.drawscope.Stroke(
                     width = stroke.width * size.width
                 )
+
                 FillType.Filled -> Fill
             }
         )
@@ -227,10 +208,3 @@ private fun DrawScope.drawCloseShapeCircle(point: Point) {
         )
     )
 }
-
-private fun DrawScope.distanceInCanvas(
-    p1: Point,
-    p2: Point
-) = sqrt(
-    (p1.x * size.width - p2.x * size.width).pow(2) +
-            (p1.y * size.height - p2.y * size.height).pow(2))

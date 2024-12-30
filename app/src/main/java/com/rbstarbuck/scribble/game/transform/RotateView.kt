@@ -10,12 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -24,55 +22,59 @@ fun RotateView(
     modifier: Modifier = Modifier
 ) {
     val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val strokesRotation by selectedLayer.strokes.rotationStateFlow.collectAsState()
 
-    val rotationStateFlow = remember { MutableStateFlow(0f) }
-    val rotation by rotationStateFlow.collectAsState()
+    val localRotationStateFlow = remember { MutableStateFlow(0f) }
+    val localRotation by localRotationStateFlow.collectAsState()
 
-    val pivotFractionStateFlow = remember { MutableStateFlow(Offset.Zero) }
-    val pivotFraction by pivotFractionStateFlow.collectAsState()
+    val boundsStateFlow = remember { MutableStateFlow(Rect.Zero) }
+    val bounds by boundsStateFlow.collectAsState()
 
-    val layerWasVisible = remember { selectedLayer.visible }
+    val recomposeBoundingBoxStateFlow = remember { MutableStateFlow(0) }
+    val recomposeBoundingBox by recomposeBoundingBoxStateFlow.collectAsState()
 
-    Box(
-        modifier = modifier
-            .graphicsLayer {
-                transformOrigin = TransformOrigin(pivotFraction.x, pivotFraction.y)
-                rotationZ = rotation * 360f
-            }.pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = {
-                        selectedLayer.visible = false
-                    },
-                    onDrag = { change, offset ->
-                        rotationStateFlow.value += offset.x / size.width
-                        rotationStateFlow.value += offset.y / size.height
-                    },
-                    onDragEnd = {
-                        selectedLayer.strokes.rotateZ(rotation * 360f)
-                        rotationStateFlow.value = 0f
-                        selectedLayer.visible = layerWasVisible
-                    }
-                )
-            }
-    ) {
-        val recompose by selectedLayer.strokes.recomposeCommittedStrokesStateFlow.collectAsState()
+    key(recomposeBoundingBox) {
+        Box(
+            modifier = modifier
+                .graphicsLayer {
+                    transformOrigin = TransformOrigin(bounds.center.x, bounds.center.y)
+                    rotationZ = localRotation
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = {
+                            boundsStateFlow.value = selectedLayer.strokes.boundingBox()
+                        },
+                        onDrag = { change, offset ->
+                            val degrees = (offset.x / size.width + offset.y / size.height) * 180f
 
-        key(recompose) {
-            Canvas(Modifier.fillMaxSize()) {
-                val bounds = drawTransformBox(selectedLayer.strokes)
-
-                pivotFractionStateFlow.value = Offset(
-                    x = bounds.center.x / size.width,
-                    y = bounds.center.y / size.height
-                )
-            }
-        }
-
-        CanvasView(
-            strokes = selectedLayer.strokes,
-            modifier = Modifier
-                .fillMaxSize()
-                .clipToBounds()
+                            localRotationStateFlow.value += degrees
+                            selectedLayer.strokes.rotateZ(
+                                degrees = degrees,
+                                strokesCenter = bounds.center
+                            )
+                        },
+                        onDragEnd = {
+                            localRotationStateFlow.value = 0f
+                            recomposeBoundingBoxStateFlow.value += 1
+                        }
+                    )
+                }
         )
+    }
+
+    key(strokesRotation) {
+        Canvas(
+            modifier = modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    boundsStateFlow.value = selectedLayer.strokes.boundingBox()
+
+                    transformOrigin = TransformOrigin(bounds.center.x, bounds.center.y)
+                    rotationZ = strokesRotation
+                }
+        ) {
+            drawTransformBox(selectedLayer.strokes)
+        }
     }
 }
