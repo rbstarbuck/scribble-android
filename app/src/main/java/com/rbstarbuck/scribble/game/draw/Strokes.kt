@@ -87,6 +87,14 @@ class Strokes(
 
     fun moveCircleStrokePoints(x: Float, y: Float, center: Offset) {
         val points = currentStroke!!.points
+        val bounds = boundingBox(currentStroke!!)
+
+        val negativeMatrix = Matrix()
+        negativeMatrix.postRotate(-rotationStateFlow.value, bounds.center.x, bounds.center.y)
+
+        mapPoints(currentStroke!!) { dstArray, srcArray ->
+            negativeMatrix.mapPoints(dstArray, srcArray)
+        }
 
         val radius = sqrt((x - center.x).pow(2) + (y - center.y).pow(2))
 
@@ -98,6 +106,13 @@ class Strokes(
         points[2].y = (center.y + radius)
         points[3].x = (center.x - radius)
         points[3].y = (center.y + radius)
+
+        val positiveMatrix = Matrix()
+        positiveMatrix.postRotate(rotationStateFlow.value, bounds.center.x, bounds.center.y)
+
+        mapPoints(currentStroke!!) { dstArray, srcArray ->
+            positiveMatrix.mapPoints(dstArray, srcArray)
+        }
 
         _recomposeCurrentStrokesStateFlow.value += 1
     }

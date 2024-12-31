@@ -206,8 +206,9 @@ fun CirclePaintbrushView(
                     onDrag = { change, dragAmount ->
                         val x = change.position.x / size.width
                         val y = change.position.y / size.height
+                        val center = boundingBox(strokes.currentStroke!!).center
 
-                        strokes.moveCircleStrokePoints(x, y, center(strokes.currentStroke!!))
+                        strokes.moveCircleStrokePoints(x, y, center)
                     },
                     onDragEnd = {
                         strokes.endStroke()
@@ -215,22 +216,6 @@ fun CirclePaintbrushView(
                 )
             }
     )
-}
-
-private fun center(currentStroke: Stroke): Offset {
-    var minX = Float.MAX_VALUE
-    var maxX = Float.MIN_VALUE
-    var minY = Float.MAX_VALUE
-    var maxY = Float.MIN_VALUE
-
-    for (point in currentStroke.points) {
-        if (point.x < minX) minX = point.x
-        if (point.x > maxX) maxX = point.x
-        if (point.y < minY) minY = point.y
-        if (point.y > maxX) maxY = point.y
-    }
-
-    return Offset((minX + maxX) / 2f, (minY + maxY) / 2f)
 }
 
 private fun pointsAreCloseToEachOther(

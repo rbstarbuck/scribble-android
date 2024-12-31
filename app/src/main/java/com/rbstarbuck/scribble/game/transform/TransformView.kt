@@ -204,7 +204,7 @@ private fun RotateControlsView(
             label = stringResource(R.string.z),
             valueRange = -180f..180f,
             onFinished = { boundsStateFlow.value = selectedLayer.strokes.boundingBox() }
-        ) { value, change ->
+        ) { _, change ->
             selectedLayer.strokes.rotateZ(
                 degrees = change,
                 strokesCenter = bounds.center
