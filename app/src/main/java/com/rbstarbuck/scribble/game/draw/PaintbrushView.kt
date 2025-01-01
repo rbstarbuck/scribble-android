@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.util.dpToPx
 import com.rbstarbuck.scribble.game.layer.Layers.Layer
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -172,7 +174,7 @@ fun RectanglePaintbrushView(
                         val x = change.position.x / size.width
                         val y = change.position.y / size.height
 
-                        strokes.moveRectangleAndCircleStrokePoints(x, y)
+                        strokes.moveRectangleStrokePoints(x, y)
                     },
                     onDragEnd = {
                         strokes.endStroke()
@@ -190,6 +192,8 @@ fun CirclePaintbrushView(
     val selectedLayer by selectedLayerStateFlow.collectAsState()
     val strokes = selectedLayer.strokes
 
+    val centerStateFlow = remember { MutableStateFlow(Offset.Zero) }
+
     Box(
         modifier = modifier
             .pointerInput(Unit) {
@@ -199,16 +203,17 @@ fun CirclePaintbrushView(
                         val y = offset.y / size.height
 
                         strokes.beginStroke(x, y)
-                        strokes.appendStroke(x, y)
-                        strokes.appendStroke(x, y)
-                        strokes.appendStroke(x, y)
+                        for (i in 1..<180) {
+                            strokes.appendStroke(x, y)
+                        }
+
+                        centerStateFlow.value = Offset(x, y)
                     },
                     onDrag = { change, dragAmount ->
-                        val x = change.position.x / size.width
-                        val y = change.position.y / size.height
-                        val center = boundingBox(strokes.currentStroke!!).center
+                        val x = (change.position.x - dragAmount.x) / size.width
+                        val y = (change.position.y - dragAmount.y) / size.height
 
-                        strokes.moveCircleStrokePoints(x, y, center)
+                        strokes.moveCircleStrokePoints(x, y, centerStateFlow.value)
                     },
                     onDragEnd = {
                         strokes.endStroke()

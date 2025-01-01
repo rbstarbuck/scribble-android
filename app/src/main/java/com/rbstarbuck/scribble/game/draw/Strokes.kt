@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 private const val MIN_SIZE = 0.05f
 
@@ -74,7 +72,7 @@ class Strokes(
         _recomposeCurrentStrokesStateFlow.value += 1
     }
 
-    fun moveRectangleAndCircleStrokePoints(x: Float, y: Float) {
+    fun moveRectangleStrokePoints(x: Float, y: Float) {
         val points = currentStroke!!.points
 
         points[1].x = x
@@ -86,32 +84,22 @@ class Strokes(
     }
 
     fun moveCircleStrokePoints(x: Float, y: Float, center: Offset) {
-        val points = currentStroke!!.points
-        val bounds = boundingBox(currentStroke!!)
+        val dstArray = Array(180) { FloatArray(2) }
+        val srcArray = Array(180) { FloatArray(2) }
 
-        val negativeMatrix = Matrix()
-        negativeMatrix.postRotate(-rotationStateFlow.value, bounds.center.x, bounds.center.y)
+        var i = 0
+        val matrix = Matrix()
+        for (point in currentStroke!!.points) {
+            srcArray[i][0] = x
+            srcArray[i][1] = y
 
-        mapPoints(currentStroke!!) { dstArray, srcArray ->
-            negativeMatrix.mapPoints(dstArray, srcArray)
-        }
+            matrix.setRotate(i * 2f, center.x, center.y)
+            matrix.mapPoints(dstArray[i], srcArray[i])
 
-        val radius = sqrt((x - center.x).pow(2) + (y - center.y).pow(2))
+            point.x = dstArray[i][0]
+            point.y = dstArray[i][1]
 
-        points[0].x = (center.x - radius)
-        points[0].y = (center.y - radius)
-        points[1].x = (center.x + radius)
-        points[1].y = (center.y - radius)
-        points[2].x = (center.x + radius)
-        points[2].y = (center.y + radius)
-        points[3].x = (center.x - radius)
-        points[3].y = (center.y + radius)
-
-        val positiveMatrix = Matrix()
-        positiveMatrix.postRotate(rotationStateFlow.value, bounds.center.x, bounds.center.y)
-
-        mapPoints(currentStroke!!) { dstArray, srcArray ->
-            positiveMatrix.mapPoints(dstArray, srcArray)
+            ++i
         }
 
         _recomposeCurrentStrokesStateFlow.value += 1
