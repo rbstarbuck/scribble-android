@@ -2,6 +2,8 @@
     <string name="app_name">Scribble</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="back">Back</string>
+
     <string name="brush">Brush</string>
     <string name="color">Color</string>
     <string name="layers">Layers</string>

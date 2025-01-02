@@ -32,6 +32,7 @@ import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.game.color.ColorPickerView
 import com.rbstarbuck.scribble.game.layer.LayersView
 import com.rbstarbuck.scribble.game.brush.BrushView
+import com.rbstarbuck.scribble.game.prompt.GamePromptView
 import com.rbstarbuck.scribble.game.transform.TransformView
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -50,7 +51,13 @@ fun GameView(
         ) {
             val tabItemRecompose by TabItem.recomposeFlag.collectAsState()
 
-            Spacer(Modifier.height(65.dp))
+            GamePromptView(
+                viewModel = viewModel.gamePromptViewModel,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(65.dp)
+                    .padding(top = 10.dp, start = 20.dp, end = 20.dp)
+            )
 
             DrawingView(
                 viewModel = viewModel.drawingViewModel,
