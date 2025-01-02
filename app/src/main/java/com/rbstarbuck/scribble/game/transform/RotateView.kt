@@ -21,15 +21,11 @@ fun RotateView(
     modifier: Modifier = Modifier
 ) {
     val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
-
-    val localRotationStateFlow = remember { MutableStateFlow(0f) }
-    val localRotation by localRotationStateFlow.collectAsState()
+    val recomposeBoundingBox by viewModel.recomposeBoundingBoxStateFlow.collectAsState()
+    val boundingBoxRotation by viewModel.boundingBoxRotationStateFlow.collectAsState()
 
     val boundsStateFlow = remember { MutableStateFlow(Rect.Zero) }
     val bounds by boundsStateFlow.collectAsState()
-
-    val recomposeBoundingBoxStateFlow = remember { MutableStateFlow(0) }
-    val recomposeBoundingBox by recomposeBoundingBoxStateFlow.collectAsState()
 
     key(recomposeBoundingBox) {
         Canvas(
@@ -39,14 +35,14 @@ fun RotateView(
                         pivotFractionX = bounds.center.x / size.width,
                         pivotFractionY = bounds.center.y / size.height
                     )
-                    rotationZ = localRotation
+                    rotationZ = boundingBoxRotation
                 }
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDrag = { change, offset ->
                             val degrees = (offset.x / size.width + offset.y / size.height) * 180f
 
-                            localRotationStateFlow.value += degrees
+                            viewModel.boundingBoxRotationStateFlow.value += degrees
                             selectedLayer.strokes.rotateZ(
                                 degrees = degrees,
                                 strokesCenter = Offset(
@@ -56,8 +52,8 @@ fun RotateView(
                             )
                         },
                         onDragEnd = {
-                            localRotationStateFlow.value = 0f
-                            recomposeBoundingBoxStateFlow.value += 1
+                            viewModel.boundingBoxRotationStateFlow.value = 0f
+                            viewModel.recomposeBoundingBoxStateFlow.value += 1
                         }
                     )
                 }

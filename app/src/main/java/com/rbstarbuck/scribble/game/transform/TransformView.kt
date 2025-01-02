@@ -203,12 +203,17 @@ private fun RotateControlsView(
             stateFlow = selectedLayer.strokes.rotationStateFlow,
             label = stringResource(R.string.z),
             valueRange = -180f..180f,
-            onFinished = { boundsStateFlow.value = selectedLayer.strokes.boundingBox() }
+            onFinished = {
+                boundsStateFlow.value = selectedLayer.strokes.boundingBox()
+                viewModel.boundingBoxRotationStateFlow.value = 0f
+                viewModel.recomposeBoundingBoxStateFlow.value += 1
+            }
         ) { _, change ->
             selectedLayer.strokes.rotateZ(
                 degrees = change,
                 strokesCenter = bounds.center
             )
+            viewModel.boundingBoxRotationStateFlow.value += change
         }
     }
 }
@@ -254,7 +259,11 @@ private fun TransformSlider(
 @Preview
 @Composable
 fun TransformViewPreview() {
-    val viewModel = TransformViewModel(MutableStateFlow(emptyLayer()))
+    val viewModel = TransformViewModel(
+        selectedLayerStateFlow = MutableStateFlow(emptyLayer()),
+        boundingBoxRotationStateFlow = MutableStateFlow(0f),
+        recomposeBoundingBoxStateFlow = MutableStateFlow(0)
+    )
 
     TransformView(
         viewModel = viewModel,
