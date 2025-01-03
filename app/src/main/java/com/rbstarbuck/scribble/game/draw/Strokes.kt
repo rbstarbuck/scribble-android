@@ -26,7 +26,7 @@ class Strokes(
     val currentStroke: Stroke?
         get() = _currentStroke
 
-    private val _committedStrokes = mutableListOf<Stroke>()
+    private val _committedStrokes = mutableListOf<MutableStroke>()
     val committedStrokes: List<Stroke>
         get() = _committedStrokes
 
@@ -114,8 +114,23 @@ class Strokes(
         }
     }
 
+    fun copy(): Strokes {
+        val other = Strokes(
+            selectedColor = selectedColor,
+            selectedWidth = selectedWidth,
+            selectedBrushType = selectedBrushType,
+            selectedFillType = selectedFillType
+        )
+
+        for (stroke in _committedStrokes) {
+            other._committedStrokes.add(stroke.copy())
+        }
+
+        return other
+    }
+
     fun mergeInto(other: Strokes) {
-        other._committedStrokes.addAll(committedStrokes)
+        other._committedStrokes.addAll(_committedStrokes)
     }
 
     fun undo() {
@@ -310,15 +325,18 @@ interface Stroke {
     val brushType: BrushType
     val fillType: FillType
     val points: List<Point>
+    val initialPoint: Point
+
+    fun copy(): Stroke
 }
 
-class MutableStroke(
+data class MutableStroke(
     override val color: HSVColor,
     override var width: Float,
     override val unscaledWidth: Float,
     override val brushType: BrushType,
     override val fillType: FillType,
-    initialPoint: Point
+    override val initialPoint: Point
 ): Stroke {
     private val _points = mutableListOf(initialPoint)
     override val points: List<Point>
@@ -326,6 +344,21 @@ class MutableStroke(
 
     fun addPoint(point: Point) {
         _points.add(point)
+    }
+
+    override fun copy(): MutableStroke {
+        val other = copy(
+            initialPoint = initialPoint.copy(
+                x = initialPoint.x,
+                y = initialPoint.y
+            )
+        )
+
+        for (point in points) {
+            other.addPoint(point.copy())
+        }
+
+        return other
     }
 }
 

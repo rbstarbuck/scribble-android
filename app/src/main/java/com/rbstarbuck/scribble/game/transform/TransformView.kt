@@ -260,9 +260,7 @@ private fun TransformSlider(
 @Composable
 fun TransformViewPreview() {
     val viewModel = TransformViewModel(
-        selectedLayerStateFlow = MutableStateFlow(emptyLayer()),
-        boundingBoxRotationStateFlow = MutableStateFlow(0f),
-        recomposeBoundingBoxStateFlow = MutableStateFlow(0)
+        selectedLayerStateFlow = MutableStateFlow(emptyLayer())
     )
 
     TransformView(

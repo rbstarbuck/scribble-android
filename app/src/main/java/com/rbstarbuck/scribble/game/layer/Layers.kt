@@ -4,6 +4,7 @@ import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.Strokes
+import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,12 +30,15 @@ class Layers(
 
     inner class Layer {
         val key = generateKey()
-        val strokes = Strokes(
+
+        private var _strokes = Strokes(
             selectedColorStateFlow,
             selectedStrokeWidthStateFlow,
             selectedBrushTypeStateFlow,
             selectedFillTypeStateFlow
         )
+        val strokes: Strokes
+            get() = _strokes
 
         private val _visibleStateFlow = MutableStateFlow(true)
         val visibleStateFlow = _visibleStateFlow.asStateFlow()
@@ -58,8 +62,35 @@ class Layers(
             _selectedLayerStateFlow.value = this
         }
 
+        fun duplicate() {
+            val layers = layersStateFlow.value
+            val index = layers.indexOfFirst { it.key == key }
+
+            val duplicatedLayer = Layer()
+            duplicatedLayer._strokes = _strokes.copy()
+            duplicatedLayer.select()
+
+            _layersStateFlow.value =
+                layers.subList(0, index) +
+                        duplicatedLayer +
+                        layers.subList(index, layers.size)
+
+            duplicatedLayer.select()
+        }
+
+        fun mergeDown() {
+            val layers = layersStateFlow.value
+            val index = layers.indexOfFirst { it.key == key }
+
+            if (index >= 0 && index < layers.size - 1) {
+                layers[index].strokes.mergeInto(layers[index + 1].strokes)
+                layers[index + 1].select()
+                layers[index].remove()
+            }
+        }
+
         fun remove() {
-            val layers = _layersStateFlow.value
+            val layers = layersStateFlow.value
 
             if (selected) {
                 val index = layers.indexOfFirst { it.key == key }
@@ -110,17 +141,6 @@ class Layers(
             }
         }
 
-        fun mergeDown() {
-            val layers = layersStateFlow.value
-            val index = layers.indexOfFirst { it.key == key }
-
-            if (index >= 0 && index < layers.size - 1) {
-                layers[index].strokes.mergeInto(layers[index + 1].strokes)
-                layers[index + 1].select()
-                layers[index].remove()
-            }
-        }
-
         fun undo() {
            strokes.undo()
         }
@@ -136,6 +156,3 @@ fun emptyLayer(): Layers.Layer {
     )
     return layers.addAndSelect()
 }
-
-private val chars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-fun generateKey(size: Int = 32) = Array(size) { chars.random() }.joinToString("")

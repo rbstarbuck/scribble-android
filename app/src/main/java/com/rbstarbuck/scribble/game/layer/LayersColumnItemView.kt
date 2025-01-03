@@ -141,6 +141,17 @@ fun LayersColumnItemView(
             Spacer(Modifier.width(10.dp))
 
             Image(
+                imageVector = ImageVector.vectorResource(R.drawable.copy),
+                contentDescription = stringResource(R.string.duplicate),
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable { layer.duplicate() },
+                colorFilter = if (visible) null else grayscale
+            )
+
+            Spacer(Modifier.width(10.dp))
+
+            Image(
                 imageVector = ImageVector.vectorResource(R.drawable.merge_down),
                 contentDescription = stringResource(R.string.merge),
                 modifier = Modifier
@@ -165,7 +176,7 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.arrow_up),
                 contentDescription = stringResource(R.string.move_up),
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(24.dp)
                     .clickable { layer.moveUp() },
                 colorFilter = if (canMoveUp) null else grayscale
             )
@@ -176,7 +187,7 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.arrow_down),
                 contentDescription = stringResource(R.string.move_down),
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(24.dp)
                     .clickable { layer.moveDown() },
                 colorFilter = if (canMoveDown) null else grayscale
             )

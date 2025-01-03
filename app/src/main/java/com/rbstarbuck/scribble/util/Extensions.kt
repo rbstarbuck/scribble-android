@@ -10,3 +10,6 @@ fun Float.pxToDp(context: Context): Dp =
         .dp
 
 fun Dp.dpToPx(context: Context): Float = (this.value * context.resources.displayMetrics.density)
+
+private val chars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+fun generateKey(size: Int = 32) = Array(size) { chars.random() }.joinToString("")
