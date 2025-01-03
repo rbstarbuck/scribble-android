@@ -26,8 +26,6 @@ class GameViewModel: ViewModel() {
         val strokeWidthStateFlow = MutableStateFlow(0.015f)
         val brushTypeStateFlow = MutableStateFlow(BrushType.Pencil)
         val fillTypeStateFlow = MutableStateFlow(FillType.Stroke)
-        val boundingBoxRotationStateFlow = MutableStateFlow(0f)
-        val recomposeBoundingBoxStateFlow = MutableStateFlow(0)
 
         gamePromptViewModel = GamePromptViewModel()
 
@@ -54,9 +52,7 @@ class GameViewModel: ViewModel() {
         )
 
         transformViewModel = TransformViewModel(
-            selectedLayerStateFlow = layers.selectedLayerStateFlow,
-            boundingBoxRotationStateFlow =  boundingBoxRotationStateFlow,
-            recomposeBoundingBoxStateFlow = recomposeBoundingBoxStateFlow
+            selectedLayerStateFlow = layers.selectedLayerStateFlow
         )
 
         drawingViewModel = DrawingViewModel(

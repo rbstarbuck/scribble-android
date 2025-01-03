@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class TransformViewModel(
-    val selectedLayerStateFlow: StateFlow<Layers.Layer>,
-    val boundingBoxRotationStateFlow: MutableStateFlow<Float>,
-    val recomposeBoundingBoxStateFlow: MutableStateFlow<Int>
+    val selectedLayerStateFlow: StateFlow<Layers.Layer>
 ): ViewModel() {
     val selectedTransformTypeStateFlow = MutableStateFlow(TransformType.TRANSLATE)
+    val boundingBoxRotationStateFlow = MutableStateFlow(0f)
+    val recomposeBoundingBoxStateFlow = MutableStateFlow(0)
 }
