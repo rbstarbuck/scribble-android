@@ -145,8 +145,7 @@ fun LayersColumnItemView(
                 contentDescription = stringResource(R.string.duplicate),
                 modifier = Modifier
                     .size(28.dp)
-                    .clickable { layer.duplicate() },
-                colorFilter = if (visible) null else grayscale
+                    .clickable { layer.duplicate() }
             )
 
             Spacer(Modifier.width(12.dp))
@@ -156,8 +155,7 @@ fun LayersColumnItemView(
                 contentDescription = stringResource(R.string.merge),
                 modifier = Modifier
                     .size(28.dp)
-                    .clickable { showMergeDialog.value = true },
-                colorFilter = if (visible) null else grayscale
+                    .clickable { showMergeDialog.value = true }
             )
 
             Spacer(Modifier.width(10.dp))
