@@ -15,9 +15,9 @@ class MainActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val game = remember { GameViewModel() }
+            val gameViewModel = remember { GameViewModel() }
             GameView(
-                viewModel = game,
+                viewModel = gameViewModel,
                 modifier = Modifier.fillMaxSize()
             )
         }
