@@ -193,12 +193,8 @@ class Strokes(
         matrix.postRotate(degrees, strokesCenter.x, strokesCenter.y)
 
         for (stroke in committedStrokes) {
-            if (stroke.brushType == BrushType.Circle) {
-                rotateZCircle(degrees, stroke, strokesCenter)
-            } else {
-                mapPoints(stroke) { dstArray, srcArray ->
-                    matrix.mapPoints(dstArray, srcArray)
-                }
+            mapPoints(stroke) { dstArray, srcArray ->
+                matrix.mapPoints(dstArray, srcArray)
             }
         }
 
@@ -212,41 +208,6 @@ class Strokes(
 
         _rotationStateFlow.value = totalRotation
         _recomposeCommittedStrokesStateFlow.value += 1
-    }
-
-    private fun rotateZCircle(
-        degrees: Float,
-        circle: Stroke,
-        strokesCenter: Offset
-    ) {
-        val circleBounds = boundingBox(circle)
-
-        val rotateMatrix = Matrix()
-        rotateMatrix.postRotate(degrees, circleBounds.center.x, circleBounds.center.y)
-
-        mapPoints(circle) { dstArray, srcArray ->
-            rotateMatrix.mapPoints(dstArray, srcArray)
-        }
-
-        val srcTranslationPoint = FloatArray(2)
-        val dstTranslationPoint = FloatArray(2)
-
-        srcTranslationPoint[0] = circleBounds.center.x
-        srcTranslationPoint[1] = circleBounds.center.y
-
-        val translationPointMatrix = Matrix()
-        translationPointMatrix.postRotate(degrees, strokesCenter.x, strokesCenter.y)
-        translationPointMatrix.mapPoints(dstTranslationPoint, srcTranslationPoint)
-
-        val translateX = dstTranslationPoint[0] - circleBounds.center.x
-        val translateY = dstTranslationPoint[1] - circleBounds.center.y
-
-        val translationMatrix = Matrix()
-        translationMatrix.postTranslate(translateX, translateY)
-
-        mapPoints(circle) { dstArray, srcArray ->
-            translationMatrix.mapPoints(dstArray, srcArray)
-        }
     }
 
     fun mapPoints(
@@ -297,25 +258,6 @@ class Strokes(
     fun firstPoint() = currentStroke!!.points.first()
 
     fun lastPoint() = currentStroke!!.points.last()
-}
-
-fun boundingBox(stroke: Stroke): Rect {
-    var minX = Float.MAX_VALUE
-    var maxX = Float.MIN_VALUE
-    var minY = Float.MAX_VALUE
-    var maxY = Float.MIN_VALUE
-
-    for (point in stroke.points) {
-        if (point.x < minX) minX = point.x
-        if (point.x > maxX) maxX = point.x
-        if (point.y < minY) minY = point.y
-        if (point.y > maxY) maxY = point.y
-    }
-
-    return Rect(
-        topLeft = Offset(minX, minY),
-        bottomRight = Offset(maxX, maxY)
-    )
 }
 
 interface Stroke {

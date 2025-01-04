@@ -32,12 +32,32 @@ fun DrawingView(
 
         for (layer in layers.reversed()) {
             val visible by layer.visibleStateFlow.collectAsState()
+            val selected by layer.selectedStateFlow.collectAsState()
 
             if (visible) {
-                CanvasView(
-                    strokes = layer.strokes,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (selected && TabItem.selectedItem == TabItem.TransformTabItem) {
+                    when (selectedTransformType) {
+                        TransformType.TRANSLATE -> TranslateView(
+                            viewModel = viewModel.translateViewModel,
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        TransformType.SCALE -> ScaleView(
+                            viewModel = viewModel.scaleViewModel,
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        TransformType.ROTATE -> RotateView(
+                            viewModel = viewModel.rotateViewModel,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                } else {
+                    CanvasView(
+                        strokes = layer.strokes,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
 
@@ -68,23 +88,6 @@ fun DrawingView(
 
                     BrushType.Rectangle -> RectanglePaintbrushView(
                         selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            } else if (TabItem.selectedItem == TabItem.TransformTabItem) {
-                when (selectedTransformType) {
-                    TransformType.TRANSLATE -> TranslateView(
-                        viewModel = viewModel.translateViewModel,
-                        modifier = Modifier.fillMaxSize()
-                    )
-
-                    TransformType.SCALE -> ScaleView(
-                        viewModel = viewModel.scaleViewModel,
-                        modifier = Modifier.fillMaxSize()
-                    )
-
-                    TransformType.ROTATE -> RotateView(
-                        viewModel = viewModel.rotateViewModel,
                         modifier = Modifier.fillMaxSize()
                     )
                 }

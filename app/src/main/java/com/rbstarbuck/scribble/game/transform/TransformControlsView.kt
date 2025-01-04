@@ -205,7 +205,6 @@ private fun RotateControlsView(
             valueRange = -180f..180f,
             onFinished = {
                 boundsStateFlow.value = selectedLayer.strokes.boundingBox()
-                viewModel.boundingBoxRotationStateFlow.value = 0f
                 viewModel.recomposeBoundingBoxStateFlow.value += 1
             }
         ) { _, change ->
@@ -213,7 +212,6 @@ private fun RotateControlsView(
                 degrees = change,
                 strokesCenter = bounds.center
             )
-            viewModel.boundingBoxRotationStateFlow.value += change
         }
     }
 }

@@ -9,6 +9,5 @@ class TransformControlsViewModel(
     val selectedLayerStateFlow: StateFlow<Layers.Layer>
 ): ViewModel() {
     val selectedTransformTypeStateFlow = MutableStateFlow(TransformType.TRANSLATE)
-    val boundingBoxRotationStateFlow = MutableStateFlow(0f)
     val recomposeBoundingBoxStateFlow = MutableStateFlow(0)
 }

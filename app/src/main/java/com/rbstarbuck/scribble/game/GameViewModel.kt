@@ -59,9 +59,7 @@ class GameViewModel: ViewModel() {
             layers = layers,
             backgroundStateFlow = colorPickerViewModel.backgroundStateFlow,
             selectedBrushTypeStateFlow = brushTypeStateFlow,
-            selectedTransformTypeStateFlow = transformControlsViewModel.selectedTransformTypeStateFlow,
-            boundingBoxRotationStateFlow = transformControlsViewModel.boundingBoxRotationStateFlow,
-            recomposeBoundingBoxStateFlow = transformControlsViewModel.recomposeBoundingBoxStateFlow
+            selectedTransformTypeStateFlow = transformControlsViewModel.selectedTransformTypeStateFlow
         )
     }
 }
