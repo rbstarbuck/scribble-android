@@ -5,7 +5,7 @@ import com.rbstarbuck.scribble.game.layer.Layers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class TransformViewModel(
+class TransformControlsViewModel(
     val selectedLayerStateFlow: StateFlow<Layers.Layer>
 ): ViewModel() {
     val selectedTransformTypeStateFlow = MutableStateFlow(TransformType.TRANSLATE)

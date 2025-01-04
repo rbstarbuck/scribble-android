@@ -34,8 +34,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun TransformView(
-    viewModel: TransformViewModel,
+fun TransformControlsView(
+    viewModel: TransformControlsViewModel,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier) {
@@ -112,7 +112,7 @@ fun TransformView(
 
 @Composable
 private fun TranslateControlsView(
-    viewModel: TransformViewModel,
+    viewModel: TransformControlsViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -145,7 +145,7 @@ private fun TranslateControlsView(
 
 @Composable
 private fun ScaleControlsView(
-    viewModel: TransformViewModel,
+    viewModel: TransformControlsViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -187,7 +187,7 @@ private fun ScaleControlsView(
 
 @Composable
 private fun RotateControlsView(
-    viewModel: TransformViewModel,
+    viewModel: TransformControlsViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -259,11 +259,11 @@ private fun TransformSlider(
 @Preview
 @Composable
 fun TransformViewPreview() {
-    val viewModel = TransformViewModel(
+    val viewModel = TransformControlsViewModel(
         selectedLayerStateFlow = MutableStateFlow(emptyLayer())
     )
 
-    TransformView(
+    TransformControlsView(
         viewModel = viewModel,
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)

@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +32,7 @@ import com.rbstarbuck.scribble.game.color.ColorPickerView
 import com.rbstarbuck.scribble.game.layer.LayersView
 import com.rbstarbuck.scribble.game.brush.BrushView
 import com.rbstarbuck.scribble.game.prompt.GamePromptView
-import com.rbstarbuck.scribble.game.transform.TransformView
+import com.rbstarbuck.scribble.game.transform.TransformControlsView
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -100,8 +99,8 @@ fun GameView(
                 }
 
                 if (TabItem.TransformTabItem.isSelected) {
-                    TransformView(
-                        viewModel = viewModel.transformViewModel,
+                    TransformControlsView(
+                        viewModel = viewModel.transformControlsViewModel,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp, vertical = 10.dp)
