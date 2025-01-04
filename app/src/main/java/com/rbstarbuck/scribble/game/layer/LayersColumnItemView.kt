@@ -133,7 +133,7 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.visibility),
                 contentDescription = stringResource(R.string.visibility),
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(36.dp)
                     .clickable { layer.visible = !layer.visible },
                 colorFilter = if (visible) null else grayscale
             )
@@ -144,18 +144,18 @@ fun LayersColumnItemView(
                 imageVector = ImageVector.vectorResource(R.drawable.copy),
                 contentDescription = stringResource(R.string.duplicate),
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(28.dp)
                     .clickable { layer.duplicate() },
                 colorFilter = if (visible) null else grayscale
             )
 
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(12.dp))
 
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.merge_down),
                 contentDescription = stringResource(R.string.merge),
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(28.dp)
                     .clickable { showMergeDialog.value = true },
                 colorFilter = if (visible) null else grayscale
             )
