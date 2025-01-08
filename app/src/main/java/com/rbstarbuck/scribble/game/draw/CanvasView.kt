@@ -110,7 +110,10 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
             } else {
                 stroke.color.toColor()
             },
-            style = if (stroke.fillType == FillType.Stroke || stroke.points.size < 3) {
+            style = if (stroke.brushType == BrushType.Line ||
+                stroke.fillType == FillType.Stroke ||
+                stroke.points.size < 3
+            ) {
                 androidx.compose.ui.graphics.drawscope.Stroke(
                     width = stroke.width * size.width,
                     cap = StrokeCap.Round
