@@ -85,8 +85,8 @@ class Strokes(
     }
 
     fun moveCircleStrokePoints(x: Float, y: Float, center: Offset) {
-        val dstArray = Array(180) { FloatArray(2) }
-        val srcArray = Array(180) { FloatArray(2) }
+        val dstArray = Array(60) { FloatArray(2) }
+        val srcArray = Array(60) { FloatArray(2) }
 
         var i = 0
         val matrix = Matrix()
@@ -94,7 +94,7 @@ class Strokes(
             srcArray[i][0] = x
             srcArray[i][1] = y
 
-            matrix.setRotate(i * 2f, center.x, center.y)
+            matrix.setRotate(i * 6f, center.x, center.y)
             matrix.mapPoints(dstArray[i], srcArray[i])
 
             point.x = dstArray[i][0]

@@ -203,7 +203,7 @@ fun CirclePaintbrushView(
                         val y = offset.y / size.height
 
                         strokes.beginStroke(x, y)
-                        for (i in 1..<180) {
+                        for (i in 1..<60) {
                             strokes.appendStroke(x, y)
                         }
 
