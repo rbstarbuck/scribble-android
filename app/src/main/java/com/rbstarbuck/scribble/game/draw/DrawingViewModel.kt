@@ -8,6 +8,7 @@ import com.rbstarbuck.scribble.game.transform.RotateViewModel
 import com.rbstarbuck.scribble.game.transform.ScaleViewModel
 import com.rbstarbuck.scribble.game.transform.TransformType
 import com.rbstarbuck.scribble.game.transform.TranslateViewModel
+import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.flow.StateFlow
 
 class DrawingViewModel(
@@ -16,6 +17,8 @@ class DrawingViewModel(
     val selectedBrushTypeStateFlow: StateFlow<BrushType>,
     val selectedTransformTypeStateFlow: StateFlow<TransformType>
 ): ViewModel() {
+    val key: String = generateKey()
+
     val translateViewModel = TranslateViewModel(layers.selectedLayerStateFlow)
     val scaleViewModel = ScaleViewModel(layers.selectedLayerStateFlow)
     val rotateViewModel = RotateViewModel(selectedLayerStateFlow = layers.selectedLayerStateFlow)

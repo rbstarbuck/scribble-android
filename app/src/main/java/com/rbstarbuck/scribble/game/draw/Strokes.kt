@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Rect
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
+import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -261,6 +262,7 @@ class Strokes(
 }
 
 interface Stroke {
+    val key: String
     val color: HSVColor
     var width: Float
     val unscaledWidth: Float
@@ -273,6 +275,7 @@ interface Stroke {
 }
 
 data class MutableStroke(
+    override val key: String = generateKey(),
     override val color: HSVColor,
     override var width: Float,
     override val unscaledWidth: Float,
