@@ -46,10 +46,12 @@ abstract class Operation {
         }
     }
 
-    fun add(operation: Operation) {
-        Operations.editList {
-            operations = operations + operation
-            operations.first().execute()
+    companion object {
+        fun add(operation: Operation) {
+            Operations.editList {
+                operations = operations + operation
+                operations.first().execute()
+            }
         }
     }
 }
