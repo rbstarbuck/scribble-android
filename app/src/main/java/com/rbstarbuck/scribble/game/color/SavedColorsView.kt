@@ -20,13 +20,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.R
+import com.rbstarbuck.scribble.koin.state.SelectedColorHue
+import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun SavedColorsView(
-    viewModel: SavedColorsViewModel,
-    modifier: Modifier = Modifier
-) {
+fun SavedColorsView(modifier: Modifier = Modifier) {
+    val viewModel: SavedColorsViewModel by inject(SavedColorsViewModel::class.java)
+
+    val selectedColorHue: SelectedColorHue by inject(SelectedColorHue::class.java)
+    val selectedColorSaturationAndValue:
+            SelectedColorSaturationAndValue by inject(SelectedColorSaturationAndValue::class.java)
+
     val savedColors by viewModel.savedColorsStateFlow.collectAsState()
 
     Column(
@@ -61,8 +67,8 @@ fun SavedColorsView(
                         .size(36.dp)
                         .animateItem()
                         .clickable {
-                            viewModel.hueStateFlow.value = savedColor.hue
-                            viewModel.saturationValueStateFlow.value =
+                            selectedColorHue.hue = savedColor.hue
+                            selectedColorSaturationAndValue.saturationAndValue =
                                 savedColor.saturation to savedColor.value
                         }
                 ) {

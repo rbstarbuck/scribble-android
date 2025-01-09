@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import com.rbstarbuck.scribble.game.draw.CanvasView
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun TranslateView(
-    viewModel: TranslateViewModel,
-    modifier: Modifier = Modifier
-) {
+fun TranslateView(modifier: Modifier = Modifier) {
+    val viewModel: TranslateViewModel by inject(TranslateViewModel::class.java)
+
     val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     Box(

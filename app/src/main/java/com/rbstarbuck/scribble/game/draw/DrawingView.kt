@@ -13,12 +13,12 @@ import com.rbstarbuck.scribble.game.transform.RotateView
 import com.rbstarbuck.scribble.game.transform.ScaleView
 import com.rbstarbuck.scribble.game.transform.TransformType
 import com.rbstarbuck.scribble.game.transform.TranslateView
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun DrawingView(
-    viewModel: DrawingViewModel,
-    modifier: Modifier = Modifier
-) {
+fun DrawingView(modifier: Modifier = Modifier) {
+    val viewModel: DrawingViewModel by inject(DrawingViewModel::class.java)
+
     Box(modifier) {
         CanvasBackgroundView(Modifier.fillMaxSize())
 
@@ -34,20 +34,9 @@ fun DrawingView(
             if (visible) {
                 if (selected && TabItem.selectedItem == TabItem.TransformTabItem) {
                     when (selectedTransformType) {
-                        TransformType.TRANSLATE -> TranslateView(
-                            viewModel = viewModel.translateViewModel,
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        TransformType.SCALE -> ScaleView(
-                            viewModel = viewModel.scaleViewModel,
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        TransformType.ROTATE -> RotateView(
-                            viewModel = viewModel.rotateViewModel,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        TransformType.TRANSLATE -> TranslateView(Modifier.fillMaxSize())
+                        TransformType.SCALE -> ScaleView(Modifier.fillMaxSize())
+                        TransformType.ROTATE -> RotateView(Modifier.fillMaxSize())
                     }
                 } else {
                     CanvasView(

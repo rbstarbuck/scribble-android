@@ -31,12 +31,12 @@ import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.util.SelectionButton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun TransformControlsView(
-    viewModel: TransformControlsViewModel,
-    modifier: Modifier = Modifier
-) {
+fun TransformControlsView(modifier: Modifier = Modifier) {
+    val viewModel: TransformControlsViewModel by inject(TransformControlsViewModel::class.java)
+
     BoxWithConstraints(modifier) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -256,10 +256,7 @@ private fun TransformSlider(
 @Preview
 @Composable
 fun TransformViewPreview() {
-    val viewModel = TransformControlsViewModel()
-
     TransformControlsView(
-        viewModel = viewModel,
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 20.dp, vertical = 10.dp)

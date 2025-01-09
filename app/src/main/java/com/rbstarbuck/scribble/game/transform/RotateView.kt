@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun RotateView(
-    viewModel: RotateViewModel,
-    modifier: Modifier = Modifier
-) {
+fun RotateView(modifier: Modifier = Modifier) {
+    val viewModel: RotateViewModel by inject(RotateViewModel::class.java)
+
     val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     val localRotationStateFlow = remember { MutableStateFlow(0f) }

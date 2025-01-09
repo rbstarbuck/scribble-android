@@ -1,21 +1,25 @@
 package com.rbstarbuck.scribble.game.color
 
 import androidx.lifecycle.ViewModel
+import com.rbstarbuck.scribble.koin.state.SelectedColorHue
+import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.java.KoinJavaComponent.inject
 
-class SavedColorsViewModel(
-    val hueStateFlow: MutableStateFlow<Float>,
-    val saturationValueStateFlow: MutableStateFlow<Pair<Float, Float>>
-): ViewModel() {
+class SavedColorsViewModel(): ViewModel() {
+    val selectedColorHue: SelectedColorHue by inject(SelectedColorHue::class.java)
+    val selectedColorSaturationAndValue:
+            SelectedColorSaturationAndValue by inject(SelectedColorSaturationAndValue::class.java)
+
     private val _savedColorsStateFlow = MutableStateFlow(emptyList<SavedColor>())
     val savedColorsStateFlow = _savedColorsStateFlow.asStateFlow()
 
     fun addColor() {
         val savedColor = SavedColor(
-            hue = hueStateFlow.value,
-            saturation = saturationValueStateFlow.value.first,
-            value = saturationValueStateFlow.value.second
+            hue = selectedColorHue.hue,
+            saturation = selectedColorSaturationAndValue.saturationAndValue.first,
+            value = selectedColorSaturationAndValue.saturationAndValue.second
         )
 
         _savedColorsStateFlow.value =

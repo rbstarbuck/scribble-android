@@ -18,12 +18,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rbstarbuck.scribble.R
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun GamePromptView(
-    viewModel: GamePromptViewModel,
-    modifier: Modifier = Modifier
-) {
+fun GamePromptView(modifier: Modifier = Modifier) {
+    val viewModel: GamePromptViewModel by inject(GamePromptViewModel::class.java)
+
     Column(modifier) {
         Spacer(Modifier.weight(1f))
 

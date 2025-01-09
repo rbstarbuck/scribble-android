@@ -23,12 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.R
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun ColorPickerView(
-    viewModel: ColorPickerViewModel,
-    modifier: Modifier = Modifier
-) {
+fun ColorPickerView(modifier: Modifier = Modifier) {
+    val viewModel: ColorPickerViewModel by inject(ColorPickerViewModel::class.java)
+
     val color by viewModel.selectedColor.stateFlow.collectAsState()
 
     Row(modifier) {
@@ -37,8 +37,6 @@ fun ColorPickerView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SaturationAndValuePicker(
-                hueStateFlow = viewModel.hueStateFlow,
-                saturationValueStateFlow = viewModel.saturationValueStateFlow,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -56,8 +54,6 @@ fun ColorPickerView(
         Spacer(Modifier.width(25.dp))
 
         HuePicker(
-            hueStateFlow = viewModel.hueStateFlow,
-            saturationValueStateFlow = viewModel.saturationValueStateFlow,
             modifier = Modifier
                 .fillMaxHeight()
                 .width(30.dp)
@@ -65,36 +61,16 @@ fun ColorPickerView(
 
         Spacer(Modifier.width(25.dp))
 
-        SavedColorsView(
-            viewModel = viewModel.savedColorsViewModel,
-            modifier = Modifier.fillMaxHeight()
-        )
+        SavedColorsView(Modifier.fillMaxHeight())
     }
 }
 
 @Preview
 @Composable
 fun ColorPickerViewPreview() {
-    val viewModel = remember { ColorPickerViewModel() }
-
-    val color by viewModel.selectedColor.stateFlow.collectAsState()
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(Modifier.height(50.dp))
-
-        ColorPickerView(
-            viewModel = viewModel,
-            modifier = Modifier
-                .height(200.dp)
-                .padding(horizontal = 20.dp)
-        )
-
-        Spacer(Modifier.height(50.dp))
-
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .background(color.toColor())
-        )
-    }
+    ColorPickerView(
+        modifier = Modifier
+            .height(200.dp)
+            .padding(horizontal = 20.dp)
+    )
 }

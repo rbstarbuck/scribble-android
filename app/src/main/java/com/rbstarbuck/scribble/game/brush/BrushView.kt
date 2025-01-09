@@ -27,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.R
 import com.rbstarbuck.scribble.util.SelectionButton
 import com.rbstarbuck.scribble.util.SelectionButtonContainer
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun BrushView(
-    viewModel: BrushViewModel,
-    modifier: Modifier = Modifier
-) {
+fun BrushView(modifier: Modifier = Modifier) {
+    val viewModel: BrushViewModel by inject(BrushViewModel::class.java)
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly

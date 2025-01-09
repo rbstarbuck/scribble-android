@@ -2,9 +2,6 @@ package com.rbstarbuck.scribble.game.draw
 
 import androidx.lifecycle.ViewModel
 import com.rbstarbuck.scribble.game.layer.Layers
-import com.rbstarbuck.scribble.game.transform.RotateViewModel
-import com.rbstarbuck.scribble.game.transform.ScaleViewModel
-import com.rbstarbuck.scribble.game.transform.TranslateViewModel
 import com.rbstarbuck.scribble.koin.state.SelectedBrushType
 import com.rbstarbuck.scribble.koin.state.SelectedTransformType
 import com.rbstarbuck.scribble.util.generateKey
@@ -16,8 +13,4 @@ class DrawingViewModel: ViewModel() {
     val layers: Layers by inject(Layers::class.java)
     val selectedBrushType: SelectedBrushType by inject(SelectedBrushType::class.java)
     val selectedTransformType: SelectedTransformType by inject(SelectedTransformType::class.java)
-
-    val translateViewModel = TranslateViewModel()
-    val scaleViewModel = ScaleViewModel()
-    val rotateViewModel = RotateViewModel()
 }
