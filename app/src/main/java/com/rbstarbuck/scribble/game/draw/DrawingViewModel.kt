@@ -8,7 +8,7 @@ import com.rbstarbuck.scribble.util.generateKey
 import org.koin.java.KoinJavaComponent.inject
 
 class DrawingViewModel: ViewModel() {
-    val key: String = generateKey()
+    var key: String = generateKey()
 
     val layers: Layers by inject(Layers::class.java)
     val selectedBrushType: SelectedBrushType by inject(SelectedBrushType::class.java)

@@ -35,18 +35,18 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rbstarbuck.scribble.koin.state.SelectedColorHue
-import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
+import com.rbstarbuck.scribble.koin.state.SelectedHue
+import com.rbstarbuck.scribble.koin.state.SelectedSaturationAndValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun SaturationAndValuePicker(modifier: Modifier = Modifier) {
-    val selectedColorHue: SelectedColorHue by inject(SelectedColorHue::class.java)
-    val selectedColorSaturationAndValue:
-            SelectedColorSaturationAndValue by inject(SelectedColorSaturationAndValue::class.java)
+    val selectedHue: SelectedHue by inject(SelectedHue::class.java)
+    val selectedSaturationAndValue:
+            SelectedSaturationAndValue by inject(SelectedSaturationAndValue::class.java)
 
-    val hue by selectedColorHue.stateFlow.collectAsState()
+    val hue by selectedHue.stateFlow.collectAsState()
 
     val pointStateFlow = remember { MutableStateFlow(Offset.Zero) }
     val point by pointStateFlow.collectAsState()
@@ -66,7 +66,7 @@ fun SaturationAndValuePicker(modifier: Modifier = Modifier) {
                                 offset.y.coerceIn(0.0000001f, size.height.toFloat())
 
                         pointStateFlow.value = offset
-                        selectedColorSaturationAndValue.saturationAndValue = saturation to value
+                        selectedSaturationAndValue.saturationAndValue = saturation to value
                     }
                 )
             }.pointerInput(Unit) {
@@ -78,14 +78,14 @@ fun SaturationAndValuePicker(modifier: Modifier = Modifier) {
                         val value = 1f - y / size.height
 
                         pointStateFlow.value = Offset(x, y)
-                        selectedColorSaturationAndValue.saturationAndValue = saturation to value
+                        selectedSaturationAndValue.saturationAndValue = saturation to value
                     }
                 )
             }
     ) {
         pointStateFlow.value = Offset(
-            x = selectedColorSaturationAndValue.saturationAndValue.first * size.width,
-            y = (1f - selectedColorSaturationAndValue.saturationAndValue.second) * size.height
+            x = selectedSaturationAndValue.saturationAndValue.first * size.width,
+            y = (1f - selectedSaturationAndValue.saturationAndValue.second) * size.height
         )
 
         val rgb = HSVToColor(floatArrayOf(hue, 1f, 1f))
@@ -151,8 +151,8 @@ fun SaturationAndValuePicker(modifier: Modifier = Modifier) {
             HSVToColor(
                 floatArrayOf(
                     hue,
-                    selectedColorSaturationAndValue.saturationAndValue.first,
-                    selectedColorSaturationAndValue.saturationAndValue.second
+                    selectedSaturationAndValue.saturationAndValue.first,
+                    selectedSaturationAndValue.saturationAndValue.second
                 )
             )
         )

@@ -16,11 +16,11 @@ import com.rbstarbuck.scribble.koin.state.SelectedBackgroundColorImpl
 import com.rbstarbuck.scribble.koin.state.SelectedBrushType
 import com.rbstarbuck.scribble.koin.state.SelectedBrushTypeImpl
 import com.rbstarbuck.scribble.koin.state.SelectedColor
-import com.rbstarbuck.scribble.koin.state.SelectedColorHue
-import com.rbstarbuck.scribble.koin.state.SelectedColorHueImpl
+import com.rbstarbuck.scribble.koin.state.SelectedHue
+import com.rbstarbuck.scribble.koin.state.SelectedHueImpl
 import com.rbstarbuck.scribble.koin.state.SelectedColorImpl
-import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
-import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValueImpl
+import com.rbstarbuck.scribble.koin.state.SelectedSaturationAndValue
+import com.rbstarbuck.scribble.koin.state.SelectedSaturationAndValueImpl
 import com.rbstarbuck.scribble.koin.state.SelectedFillType
 import com.rbstarbuck.scribble.koin.state.SelectedFillTypeImpl
 import com.rbstarbuck.scribble.koin.state.SelectedLayer
@@ -36,8 +36,8 @@ object Module {
     val stateModule = module {
         single<SelectedLayer> { SelectedLayerImpl() }
         single<SelectedColor> { SelectedColorImpl() }
-        single<SelectedColorHue> { SelectedColorHueImpl() }
-        single<SelectedColorSaturationAndValue> { SelectedColorSaturationAndValueImpl() }
+        single<SelectedHue> { SelectedHueImpl() }
+        single<SelectedSaturationAndValue> { SelectedSaturationAndValueImpl() }
         single<SelectedBackgroundColor> { SelectedBackgroundColorImpl() }
         single<SelectedStrokeWidth> { SelectedStrokeWidthImpl() }
         single<SelectedBrushType> { SelectedBrushTypeImpl() }

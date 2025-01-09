@@ -4,16 +4,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-interface SelectedColorHue {
-    val stateFlow: StateFlow<Float>
-    var hue: Float
+interface SelectedSaturationAndValue {
+    val stateFlow: StateFlow<Pair<Float, Float>>
+    var saturationAndValue: Pair<Float, Float>
 }
 
-class SelectedColorHueImpl: SelectedColorHue {
-    private val _stateFlow = MutableStateFlow(180f)
+class SelectedSaturationAndValueImpl: SelectedSaturationAndValue {
+    private val _stateFlow = MutableStateFlow(Pair(0f, 0f))
     override val stateFlow = _stateFlow.asStateFlow()
 
-    override var hue: Float
+    override var saturationAndValue: Pair<Float, Float>
         get() = stateFlow.value
         set(value) {
             _stateFlow.value = value

@@ -26,16 +26,16 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rbstarbuck.scribble.koin.state.SelectedColorHue
-import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
+import com.rbstarbuck.scribble.koin.state.SelectedHue
+import com.rbstarbuck.scribble.koin.state.SelectedSaturationAndValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun HuePicker(modifier: Modifier = Modifier) {
-    val selectedColorHue: SelectedColorHue by inject(SelectedColorHue::class.java)
-    val selectedColorSaturationAndValue:
-            SelectedColorSaturationAndValue by inject(SelectedColorSaturationAndValue::class.java)
+    val selectedHue: SelectedHue by inject(SelectedHue::class.java)
+    val selectedSaturationAndValue:
+            SelectedSaturationAndValue by inject(SelectedSaturationAndValue::class.java)
 
     val pointStateFlow = remember { MutableStateFlow(0f) }
     val point by pointStateFlow.collectAsState()
@@ -62,7 +62,7 @@ fun HuePicker(modifier: Modifier = Modifier) {
                 detectTapGestures(
                     onPress = { offset ->
                         pointStateFlow.value = offset.y
-                        selectedColorHue.hue = offset.y / size.height.toFloat() * 360f
+                        selectedHue.hue = offset.y / size.height.toFloat() * 360f
                     }
                 )
             }.pointerInput(Unit) {
@@ -70,12 +70,12 @@ fun HuePicker(modifier: Modifier = Modifier) {
                     onDrag = { change, _ ->
                         val y = change.position.y.coerceIn(0f, size.height.toFloat())
                         pointStateFlow.value = y
-                        selectedColorHue.hue = y / size.height.toFloat() * 360f
+                        selectedHue.hue = y / size.height.toFloat() * 360f
                     }
                 )
             }
     ) {
-        pointStateFlow.value = selectedColorHue.hue / 360f * size.height.toFloat()
+        pointStateFlow.value = selectedHue.hue / 360f * size.height.toFloat()
 
         val strokeWidth = size.width / 20f
         val center = size.width / 2f
@@ -83,9 +83,9 @@ fun HuePicker(modifier: Modifier = Modifier) {
         val fillColor = Color(
             HSVToColor(
                 floatArrayOf(
-                    selectedColorHue.hue,
-                    selectedColorSaturationAndValue.saturationAndValue.first,
-                    selectedColorSaturationAndValue.saturationAndValue.second
+                    selectedHue.hue,
+                    selectedSaturationAndValue.saturationAndValue.first,
+                    selectedSaturationAndValue.saturationAndValue.second
                 )
             )
         )
