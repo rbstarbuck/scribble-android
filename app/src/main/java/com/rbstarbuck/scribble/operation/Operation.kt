@@ -18,7 +18,7 @@ const val STROKE_COLLECTION = "Stroke"
 private object Operations {
     private val mutex = Mutex()
 
-    fun editList(task: ()-> Unit) {
+    fun editList(task: () -> Unit) {
         GlobalScope.launch {
             mutex.withLock {
                 task()
@@ -27,7 +27,7 @@ private object Operations {
     }
 }
 
-abstract class Operation {
+internal abstract class Operation {
     protected val firestore = Firebase.firestore
 
     protected abstract fun execute()
@@ -46,12 +46,10 @@ abstract class Operation {
         }
     }
 
-    companion object {
-        fun add(operation: Operation) {
-            Operations.editList {
-                operations = operations + operation
-                operations.first().execute()
-            }
+    fun upload() {
+        Operations.editList {
+            operations = operations + this
+            operations.first().execute()
         }
     }
 }

@@ -2,11 +2,15 @@ package com.rbstarbuck.scribble.operation
 
 import com.rbstarbuck.scribble.game.layer.Layers.Layer
 
-class AddLayerOperation(private val layer: Layer): Operation() {
+fun uploadLayer(layer: Layer) {
+    LayerOperation(layer).upload()
+}
+
+private class LayerOperation(private val layer: Layer): Operation() {
 
     override fun execute() {
         val map = mapOf(
-            "isVisible" to layer.visible,
+            "visible" to layer.visible,
             "translation" to packFloats(
                 layer.strokes.translationStateFlow.value.x,
                 layer.strokes.translationStateFlow.value.y,
