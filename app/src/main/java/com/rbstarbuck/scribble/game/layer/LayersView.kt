@@ -57,7 +57,6 @@ fun LayersView(
             ) { i ->
                 LayersColumnItemView(
                     layer = layers[i],
-                    backgroundStateFlow = viewModel.backgroundStateFlow,
                     canMoveUp = i > 0,
                     canMoveDown = i < layers.size - 1,
                     modifier = Modifier.animateItem()

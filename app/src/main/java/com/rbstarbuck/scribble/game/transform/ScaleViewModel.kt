@@ -1,9 +1,9 @@
 package com.rbstarbuck.scribble.game.transform
 
 import androidx.lifecycle.ViewModel
-import com.rbstarbuck.scribble.game.layer.Layers
-import kotlinx.coroutines.flow.StateFlow
+import com.rbstarbuck.scribble.koin.state.SelectedLayer
+import org.koin.java.KoinJavaComponent.inject
 
-class ScaleViewModel(
-    val selectedLayerStateFlow: StateFlow<Layers.Layer>
-): ViewModel()
+class ScaleViewModel: ViewModel() {
+    val selectedLayer: SelectedLayer by inject(SelectedLayer::class.java)
+}

@@ -41,12 +41,13 @@ import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.CanvasBackgroundView
 import com.rbstarbuck.scribble.game.draw.CanvasView
+import com.rbstarbuck.scribble.koin.state.SelectedLayer
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun LayersColumnItemView(
     layer: Layers.Layer,
-    backgroundStateFlow: StateFlow<Color>,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     modifier: Modifier = Modifier
@@ -111,10 +112,7 @@ fun LayersColumnItemView(
                     .size(animatedCanvasSize.value.dp)
                     .clickable { layer.select() }
             ) {
-                CanvasBackgroundView(
-                    backgroundStateFlow = backgroundStateFlow,
-                    modifier = Modifier.fillMaxSize()
-                )
+                CanvasBackgroundView(Modifier.fillMaxSize())
 
                 CanvasView(
                     strokes = layer.strokes,
@@ -289,17 +287,11 @@ private fun MergeLayerConfirmationDialog(
 @Preview
 @Composable
 fun LayersColumnItemViewPreview() {
-    val layers = Layers(
-        selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
-        selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
-        selectedFillTypeStateFlow = MutableStateFlow(FillType.Stroke)
-    )
-    val layer by layers.selectedLayerStateFlow.collectAsState()
+    val selectedLayer: SelectedLayer by inject(SelectedLayer::class.java)
 
     LayersColumnItemView(
-        layer = layer,
+        layer = selectedLayer.layer,
         canMoveUp = true,
-        canMoveDown = true,
-        backgroundStateFlow = MutableStateFlow(Color.White)
+        canMoveDown = true
     )
 }

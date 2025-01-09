@@ -1,62 +1,18 @@
 package com.rbstarbuck.scribble.game
 
 import androidx.lifecycle.ViewModel
-import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.color.ColorPickerViewModel
 import com.rbstarbuck.scribble.game.draw.DrawingViewModel
-import com.rbstarbuck.scribble.game.layer.Layers
 import com.rbstarbuck.scribble.game.layer.LayersViewModel
 import com.rbstarbuck.scribble.game.brush.BrushViewModel
-import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.prompt.GamePromptViewModel
 import com.rbstarbuck.scribble.game.transform.TransformControlsViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class GameViewModel: ViewModel() {
-    val layers: Layers
-
-    val colorPickerViewModel: ColorPickerViewModel
-    val layersViewModel: LayersViewModel
-    val brushViewModel: BrushViewModel
-    val drawingViewModel: DrawingViewModel
-    val transformControlsViewModel: TransformControlsViewModel
-    val gamePromptViewModel: GamePromptViewModel
-
-    init {
-        val brushTypeStateFlow = MutableStateFlow(BrushType.Pencil)
-        val fillTypeStateFlow = MutableStateFlow(FillType.Stroke)
-
-        gamePromptViewModel = GamePromptViewModel()
-
-        colorPickerViewModel = ColorPickerViewModel()
-
-        layers = Layers(
-            selectedColorStateFlow = colorPickerViewModel.colorStateFlow,
-            selectedBrushTypeStateFlow = brushTypeStateFlow,
-            selectedFillTypeStateFlow = fillTypeStateFlow
-        )
-
-        layersViewModel = LayersViewModel(
-            layers = layers,
-            backgroundStateFlow = colorPickerViewModel.backgroundStateFlow
-        )
-
-        brushViewModel = BrushViewModel(
-            colorStateFlow = colorPickerViewModel.colorStateFlow,
-            selectedLayerStateFlow = layers.selectedLayerStateFlow,
-            brushTypeStateFlow = brushTypeStateFlow,
-            fillTypeStateFlow = fillTypeStateFlow,
-        )
-
-        transformControlsViewModel = TransformControlsViewModel(
-            selectedLayerStateFlow = layers.selectedLayerStateFlow
-        )
-
-        drawingViewModel = DrawingViewModel(
-            layers = layers,
-            backgroundStateFlow = colorPickerViewModel.backgroundStateFlow,
-            selectedBrushTypeStateFlow = brushTypeStateFlow,
-            selectedTransformTypeStateFlow = transformControlsViewModel.selectedTransformTypeStateFlow
-        )
-    }
+    val colorPickerViewModel: ColorPickerViewModel = ColorPickerViewModel()
+    val layersViewModel: LayersViewModel = LayersViewModel()
+    val brushViewModel: BrushViewModel = BrushViewModel()
+    val drawingViewModel: DrawingViewModel = DrawingViewModel()
+    val transformControlsViewModel: TransformControlsViewModel = TransformControlsViewModel()
+    val gamePromptViewModel: GamePromptViewModel = GamePromptViewModel()
 }

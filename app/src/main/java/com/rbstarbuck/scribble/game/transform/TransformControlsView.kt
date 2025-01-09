@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rbstarbuck.scribble.R
-import com.rbstarbuck.scribble.game.layer.emptyLayer
 import com.rbstarbuck.scribble.util.SelectionButton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,47 +42,47 @@ fun TransformControlsView(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val transformType by viewModel.selectedTransformTypeStateFlow.collectAsState()
+            val selectedTransformType by viewModel.selectedTransformType.stateFlow.collectAsState()
 
             Column(Modifier.fillMaxHeight()) {
                 val size = this@BoxWithConstraints.maxHeight * 0.3f
 
                 SelectionButton(
                     onClick = {
-                        viewModel.selectedTransformTypeStateFlow.value = TransformType.TRANSLATE
+                        viewModel.selectedTransformType.transformType = TransformType.TRANSLATE
                     },
                     icon = ImageVector.vectorResource(R.drawable.move),
                     contentDescription = stringResource(R.string.move),
                     size = size,
-                    selected = transformType == TransformType.TRANSLATE
+                    selected = selectedTransformType == TransformType.TRANSLATE
                 )
 
                 Spacer(Modifier.weight(1f))
 
                 SelectionButton(
                     onClick = {
-                        viewModel.selectedTransformTypeStateFlow.value = TransformType.SCALE
+                        viewModel.selectedTransformType.transformType = TransformType.SCALE
                     },
                     icon = ImageVector.vectorResource(R.drawable.scale),
                     contentDescription = stringResource(R.string.scale),
                     size = size,
-                    selected = transformType == TransformType.SCALE
+                    selected = selectedTransformType == TransformType.SCALE
                 )
 
                 Spacer(Modifier.weight(1f))
 
                 SelectionButton(
                     onClick = {
-                        viewModel.selectedTransformTypeStateFlow.value = TransformType.ROTATE
+                        viewModel.selectedTransformType.transformType = TransformType.ROTATE
                     },
                     icon = ImageVector.vectorResource(R.drawable.rotate),
                     contentDescription = stringResource(R.string.rotate),
                     size = size,
-                    selected = transformType == TransformType.ROTATE
+                    selected = selectedTransformType == TransformType.ROTATE
                 )
             }
 
-            when (transformType) {
+            when (viewModel.selectedTransformType.transformType) {
                 TransformType.TRANSLATE -> TranslateControlsView(
                     viewModel = viewModel,
                     modifier = Modifier
@@ -119,10 +118,10 @@ private fun TranslateControlsView(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+        val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
         val translation by selectedLayer.strokes.translationStateFlow.collectAsState()
 
-        val boundingBox = remember { selectedLayer.strokes.boundingBox() }
+        val boundingBox = remember { viewModel.selectedLayer.layer.strokes.boundingBox() }
 
         val translateXStateFlow = MutableStateFlow(boundingBox.center.x + translation.x)
         val translateYStateFlow =  MutableStateFlow(boundingBox.center.y + translation.y)
@@ -152,7 +151,7 @@ private fun ScaleControlsView(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+        val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
         val scale by selectedLayer.strokes.scaleStateFlow.collectAsState()
 
         val scaleXYStateFlow = MutableStateFlow((scale.x + scale.y) / 2f)
@@ -194,7 +193,7 @@ private fun RotateControlsView(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+        val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
         val boundsStateFlow = MutableStateFlow(selectedLayer.strokes.boundingBox())
         val bounds by boundsStateFlow.collectAsState()
@@ -257,9 +256,7 @@ private fun TransformSlider(
 @Preview
 @Composable
 fun TransformViewPreview() {
-    val viewModel = TransformControlsViewModel(
-        selectedLayerStateFlow = MutableStateFlow(emptyLayer())
-    )
+    val viewModel = TransformControlsViewModel()
 
     TransformControlsView(
         viewModel = viewModel,

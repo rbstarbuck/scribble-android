@@ -22,17 +22,21 @@ import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.toColor
+import com.rbstarbuck.scribble.koin.state.SelectedBackgroundColor
 import com.rbstarbuck.scribble.util.SoftwareLayer
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun CanvasBackgroundView(
-    backgroundStateFlow: StateFlow<Color>,
     modifier: Modifier = Modifier
 ) {
-    val background by backgroundStateFlow.collectAsState()
+    val selectedBackgroundColor:
+            SelectedBackgroundColor by inject(SelectedBackgroundColor::class.java)
 
-    Box(modifier.background(background))
+    val backgroundColor by selectedBackgroundColor.stateFlow.collectAsState()
+
+    Box(modifier.background(backgroundColor))
 }
 
 @Composable
@@ -110,7 +114,9 @@ private fun DrawScope.drawStroke(stroke: Stroke) {
             } else {
                 stroke.color.toColor()
             },
-            style = if (stroke.brushType == BrushType.Line ||
+            style = if (
+                stroke.brushType == BrushType.Pencil ||
+                stroke.brushType == BrushType.Line ||
                 stroke.fillType == FillType.Stroke ||
                 stroke.points.size < 3
             ) {

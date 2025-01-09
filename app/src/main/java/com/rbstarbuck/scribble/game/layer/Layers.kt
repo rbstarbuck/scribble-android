@@ -1,24 +1,17 @@
 package com.rbstarbuck.scribble.game.layer
 
-import com.rbstarbuck.scribble.game.brush.BrushType
-import com.rbstarbuck.scribble.game.brush.FillType
-import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.Strokes
+import com.rbstarbuck.scribble.koin.state.SelectedLayer
 import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.java.KoinJavaComponent.inject
 
-class Layers(
-    private val selectedColorStateFlow: StateFlow<HSVColor>,
-    private val selectedBrushTypeStateFlow: StateFlow<BrushType>,
-    private val selectedFillTypeStateFlow: StateFlow<FillType>
-) {
+class Layers {
+    val selectedLayer: SelectedLayer by inject(SelectedLayer::class.java)
+
     private val _layersStateFlow = MutableStateFlow(listOf(Layer()))
     val layersStateFlow = _layersStateFlow.asStateFlow()
-
-    private val _selectedLayerStateFlow = MutableStateFlow(_layersStateFlow.value.first())
-    val selectedLayerStateFlow = _selectedLayerStateFlow.asStateFlow()
 
     fun addAndSelect(): Layer {
         val layer = Layer()
@@ -30,11 +23,7 @@ class Layers(
     inner class Layer {
         val key = generateKey()
 
-        private var _strokes = Strokes(
-            selectedColorStateFlow,
-            selectedBrushTypeStateFlow,
-            selectedFillTypeStateFlow
-        )
+        private var _strokes = Strokes()
         val strokes: Strokes
             get() = _strokes
 
@@ -55,9 +44,9 @@ class Layers(
             }
 
         fun select() {
-            _selectedLayerStateFlow.value.selected = false
+            selectedLayer.layer.selected = false
             selected = true
-            _selectedLayerStateFlow.value = this
+            selectedLayer.layer = this
         }
 
         fun duplicate() {
@@ -146,10 +135,7 @@ class Layers(
 }
 
 fun emptyLayer(): Layers.Layer {
-    val layers = Layers(
-        selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
-        selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
-        selectedFillTypeStateFlow = MutableStateFlow(FillType.Filled)
-    )
+
+    val layers = Layers()
     return layers.addAndSelect()
 }

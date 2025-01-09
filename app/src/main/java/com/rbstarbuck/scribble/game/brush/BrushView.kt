@@ -41,18 +41,19 @@ fun BrushView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            colorStateFlow = viewModel.colorStateFlow
+            colorStateFlow = viewModel.selectedColor.stateFlow
         )
 
         Row(Modifier.fillMaxWidth()) {
-            val brushType by viewModel.brushTypeStateFlow.collectAsState()
-            val fillType by viewModel.fillTypeStateFlow.collectAsState()
+            val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
+            val brushType by viewModel.selectedBrushType.stateFlow.collectAsState()
+            val fillType by viewModel.selectedFillType.stateFlow.collectAsState()
 
             Column {
                 Row {
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Pencil
+                            viewModel.selectedBrushType.brushType = BrushType.Pencil
                         },
                         icon = ImageVector.vectorResource(R.drawable.pencil),
                         contentDescription = stringResource(R.string.pencil),
@@ -64,7 +65,7 @@ fun BrushView(
 
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Eraser
+                            viewModel.selectedBrushType.brushType = BrushType.Eraser
 
                         },
                         icon = ImageVector.vectorResource(R.drawable.eraser),
@@ -77,7 +78,7 @@ fun BrushView(
 
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Line
+                            viewModel.selectedBrushType.brushType = BrushType.Line
                         },
                         icon = ImageVector.vectorResource(R.drawable.line),
                         contentDescription = stringResource(R.string.line),
@@ -93,7 +94,7 @@ fun BrushView(
                         modifier = Modifier
                             .size(44.dp)
                             .clickable {
-                                viewModel.selectedLayerStateFlow.value.undo()
+                                selectedLayer.undo()
                             }
                     )
                 }
@@ -108,7 +109,7 @@ fun BrushView(
 
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Rectangle
+                            viewModel.selectedBrushType.brushType = BrushType.Rectangle
                         },
                         icon = ImageVector.vectorResource(R.drawable.square),
                         contentDescription = stringResource(R.string.rectangle),
@@ -121,7 +122,7 @@ fun BrushView(
 
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Circle
+                            viewModel.selectedBrushType.brushType = BrushType.Circle
                         },
                         icon = ImageVector.vectorResource(R.drawable.circle),
                         contentDescription = stringResource(R.string.circle),
@@ -134,7 +135,7 @@ fun BrushView(
 
                     SelectionButton(
                         onClick = {
-                            viewModel.brushTypeStateFlow.value = BrushType.Polygon
+                            viewModel.selectedBrushType.brushType = BrushType.Polygon
                         },
                         icon = ImageVector.vectorResource(R.drawable.polygon),
                         contentDescription = stringResource(R.string.polygon),
@@ -146,7 +147,7 @@ fun BrushView(
 
                     FillTypeButton(
                         onClick = {
-                            viewModel.fillTypeStateFlow.value = FillType.Stroke
+                            viewModel.selectedFillType.fillType = FillType.Stroke
                         },
                         size = 44.dp,
                         enabled = fillTypeEnabled,
@@ -158,7 +159,7 @@ fun BrushView(
 
                     FillTypeButton(
                         onClick = {
-                            viewModel.fillTypeStateFlow.value = FillType.Filled
+                            viewModel.selectedFillType.fillType = FillType.Filled
                         },
                         size = 44.dp,
                         enabled = fillTypeEnabled,

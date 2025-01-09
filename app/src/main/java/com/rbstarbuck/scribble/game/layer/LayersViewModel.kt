@@ -1,10 +1,11 @@
 package com.rbstarbuck.scribble.game.layer
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.StateFlow
+import com.rbstarbuck.scribble.koin.state.SelectedBackgroundColor
+import org.koin.java.KoinJavaComponent.inject
 
-class LayersViewModel(
-    val layers: Layers,
-    val backgroundStateFlow: StateFlow<Color>
-): ViewModel()
+class LayersViewModel: ViewModel() {
+    val layers: Layers by inject(Layers::class.java)
+    val selectedBackgroundColor:
+            SelectedBackgroundColor by inject(SelectedBackgroundColor::class.java)
+}

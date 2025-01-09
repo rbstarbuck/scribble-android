@@ -22,7 +22,7 @@ fun RotateView(
     viewModel: RotateViewModel,
     modifier: Modifier = Modifier
 ) {
-    val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     val localRotationStateFlow = remember { MutableStateFlow(0f) }
     val localRotation by localRotationStateFlow.collectAsState()

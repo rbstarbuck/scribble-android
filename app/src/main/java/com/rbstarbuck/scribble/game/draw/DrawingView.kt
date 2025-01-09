@@ -20,14 +20,11 @@ fun DrawingView(
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
-        CanvasBackgroundView(
-            backgroundStateFlow = viewModel.backgroundStateFlow,
-            modifier = Modifier.fillMaxSize()
-        )
+        CanvasBackgroundView(Modifier.fillMaxSize())
 
         val layers by viewModel.layers.layersStateFlow.collectAsState()
-        val selectedBrush by viewModel.selectedBrushTypeStateFlow.collectAsState()
-        val selectedTransformType by viewModel.selectedTransformTypeStateFlow.collectAsState()
+        val selectedBrushType by viewModel.selectedBrushType.stateFlow.collectAsState()
+        val selectedTransformType by viewModel.selectedTransformType.stateFlow.collectAsState()
         val tabItemRecompose by TabItem.recomposeFlag.collectAsState()
 
         for (layer in layers.reversed()) {
@@ -63,31 +60,26 @@ fun DrawingView(
 
         key(tabItemRecompose) {
             if (TabItem.selectedItem == TabItem.BrushTabItem) {
-                when (selectedBrush) {
+                when (selectedBrushType) {
                     BrushType.Pencil, BrushType.Eraser -> PencilPaintbrushView(
-                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         modifier = Modifier.fillMaxSize()
                     )
 
                     BrushType.Line -> LineAndPolygonPaintbrushView(
-                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         isPolygon = false,
                         modifier = Modifier.fillMaxSize()
                     )
 
                     BrushType.Polygon -> LineAndPolygonPaintbrushView(
-                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         isPolygon = true,
                         modifier = Modifier.fillMaxSize()
                     )
 
                     BrushType.Circle -> CirclePaintbrushView(
-                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         modifier = Modifier.fillMaxSize()
                     )
 
                     BrushType.Rectangle -> RectanglePaintbrushView(
-                        selectedLayerStateFlow = viewModel.layers.selectedLayerStateFlow,
                         modifier = Modifier.fillMaxSize()
                     )
                 }

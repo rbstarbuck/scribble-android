@@ -16,7 +16,7 @@ fun TranslateView(
     viewModel: TranslateViewModel,
     modifier: Modifier = Modifier
 ) {
-    val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     Box(
         modifier = modifier

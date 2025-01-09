@@ -1,25 +1,23 @@
 package com.rbstarbuck.scribble.game.draw
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.layer.Layers
 import com.rbstarbuck.scribble.game.transform.RotateViewModel
 import com.rbstarbuck.scribble.game.transform.ScaleViewModel
-import com.rbstarbuck.scribble.game.transform.TransformType
 import com.rbstarbuck.scribble.game.transform.TranslateViewModel
+import com.rbstarbuck.scribble.koin.state.SelectedBrushType
+import com.rbstarbuck.scribble.koin.state.SelectedTransformType
 import com.rbstarbuck.scribble.util.generateKey
-import kotlinx.coroutines.flow.StateFlow
+import org.koin.java.KoinJavaComponent.inject
 
-class DrawingViewModel(
-    val layers: Layers,
-    val backgroundStateFlow: StateFlow<Color>,
-    val selectedBrushTypeStateFlow: StateFlow<BrushType>,
-    val selectedTransformTypeStateFlow: StateFlow<TransformType>
-): ViewModel() {
+class DrawingViewModel: ViewModel() {
     val key: String = generateKey()
 
-    val translateViewModel = TranslateViewModel(layers.selectedLayerStateFlow)
-    val scaleViewModel = ScaleViewModel(layers.selectedLayerStateFlow)
-    val rotateViewModel = RotateViewModel(selectedLayerStateFlow = layers.selectedLayerStateFlow)
+    val layers: Layers by inject(Layers::class.java)
+    val selectedBrushType: SelectedBrushType by inject(SelectedBrushType::class.java)
+    val selectedTransformType: SelectedTransformType by inject(SelectedTransformType::class.java)
+
+    val translateViewModel = TranslateViewModel()
+    val scaleViewModel = ScaleViewModel()
+    val rotateViewModel = RotateViewModel()
 }

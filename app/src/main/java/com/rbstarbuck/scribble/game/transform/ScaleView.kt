@@ -19,7 +19,7 @@ fun ScaleView(
     viewModel: ScaleViewModel,
     modifier: Modifier = Modifier
 ) {
-    val selectedLayer by viewModel.selectedLayerStateFlow.collectAsState()
+    val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     val boundsStateFlow = remember { MutableStateFlow(Rect.Zero) }
     val bounds by boundsStateFlow.collectAsState()

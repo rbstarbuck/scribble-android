@@ -29,6 +29,8 @@ fun ColorPickerView(
     viewModel: ColorPickerViewModel,
     modifier: Modifier = Modifier
 ) {
+    val color by viewModel.selectedColor.stateFlow.collectAsState()
+
     Row(modifier) {
         Column(
             modifier = Modifier.weight(1f),
@@ -44,7 +46,7 @@ fun ColorPickerView(
 
             TextButton(
                 onClick = {
-                    viewModel.backgroundStateFlow.value = viewModel.colorStateFlow.value.toColor()
+                    viewModel.selectedBackgroundColor.color = color.toColor()
                 }
             ) {
                 Text(stringResource(R.string.set_background_color))
@@ -75,7 +77,7 @@ fun ColorPickerView(
 fun ColorPickerViewPreview() {
     val viewModel = remember { ColorPickerViewModel() }
 
-    val color by viewModel.colorStateFlow.collectAsState()
+    val color by viewModel.selectedColor.stateFlow.collectAsState()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.height(50.dp))

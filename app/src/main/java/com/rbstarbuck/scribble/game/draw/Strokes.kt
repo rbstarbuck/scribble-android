@@ -6,13 +6,15 @@ import androidx.compose.ui.geometry.Rect
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
+import com.rbstarbuck.scribble.koin.state.SelectedBrushType
+import com.rbstarbuck.scribble.koin.state.SelectedColor
+import com.rbstarbuck.scribble.koin.state.SelectedFillType
 import com.rbstarbuck.scribble.koin.state.SelectedStrokeWidth
 import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
@@ -20,12 +22,11 @@ import kotlin.getValue
 
 private const val MIN_SIZE = 0.05f
 
-class Strokes(
-    private val selectedColor: StateFlow<HSVColor>,
-    val selectedBrushType: StateFlow<BrushType>,
-    val selectedFillType: StateFlow<FillType>
-) {
+class Strokes {
+    private val selectedColor: SelectedColor by inject(SelectedColor::class.java)
     private val selectedStrokeWidth: SelectedStrokeWidth by inject(SelectedStrokeWidth::class.java)
+    private val selectedBrushType: SelectedBrushType by inject(SelectedBrushType::class.java)
+    private val selectedFillType: SelectedFillType by inject(SelectedFillType::class.java)
 
     private var _currentStroke: MutableStroke? = null
     val currentStroke: Stroke?
@@ -52,11 +53,11 @@ class Strokes(
 
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
-            color = selectedColor.value,
+            color = selectedColor.color,
             width = selectedStrokeWidth.width,
             unscaledWidth = selectedStrokeWidth.width,
-            brushType = selectedBrushType.value,
-            fillType = selectedFillType.value,
+            brushType = selectedBrushType.brushType,
+            fillType = selectedFillType.fillType,
             initialPoint = Point(x, y)
         )
 
@@ -120,11 +121,7 @@ class Strokes(
     }
 
     fun copy(): Strokes {
-        val other = Strokes(
-            selectedColor = selectedColor,
-            selectedBrushType = selectedBrushType,
-            selectedFillType = selectedFillType
-        )
+        val other = Strokes()
 
         for (stroke in _committedStrokes) {
             other._committedStrokes.add(stroke.copy())
