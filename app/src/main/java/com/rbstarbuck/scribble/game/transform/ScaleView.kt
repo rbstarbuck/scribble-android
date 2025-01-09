@@ -13,12 +13,12 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun ScaleView(
-    viewModel: ScaleViewModel,
-    modifier: Modifier = Modifier
-) {
+fun ScaleView(modifier: Modifier = Modifier) {
+    val viewModel: ScaleViewModel by inject(ScaleViewModel::class.java)
+
     val selectedLayer by viewModel.selectedLayer.stateFlow.collectAsState()
 
     val boundsStateFlow = remember { MutableStateFlow(Rect.Zero) }

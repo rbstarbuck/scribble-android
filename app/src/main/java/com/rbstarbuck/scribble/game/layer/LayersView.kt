@@ -20,12 +20,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rbstarbuck.scribble.R
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun LayersView(
-    viewModel: LayersViewModel,
-    modifier: Modifier = Modifier
-) {
+fun LayersView(modifier: Modifier = Modifier) {
+    val viewModel: LayersViewModel by inject(LayersViewModel::class.java)
+
     Column(modifier) {
         val layers by viewModel.layers.layersStateFlow.collectAsState()
 

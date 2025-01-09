@@ -51,7 +51,6 @@ fun GameView(
             val tabItemRecompose by TabItem.recomposeFlag.collectAsState()
 
             GamePromptView(
-                viewModel = viewModel.gamePromptViewModel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(65.dp)
@@ -59,7 +58,6 @@ fun GameView(
             )
 
             DrawingView(
-                viewModel = viewModel.drawingViewModel,
                 modifier = Modifier
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxWidth()
@@ -73,7 +71,6 @@ fun GameView(
             key(tabItemRecompose) {
                 if (TabItem.BrushTabItem.isSelected) {
                     BrushView(
-                        viewModel = viewModel.brushViewModel,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp)
@@ -82,7 +79,6 @@ fun GameView(
 
                 if (TabItem.ColorTabItem.isSelected) {
                     ColorPickerView(
-                        viewModel = viewModel.colorPickerViewModel,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp)
@@ -91,7 +87,6 @@ fun GameView(
 
                 if (TabItem.LayersTabItem.isSelected) {
                     LayersView(
-                        viewModel = viewModel.layersViewModel,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp)
@@ -100,7 +95,6 @@ fun GameView(
 
                 if (TabItem.TransformTabItem.isSelected) {
                     TransformControlsView(
-                        viewModel = viewModel.transformControlsViewModel,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 20.dp, vertical = 10.dp)

@@ -13,6 +13,7 @@ class MyApplication: Application() {
             androidContext(this@MyApplication)
             modules(Module.stateModule)
             modules(Module.typesModule)
+            modules(Module.viewModelsModule)
         }
     }
 }

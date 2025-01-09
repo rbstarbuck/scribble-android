@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rbstarbuck.scribble.koin.state.SelectedBackgroundColor
 import com.rbstarbuck.scribble.koin.state.SelectedColor
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.rbstarbuck.scribble.koin.state.SelectedColorHue
+import com.rbstarbuck.scribble.koin.state.SelectedColorSaturationAndValue
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
@@ -14,21 +15,19 @@ class ColorPickerViewModel: ViewModel() {
     val selectedColor: SelectedColor by inject(SelectedColor::class.java)
     val selectedBackgroundColor:
             SelectedBackgroundColor by inject(SelectedBackgroundColor::class.java)
-
-    val hueStateFlow = MutableStateFlow(180f)
-    val saturationValueStateFlow = MutableStateFlow(0f to 0f)
-
-    val savedColorsViewModel = SavedColorsViewModel(hueStateFlow, saturationValueStateFlow)
+    val selectedColorHue: SelectedColorHue by inject(SelectedColorHue::class.java)
+    val selectedColorSaturationAndValue:
+            SelectedColorSaturationAndValue by inject(SelectedColorSaturationAndValue::class.java)
 
     init {
         viewModelScope.launch {
-            hueStateFlow.collect { hue ->
+            selectedColorHue.stateFlow.collect { hue ->
                 selectedColor.color = selectedColor.color.copy(hue = hue)
             }
         }
 
         viewModelScope.launch {
-            saturationValueStateFlow.collect { saturationAndValue ->
+            selectedColorSaturationAndValue.stateFlow.collect { saturationAndValue ->
                 selectedColor.color = selectedColor.color.copy(
                     saturation = saturationAndValue.first,
                     value = saturationAndValue.second

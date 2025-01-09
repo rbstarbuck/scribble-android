@@ -16,7 +16,7 @@ class AddDrawingOperation(private val drawing: DrawingViewModel): Operation() {
         if (uid != null) {
             val selectedBackgroundColor:
                     SelectedBackgroundColor by inject(SelectedBackgroundColor::class.java)
-            
+
             val map = mapOf(
                 "day" to Timestamp.now(),
                 "uid" to uid,
