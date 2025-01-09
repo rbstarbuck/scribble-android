@@ -22,19 +22,33 @@ import kotlin.getValue
 
 private const val MIN_SIZE = 0.05f
 
-class Strokes {
+class Strokes(
+    private val committedMutableStrokes: MutableList<MutableStroke> =
+        mutableListOf<MutableStroke>(),
+    translation: Offset = Offset.Zero,
+    scale: Offset = Offset(1f, 1f),
+    rotation: Float = 0f
+) {
     private val selectedColor: SelectedColor by inject(SelectedColor::class.java)
     private val selectedStrokeWidth: SelectedStrokeWidth by inject(SelectedStrokeWidth::class.java)
     private val selectedBrushType: SelectedBrushType by inject(SelectedBrushType::class.java)
     private val selectedFillType: SelectedFillType by inject(SelectedFillType::class.java)
 
-    private var _currentStroke: MutableStroke? = null
+    private var currentMutableStroke: MutableStroke? = null
     val currentStroke: Stroke?
-        get() = _currentStroke
+        get() = currentMutableStroke
 
-    private val _committedStrokes = mutableListOf<MutableStroke>()
     val committedStrokes: List<Stroke>
-        get() = _committedStrokes
+        get() = committedMutableStrokes
+
+    private val _translationStateFlow = MutableStateFlow(translation)
+    val translationStateFlow = _translationStateFlow.asStateFlow()
+
+    private val _scaleStateFlow = MutableStateFlow(scale)
+    val scaleStateFlow = _scaleStateFlow.asStateFlow()
+
+    private val _rotationStateFlow = MutableStateFlow(rotation)
+    val rotationStateFlow = _rotationStateFlow.asStateFlow()
 
     private val _recomposeCurrentStrokesStateFlow = MutableStateFlow(0)
     val recomposeCurrentStrokesStateFlow = _recomposeCurrentStrokesStateFlow.asStateFlow()
@@ -42,17 +56,8 @@ class Strokes {
     private val _recomposeCommittedStrokesStateFlow = MutableStateFlow(0)
     val recomposeCommittedStrokesStateFlow = _recomposeCommittedStrokesStateFlow.asStateFlow()
 
-    private val _translationStateFlow = MutableStateFlow(Offset.Zero)
-    val translationStateFlow = _translationStateFlow.asStateFlow()
-
-    private val _scaleStateFlow = MutableStateFlow(Offset(1f, 1f))
-    val scaleStateFlow = _scaleStateFlow.asStateFlow()
-
-    private val _rotationStateFlow = MutableStateFlow(0f)
-    val rotationStateFlow = _rotationStateFlow.asStateFlow()
-
     fun beginStroke(x: Float, y: Float) {
-        _currentStroke = MutableStroke(
+        currentMutableStroke = MutableStroke(
             color = selectedColor.color,
             width = selectedStrokeWidth.width,
             unscaledWidth = selectedStrokeWidth.width,
@@ -65,13 +70,13 @@ class Strokes {
     }
 
     fun appendStroke(x: Float, y: Float) {
-        _currentStroke!!.addPoint(Point(x, y))
+        currentMutableStroke!!.addPoint(Point(x, y))
 
         _recomposeCurrentStrokesStateFlow.value += 1
     }
 
     fun moveCurrentStrokePoint(x: Float, y: Float) {
-        val currentPoint = _currentStroke!!.points.last()
+        val currentPoint = currentMutableStroke!!.points.last()
         currentPoint.x = x
         currentPoint.y = y
 
@@ -112,8 +117,8 @@ class Strokes {
     }
 
     fun endStroke() {
-        _committedStrokes.add(_currentStroke!!)
-        _currentStroke = null
+        committedMutableStrokes.add(currentMutableStroke!!)
+        currentMutableStroke = null
         CoroutineScope(Dispatchers.Default).launch {
             delay(100L)
             _recomposeCommittedStrokesStateFlow.value += 1
@@ -123,22 +128,22 @@ class Strokes {
     fun copy(): Strokes {
         val other = Strokes()
 
-        for (stroke in _committedStrokes) {
-            other._committedStrokes.add(stroke.copy())
+        for (stroke in committedMutableStrokes) {
+            other.committedMutableStrokes.add(stroke.copy())
         }
 
         return other
     }
 
     fun mergeInto(other: Strokes) {
-        other._committedStrokes.addAll(_committedStrokes)
+        other.committedMutableStrokes.addAll(committedMutableStrokes)
     }
 
     fun undo() {
-        if (_currentStroke != null) {
-            _currentStroke = null
+        if (currentMutableStroke != null) {
+            currentMutableStroke = null
         } else {
-            _committedStrokes.removeLastOrNull()
+            committedMutableStrokes.removeLastOrNull()
         }
 
         _recomposeCommittedStrokesStateFlow.value += 1
@@ -293,6 +298,7 @@ data class MutableStroke(
 
     override fun copy(): MutableStroke {
         val other = copy(
+            key = generateKey(),
             initialPoint = initialPoint.copy(
                 x = initialPoint.x,
                 y = initialPoint.y

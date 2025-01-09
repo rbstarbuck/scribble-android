@@ -7,11 +7,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.java.KoinJavaComponent.inject
 
-class Layers {
+class Layers(
+    layers: List<Layer> = emptyList()
+) {
     val selectedLayer: SelectedLayer by inject(SelectedLayer::class.java)
 
-    private val _layersStateFlow = MutableStateFlow(listOf(Layer()))
+    private val _layersStateFlow = MutableStateFlow(layers)
     val layersStateFlow = _layersStateFlow.asStateFlow()
+
+    init {
+        if (layers.isEmpty()) {
+            addAndSelect()
+        }
+    }
 
     fun addAndSelect(): Layer {
         val layer = Layer()
@@ -20,14 +28,19 @@ class Layers {
         return layer
     }
 
-    inner class Layer {
-        val key = generateKey()
+    inner class Layer(
+        unpackedKey: String = generateKey(),
+        unpackedStrokes: Strokes = Strokes(),
+        unpackedVisible: Boolean = true,
+        unpackedSelected: Boolean = true
+    ) {
+        val key = unpackedKey
 
-        private var _strokes = Strokes()
+        private var _strokes = unpackedStrokes
         val strokes: Strokes
             get() = _strokes
 
-        private val _visibleStateFlow = MutableStateFlow(true)
+        private val _visibleStateFlow = MutableStateFlow(unpackedVisible)
         val visibleStateFlow = _visibleStateFlow.asStateFlow()
         var visible: Boolean
             get() = visibleStateFlow.value
@@ -35,7 +48,7 @@ class Layers {
                 _visibleStateFlow.value = value
             }
 
-        private val _selectedStateFlow = MutableStateFlow(true)
+        private val _selectedStateFlow = MutableStateFlow(unpackedSelected)
         val selectedStateFlow = _selectedStateFlow.asStateFlow()
         private var selected: Boolean
             get() = selectedStateFlow.value

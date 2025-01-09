@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,13 +35,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.rbstarbuck.scribble.R
-import com.rbstarbuck.scribble.game.brush.BrushType
-import com.rbstarbuck.scribble.game.brush.FillType
-import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.draw.CanvasBackgroundView
 import com.rbstarbuck.scribble.game.draw.CanvasView
 import com.rbstarbuck.scribble.koin.state.SelectedLayer
-import kotlinx.coroutines.flow.StateFlow
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable
