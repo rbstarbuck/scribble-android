@@ -22,9 +22,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rbstarbuck.scribble.game.color.HSVColor
 import com.rbstarbuck.scribble.game.color.toColor
+import com.rbstarbuck.scribble.koin.state.SelectedStrokeWidth
 import com.rbstarbuck.scribble.util.pxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.java.KoinJavaComponent.inject
+import kotlin.getValue
 
 const val LINE_THICKNESS_MIN_VALUE = 0.005f
 const val LINE_THICKNESS_MAX_VALUE = 0.1f
@@ -32,15 +35,16 @@ const val LINE_THICKNESS_MAX_VALUE = 0.1f
 @Composable
 fun StrokeWidthSlider(
     modifier: Modifier = Modifier,
-    lineThicknessStateFlow: MutableStateFlow<Float>,
     colorStateFlow: StateFlow<HSVColor>
 ) {
+    val selectedStrokeWidth: SelectedStrokeWidth by inject(SelectedStrokeWidth::class.java)
+
     val color by colorStateFlow.collectAsState()
 
     val canvasWidthStateFlow = remember { MutableStateFlow(0f) }
     val canvasWidth by canvasWidthStateFlow.collectAsState()
 
-    val lineThickness by lineThicknessStateFlow.collectAsState()
+    val lineThickness by selectedStrokeWidth.stateFlow.collectAsState()
 
     val initialPoint = (lineThickness - LINE_THICKNESS_MIN_VALUE) /
             (LINE_THICKNESS_MAX_VALUE - LINE_THICKNESS_MIN_VALUE)
@@ -49,7 +53,7 @@ fun StrokeWidthSlider(
     val point by pointStateFlow.collectAsState()
 
     fun onTouchInput(percentOfWidth: Float) {
-        lineThicknessStateFlow.value =
+        selectedStrokeWidth.width =
             (LINE_THICKNESS_MIN_VALUE +
                     (LINE_THICKNESS_MAX_VALUE - LINE_THICKNESS_MIN_VALUE) *
                     percentOfWidth)
@@ -114,7 +118,6 @@ fun StrokeWidthSliderPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            lineThicknessStateFlow = MutableStateFlow(0.015f),
             colorStateFlow = MutableStateFlow(HSVColor(0f, 1f, 1f))
         )
 

@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Rect
 import com.rbstarbuck.scribble.game.brush.BrushType
 import com.rbstarbuck.scribble.game.brush.FillType
 import com.rbstarbuck.scribble.game.color.HSVColor
+import com.rbstarbuck.scribble.koin.state.SelectedStrokeWidth
 import com.rbstarbuck.scribble.util.generateKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,15 +15,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
+import kotlin.getValue
 
 private const val MIN_SIZE = 0.05f
 
 class Strokes(
     private val selectedColor: StateFlow<HSVColor>,
-    private val selectedWidth: StateFlow<Float>,
     val selectedBrushType: StateFlow<BrushType>,
     val selectedFillType: StateFlow<FillType>
 ) {
+    private val selectedStrokeWidth: SelectedStrokeWidth by inject(SelectedStrokeWidth::class.java)
+
     private var _currentStroke: MutableStroke? = null
     val currentStroke: Stroke?
         get() = _currentStroke
@@ -49,8 +53,8 @@ class Strokes(
     fun beginStroke(x: Float, y: Float) {
         _currentStroke = MutableStroke(
             color = selectedColor.value,
-            width = selectedWidth.value,
-            unscaledWidth = selectedWidth.value,
+            width = selectedStrokeWidth.width,
+            unscaledWidth = selectedStrokeWidth.width,
             brushType = selectedBrushType.value,
             fillType = selectedFillType.value,
             initialPoint = Point(x, y)
@@ -118,7 +122,6 @@ class Strokes(
     fun copy(): Strokes {
         val other = Strokes(
             selectedColor = selectedColor,
-            selectedWidth = selectedWidth,
             selectedBrushType = selectedBrushType,
             selectedFillType = selectedFillType
         )

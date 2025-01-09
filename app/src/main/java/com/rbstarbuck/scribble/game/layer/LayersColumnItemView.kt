@@ -291,7 +291,6 @@ private fun MergeLayerConfirmationDialog(
 fun LayersColumnItemViewPreview() {
     val layers = Layers(
         selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
-        selectedStrokeWidthStateFlow = MutableStateFlow(10f),
         selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
         selectedFillTypeStateFlow = MutableStateFlow(FillType.Stroke)
     )

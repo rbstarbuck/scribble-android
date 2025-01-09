@@ -12,6 +12,7 @@ material = "1.12.0"
 lifecycleRuntimeKtx = "2.8.7"
 firebase = "33.7.0"
 google = "4.4.2"
+koin-bom = "4.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +38,9 @@ firebase-config = { group = "com.google.firebase", name = "firebase-config" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin-bom" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

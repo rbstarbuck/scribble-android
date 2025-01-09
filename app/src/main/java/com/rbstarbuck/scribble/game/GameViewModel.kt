@@ -23,7 +23,6 @@ class GameViewModel: ViewModel() {
     val gamePromptViewModel: GamePromptViewModel
 
     init {
-        val strokeWidthStateFlow = MutableStateFlow(0.015f)
         val brushTypeStateFlow = MutableStateFlow(BrushType.Pencil)
         val fillTypeStateFlow = MutableStateFlow(FillType.Stroke)
 
@@ -33,7 +32,6 @@ class GameViewModel: ViewModel() {
 
         layers = Layers(
             selectedColorStateFlow = colorPickerViewModel.colorStateFlow,
-            selectedStrokeWidthStateFlow = strokeWidthStateFlow,
             selectedBrushTypeStateFlow = brushTypeStateFlow,
             selectedFillTypeStateFlow = fillTypeStateFlow
         )
@@ -46,7 +44,6 @@ class GameViewModel: ViewModel() {
         brushViewModel = BrushViewModel(
             colorStateFlow = colorPickerViewModel.colorStateFlow,
             selectedLayerStateFlow = layers.selectedLayerStateFlow,
-            strokeWidthStateFlow = strokeWidthStateFlow,
             brushTypeStateFlow = brushTypeStateFlow,
             fillTypeStateFlow = fillTypeStateFlow,
         )

@@ -41,7 +41,6 @@ fun BrushView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            lineThicknessStateFlow = viewModel.strokeWidthStateFlow,
             colorStateFlow = viewModel.colorStateFlow
         )
 

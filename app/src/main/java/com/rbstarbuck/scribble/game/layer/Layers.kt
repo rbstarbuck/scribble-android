@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class Layers(
     private val selectedColorStateFlow: StateFlow<HSVColor>,
-    private val selectedStrokeWidthStateFlow: StateFlow<Float>,
     private val selectedBrushTypeStateFlow: StateFlow<BrushType>,
     private val selectedFillTypeStateFlow: StateFlow<FillType>
 ) {
@@ -33,7 +32,6 @@ class Layers(
 
         private var _strokes = Strokes(
             selectedColorStateFlow,
-            selectedStrokeWidthStateFlow,
             selectedBrushTypeStateFlow,
             selectedFillTypeStateFlow
         )
@@ -150,7 +148,6 @@ class Layers(
 fun emptyLayer(): Layers.Layer {
     val layers = Layers(
         selectedColorStateFlow = MutableStateFlow(HSVColor(0f, 0f, 0f)),
-        selectedStrokeWidthStateFlow = MutableStateFlow(1f),
         selectedBrushTypeStateFlow = MutableStateFlow(BrushType.Pencil),
         selectedFillTypeStateFlow = MutableStateFlow(FillType.Filled)
     )
